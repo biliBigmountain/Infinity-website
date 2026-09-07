@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味打卡系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #4a6baf;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .description {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .file-input {
+            margin-bottom: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .file-input input {
+            display: none;
+        }
+        
+        .file-input label {
+            background: #4a6baf;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .file-input label:hover {
+            background: #3a5a9f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .export-btn {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background: #f44336;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+        
+        .main-content {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+        }
+        
+        .section {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            color: #4a6baf;
+            font-size: 1.5rem;
+        }
+        
+        .bubbles-container {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-content: flex-start;
+            min-height: 400px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f9fafc;
+            transition: all 0.3s;
+        }
+        
+        .bubble {
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bubble::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .bubble:hover::after {
+            opacity: 1;
+        }
+        
+        .left .bubble {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(106, 17, 203, 0.3);
+        }
+        
+        .left .bubble:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(106, 17, 203, 0.4);
+        }
+        
+        .right .bubble {
+            background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(11, 163, 96, 0.3);
+        }
+        
+        .right .bubble:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(11, 163, 96, 0.4);
+        }
+        
+        .stats {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        .celebrate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff0;
+            border-radius: 50%;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes celebrate {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="common-theme.css">
+</head>
+<body>
+    <div class="site-common-controls"><a class="site-home-btn" href="/index" aria-label="返回主页"><i class="ri-home-4-line"></i><span>返回主页</span></a><button class="site-theme-btn" type="button" data-site-theme-toggle aria-label="切换深浅色模式"><i class="ri-sun-line"></i></button></div>
+    <div class="container">
+        <header>
+            <h1>趣味打卡系统</h1>
+            <p class="description">上传名单文件，点击左侧气泡完成打卡，点击右侧气泡取消打卡。支持导出打卡结果。</p>
+        </header>
+        
+        <div class="upload-section">
+            <div class="file-input">
+                <input type="file" id="fileUpload" accept=".txt">
+                <label for="fileUpload">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                    </svg>
+                    上传名单文件 (.txt)
+                </label>
+            </div>
+            <div class="buttons">
+                <button class="export-btn" id="exportBtn">导出打卡结果</button>
+                <button class="clear-btn" id="clearBtn">清空名单</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="section left">
+                <h2 class="section-title">未完成打卡</h2>
+                <div class="bubbles-container" id="leftContainer"></div>
+            </div>
+            
+            <div class="section right">
+                <h2 class="section-title">已完成打卡</h2>
+                <div class="bubbles-container" id="rightContainer"></div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <p>完成进度: <span id="completedCount">0</span> / <span id="totalCount">0</span></p>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="celebrate" id="celebrate"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileUpload = document.getElementById('fileUpload');
+            const exportBtn = document.getElementById('exportBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const leftContainer = document.getElementById('leftContainer');
+            const rightContainer = document.getElementById('rightContainer');
+            const completedCount = document.getElementById('completedCount');
+            const totalCount = document.getElementById('totalCount');
+            const progressBar = document.getElementById('progressBar');
+            const celebrate = document.getElementById('celebrate');
+            
+            let names = [];
+            let completed = [];
+            
+            // 文件上传处理
+            fileUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    processFileContent(content);
+                };
+                reader.readAsText(file);
+            });
+            
+            // 处理文件内容
+            function processFileContent(content) {
+                names = content.split('\n')
+                    .map(name => name.trim())
+                    .filter(name => name.length > 0);
+                
+                completed = [];
+                renderBubbles();
+                updateStats();
+            }
+            
+            // 渲染气泡
+            function renderBubbles() {
+                leftContainer.innerHTML = '';
+                rightContainer.innerHTML = '';
+                
+                names.forEach(name => {
+                    if (!completed.includes(name)) {
+                        createBubble(name, leftContainer, true);
+                    }
+                });
+                
+                completed.forEach(name => {
+                    createBubble(name, rightContainer, false);
+                });
+            }
+            
+            // 创建气泡
+            function createBubble(name, container, isLeft) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = name;
+                
+                bubble.addEventListener('click', function() {
+                    if (isLeft) {
+                        // 移动到右侧（完成打卡）
+                        completed.push(name);
+                        bubble.remove();
+                        createBubble(name, rightContainer, false);
+                        
+                        // 检查是否全部完成
+                        if (completed.length === names.length) {
+                            triggerCelebration();
+                        }
+                    } else {
+                        // 移回左侧（取消打卡）
+                        const index = completed.indexOf(name);
+                        if (index > -1) {
+                            completed.splice(index, 1);
+                            bubble.remove();
+                            createBubble(name, leftContainer, true);
+                        }
+                    }
+                    updateStats();
+                });
+                
+                container.appendChild(bubble);
+            }
+            
+            // 更新统计数据
+            function updateStats() {
+                completedCount.textContent = completed.length;
+                totalCount.textContent = names.length;
+                
+                const progress = names.length > 0 ? (completed.length / names.length) * 100 : 0;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            // 导出打卡结果
+            exportBtn.addEventListener('click', function() {
+                if (completed.length === 0) {
+                    alert('还没有人完成打卡！');
+                    return;
+                }
+                
+                const content = completed.join('\n');
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '打卡结果.txt';
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+            });
+            
+            // 清空名单
+            clearBtn.addEventListener('click', function() {
+                if (confirm('确定要清空名单吗？')) {
+                    names = [];
+                    completed = [];
+                    leftContainer.innerHTML = '';
+                    rightContainer.innerHTML = '';
+                    updateStats();
+                }
+            });
+            
+            // 庆祝动画
+            function triggerCelebration() {
+                celebrate.style.opacity = '1';
+                celebrate.innerHTML = '';
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    confetti.style.animation = `celebrate ${1 + Math.random() * 2}s forwards`;
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    celebrate.appendChild(confetti);
+                }
+                
+                setTimeout(() => {
+                    celebrate.style.opacity = '0';
+                }, 3000);
+            }
+            
+            // 添加示例名单
+            const sampleNames = ['张三', '李四', '王五', '赵六', '钱七', '孙八', '周九', '吴十', 
+                                '郑十一', '王十二', '刘十三', '陈十四', '杨十五', '黄十六'];
+            names = sampleNames;
+            renderBubbles();
+            updateStats();
+        });
+    </script>
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const button = document.querySelector('[data-site-theme-toggle]');
+            const saved = localStorage.getItem('site-theme-preference') || 'system';
+            const apply = mode => {
+                const light = mode === 'light' || (mode === 'system' && !matchMedia('(prefers-color-scheme: dark)').matches);
+                root.dataset.theme = light ? 'light' : 'dark';
+                document.body.classList.toggle('site-light', light);
+                if (button) button.innerHTML = light ? '<i class="ri-moon-line"></i>' : '<i class="ri-sun-line"></i>';
+            };
+            apply(saved);
+            button?.addEventListener('click', () => {
+                const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('site-theme-preference', next);
+                apply(next);
+            });
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if ((localStorage.getItem('site-theme-preference') || 'system') === 'system') apply('system');
+            });
+        })();
+    </script>
+</body>
+</html>

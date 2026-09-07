@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能计算器 - 增强版</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://img.cdn1.vip/i/68c41cce83a0f_1757682894.jpeg">
+	<link rel="stylesheet" href="template">
+	<div class="bg-img"></div>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .calculator-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 550px;
+            overflow: hidden;
+        }
+        
+        .calculator-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .calculator-header h1 {
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #f0f4ff;
+            border-bottom: 1px solid #e0e6ff;
+        }
+        
+        .tab-button {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .tab-button:hover {
+            background-color: #e0e6ff;
+            color: #2575fc;
+        }
+        
+        .tab-button.active {
+            color: #2575fc;
+            border-bottom: 3px solid #2575fc;
+            background-color: white;
+        }
+        
+        .calculator-body {
+            padding: 20px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9ff;
+            border-radius: 6px;
+            border-left: 4px solid #2575fc;
+        }
+        
+        .result h3 {
+            font-size: 16px;
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .result p {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .scientific-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .scientific-buttons button {
+            background: #f0f4ff;
+            color: #2575fc;
+        }
+        
+        .symbol-explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9ff;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .symbol-explanation h3 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .symbol-explanation ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .symbol-explanation li {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .symbol-explanation .symbol {
+            font-weight: bold;
+            color: #2575fc;
+            width: 60px;
+        }
+        
+        .date-mode-selector {
+            display: flex;
+            margin-bottom: 15px;
+            background-color: #f0f4ff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .date-mode-button {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .date-mode-button.active {
+            background-color: #2575fc;
+            color: white;
+        }
+        
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-inputs input {
+            flex: 1;
+        }
+        
+        .unit-category {
+            margin-bottom: 15px;
+        }
+        
+        .unit-category label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        @media (max-width: 600px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .scientific-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .date-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="common-theme.css">
+</head>
+<body>
+    <div class="site-common-controls"><a class="site-home-btn" href="/index" aria-label="返回主页"><i class="ri-home-4-line"></i><span>返回主页</span></a><button class="site-theme-btn" type="button" data-site-theme-toggle aria-label="切换深浅色模式"><i class="ri-sun-line"></i></button></div>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1>多功能计算器 - 增强版</h1>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-button active" data-tab="math">数学计算</button>
+            <button class="tab-button" data-tab="scientific">科学计算</button>
+            <button class="tab-button" data-tab="currency">货币换算</button>
+            <button class="tab-button" data-tab="date">日期计算</button>
+            <button class="tab-button" data-tab="loan">贷款计算</button>
+            <button class="tab-button" data-tab="unit">单位换算</button>
+        </div>
+        
+        <div class="calculator-body">
+            <!-- 数学计算器 -->
+            <div class="tab-content active" id="math">
+                <div class="input-group">
+                    <label>输入表达式 (例如: 2+3*4)</label>
+                    <input type="text" id="math-expression" placeholder="输入数学表达式">
+                </div>
+                <button onclick="calculateMath()">计算</button>
+                <div class="result">
+                    <h3>结果</h3>
+                    <p id="math-result">0</p>
+                </div>
+                <div class="symbol-explanation">
+                    <h3>运算符号说明</h3>
+                    <ul>
+                        <li><span class="symbol">+</span> 加法运算</li>
+                        <li><span class="symbol">-</span> 减法运算</li>
+                        <li><span class="symbol">*</span> 乘法运算</li>
+                        <li><span class="symbol">/</span> 除法运算</li>
+                        <li><span class="symbol">%</span> 取余运算</li>
+                        <li><span class="symbol">( )</span> 括号，改变运算优先级</li>
+                        <li><span class="symbol">.</span> 小数点</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 科学计算器 -->
+            <div class="tab-content" id="scientific">
+                <div class="input-group">
+                    <label>科学计算表达式</label>
+                    <input type="text" id="sci-expression" placeholder="例如: sin(30)+log(100)">
+                </div>
+                <div class="scientific-buttons">
+                    <button onclick="addToExpression('sin(')">sin</button>
+                    <button onclick="addToExpression('cos(')">cos</button>
+                    <button onclick="addToExpression('tan(')">tan</button>
+                    <button onclick="addToExpression('log(')">log</button>
+                    <button onclick="addToExpression('sqrt(')">√</button>
+                    <button onclick="addToExpression('^')">^</button>
+                    <button onclick="addToExpression('π')">π</button>
+                    <button onclick="addToExpression('(')">(</button>
+                    <button onclick="addToExpression(')')">)</button>
+                </div>
+                <button onclick="calculateScientific()">计算</button>
+                <div class="result">
+                    <h3>结果</h3>
+                    <p id="sci-result">0</p>
+                </div>
+                <div class="symbol-explanation">
+                    <h3>运算符号说明</h3>
+                    <ul>
+                        <li><span class="symbol">sin()</span> 正弦函数</li>
+                        <li><span class="symbol">cos()</span> 余弦函数</li>
+                        <li><span class="symbol">tan()</span> 正切函数</li>
+                        <li><span class="symbol">log()</span> 常用对数(以10为底)</li>
+                        <li><span class="symbol">sqrt()</span> 平方根</li>
+                        <li><span class="symbol">^</span> 幂运算</li>
+                        <li><span class="symbol">π</span> 圆周率(约3.14159)</li>
+                        <li><span class="symbol">e</span> 自然常数(约2.71828)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 货币换算 -->
+            <div class="tab-content" id="currency">
+                <div class="input-group">
+                    <label>金额</label>
+                    <input type="number" id="currency-amount" placeholder="输入金额" value="1">
+                </div>
+                <div class="input-group">
+                    <label>从</label>
+                    <select id="currency-from">
+                        <option value="USD">美元 (USD)</option>
+                        <option value="EUR">欧元 (EUR)</option>
+                        <option value="GBP">英镑 (GBP)</option>
+                        <option value="JPY">日元 (JPY)</option>
+                        <option value="CNY" selected>人民币 (CNY)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>到</label>
+                    <select id="currency-to">
+                        <option value="USD">美元 (USD)</option>
+                        <option value="EUR" selected>欧元 (EUR)</option>
+                        <option value="GBP">英镑 (GBP)</option>
+                        <option value="JPY">日元 (JPY)</option>
+                        <option value="CNY">人民币 (CNY)</option>
+                    </select>
+                </div>
+                <button onclick="convertCurrency()">换算</button>
+                <div class="result">
+                    <h3>换算结果</h3>
+                    <p id="currency-result">0</p>
+                </div>
+            </div>
+            
+            <!-- 日期计算 -->
+            <div class="tab-content" id="date">
+                <div class="date-mode-selector">
+                    <button class="date-mode-button active" data-mode="difference">计算日期差</button>
+                    <button class="date-mode-button" data-mode="end-date">计算结束日期</button>
+                </div>
+                
+                <!-- 计算日期差模式 -->
+                <div id="date-difference-mode">
+                    <div class="input-group">
+                        <label>开始日期</label>
+                        <input type="date" id="date-start">
+                    </div>
+                    <div class="input-group">
+                        <label>结束日期</label>
+                        <input type="date" id="date-end">
+                    </div>
+                    <button onclick="calculateDateDifference()">计算差异</button>
+                    <div class="result">
+                        <h3>日期差异</h3>
+                        <p id="date-difference-result">0 天</p>
+                    </div>
+                </div>
+                
+                <!-- 计算结束日期模式 -->
+                <div id="date-end-mode" style="display: none;">
+                    <div class="input-group">
+                        <label>开始日期</label>
+                        <input type="date" id="date-start-end">
+                    </div>
+                    <div class="input-group">
+                        <label>经历天数</label>
+                        <input type="number" id="date-days" placeholder="输入天数">
+                    </div>
+                    <button onclick="calculateEndDate()">计算结束日期</button>
+                    <div class="result">
+                        <h3>结束日期</h3>
+                        <p id="date-end-result">未计算</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 贷款计算 -->
+            <div class="tab-content" id="loan">
+                <div class="input-group">
+                    <label>贷款金额</label>
+                    <input type="number" id="loan-amount" placeholder="输入贷款金额">
+                </div>
+                <div class="input-group">
+                    <label>年利率 (%)</label>
+                    <input type="number" id="loan-rate" placeholder="输入年利率">
+                </div>
+                <div class="input-group">
+                    <label>贷款期限 (月)</label>
+                    <input type="number" id="loan-term" placeholder="输入贷款期限">
+                </div>
+                <button onclick="calculateLoan()">计算月供</button>
+                <div class="result">
+                    <h3>计算结果</h3>
+                    <p id="loan-result">月供: 0</p>
+                </div>
+            </div>
+            
+            <!-- 单位换算 -->
+            <div class="tab-content" id="unit">
+                <div class="unit-category">
+                    <label>单位类别</label>
+                    <select id="unit-category">
+                        <option value="length">长度</option>
+                        <option value="weight">重量</option>
+                        <option value="area">面积</option>
+                        <option value="volume">体积</option>
+                        <option value="temperature">温度</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>数值</label>
+                    <input type="number" id="unit-value" placeholder="输入数值" value="1">
+                </div>
+                <div class="input-group">
+                    <label>从单位</label>
+                    <select id="unit-from">
+                        <!-- 长度单位 -->
+                        <option value="meter" data-category="length">米 (m)</option>
+                        <option value="km" data-category="length">千米 (km)</option>
+                        <option value="cm" data-category="length">厘米 (cm)</option>
+                        <option value="mm" data-category="length">毫米 (mm)</option>
+                        <option value="inch" data-category="length">英寸 (in)</option>
+                        <option value="foot" data-category="length">英尺 (ft)</option>
+                        <option value="yard" data-category="length">码 (yd)</option>
+                        <option value="mile" data-category="length">英里 (mi)</option>
+                        
+                        <!-- 重量单位 -->
+                        <option value="gram" data-category="weight">克 (g)</option>
+                        <option value="kg" data-category="weight">千克 (kg)</option>
+                        <option value="pound" data-category="weight">磅 (lb)</option>
+                        <option value="ounce" data-category="weight">盎司 (oz)</option>
+                        
+                        <!-- 面积单位 -->
+                        <option value="sq_meter" data-category="area">平方米 (m²)</option>
+                        <option value="sq_km" data-category="area">平方千米 (km²)</option>
+                        <option value="hectare" data-category="area">公顷 (ha)</option>
+                        <option value="acre" data-category="area">英亩 (acre)</option>
+                        <option value="sq_foot" data-category="area">平方英尺 (ft²)</option>
+                        
+                        <!-- 体积单位 -->
+                        <option value="cubic_meter" data-category="volume">立方米 (m³)</option>
+                        <option value="liter" data-category="volume">升 (L)</option>
+                        <option value="milliliter" data-category="volume">毫升 (mL)</option>
+                        <option value="gallon" data-category="volume">加仑 (gal)</option>
+                        
+                        <!-- 温度单位 -->
+                        <option value="celsius" data-category="temperature">摄氏度 (°C)</option>
+                        <option value="fahrenheit" data-category="temperature">华氏度 (°F)</option>
+                        <option value="kelvin" data-category="temperature">开尔文 (K)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>到单位</label>
+                    <select id="unit-to">
+                        <!-- 长度单位 -->
+                        <option value="meter" data-category="length">米 (m)</option>
+                        <option value="km" data-category="length">千米 (km)</option>
+                        <option value="cm" data-category="length">厘米 (cm)</option>
+                        <option value="mm" data-category="length">毫米 (mm)</option>
+                        <option value="inch" data-category="length">英寸 (in)</option>
+                        <option value="foot" data-category="length">英尺 (ft)</option>
+                        <option value="yard" data-category="length">码 (yd)</option>
+                        <option value="mile" data-category="length">英里 (mi)</option>
+                        
+                        <!-- 重量单位 -->
+                        <option value="gram" data-category="weight">克 (g)</option>
+                        <option value="kg" data-category="weight">千克 (kg)</option>
+                        <option value="pound" data-category="weight">磅 (lb)</option>
+                        <option value="ounce" data-category="weight">盎司 (oz)</option>
+                        
+                        <!-- 面积单位 -->
+                        <option value="sq_meter" data-category="area">平方米 (m²)</option>
+                        <option value="sq_km" data-category="area">平方千米 (km²)</option>
+                        <option value="hectare" data-category="area">公顷 (ha)</option>
+                        <option value="acre" data-category="area">英亩 (acre)</option>
+                        <option value="sq_foot" data-category="area">平方英尺 (ft²)</option>
+                        
+                        <!-- 体积单位 -->
+                        <option value="cubic_meter" data-category="volume">立方米 (m³)</option>
+                        <option value="liter" data-category="volume">升 (L)</option>
+                        <option value="milliliter" data-category="volume">毫升 (mL)</option>
+                        <option value="gallon" data-category="volume">加仑 (gal)</option>
+                        
+                        <!-- 温度单位 -->
+                        <option value="celsius" data-category="temperature">摄氏度 (°C)</option>
+                        <option value="fahrenheit" data-category="temperature">华氏度 (°F)</option>
+                        <option value="kelvin" data-category="temperature">开尔文 (K)</option>
+                    </select>
+                </div>
+                <button onclick="convertUnit()">换算</button>
+                <div class="result">
+                    <h3>换算结果</h3>
+                    <p id="unit-result">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 选项卡切换功能
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // 添加active类到当前选项卡
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // 日期计算模式切换
+        document.querySelectorAll('.date-mode-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.date-mode-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                if (button.dataset.mode === 'difference') {
+                    document.getElementById('date-difference-mode').style.display = 'block';
+                    document.getElementById('date-end-mode').style.display = 'none';
+                } else {
+                    document.getElementById('date-difference-mode').style.display = 'none';
+                    document.getElementById('date-end-mode').style.display = 'block';
+                }
+            });
+        });
+        
+        // 单位类别切换
+        document.getElementById('unit-category').addEventListener('change', function() {
+            const category = this.value;
+            const fromSelect = document.getElementById('unit-from');
+            const toSelect = document.getElementById('unit-to');
+            
+            // 显示当前类别的单位
+            Array.from(fromSelect.options).forEach(option => {
+                option.style.display = option.dataset.category === category ? 'block' : 'none';
+            });
+            Array.from(toSelect.options).forEach(option => {
+                option.style.display = option.dataset.category === category ? 'block' : 'none';
+            });
+            
+            // 设置默认选中
+            fromSelect.selectedIndex = 0;
+            toSelect.selectedIndex = 1;
+        });
+        
+        // 初始化
+        window.onload = function() {
+            // 设置默认日期为今天
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('date-start').value = formattedDate;
+            document.getElementById('date-end').value = formattedDate;
+            document.getElementById('date-start-end').value = formattedDate;
+            
+            // 初始化单位类别
+            document.getElementById('unit-category').dispatchEvent(new Event('change'));
+        };
+        
+        // 数学计算功能
+        function calculateMath() {
+            const expression = document.getElementById('math-expression').value;
+            try {
+                const result = eval(expression);
+                document.getElementById('math-result').textContent = result;
+            } catch (error) {
+                document.getElementById('math-result').textContent = '错误: 无效表达式';
+            }
+        }
+        
+        // 科学计算功能
+        function addToExpression(value) {
+            const input = document.getElementById('sci-expression');
+            input.value += value;
+        }
+        
+        function calculateScientific() {
+            const expression = document.getElementById('sci-expression').value;
+            try {
+                // 替换数学常数和函数
+                let processedExpr = expression
+                    .replace(/π/g, Math.PI)
+                    .replace(/sin\(/g, 'Math.sin(')
+                    .replace(/cos\(/g, 'Math.cos(')
+                    .replace(/tan\(/g, 'Math.tan(')
+                    .replace(/log\(/g, 'Math.log10(')
+                    .replace(/sqrt\(/g, 'Math.sqrt(')
+                    .replace(/\^/g, '**');
+                
+                const result = eval(processedExpr);
+                document.getElementById('sci-result').textContent = result;
+            } catch (error) {
+                document.getElementById('sci-result').textContent = '错误: 无效表达式';
+            }
+        }
+        
+        // 货币换算功能（使用固定汇率，实际应用中应该使用API获取实时汇率）
+        const exchangeRates = {
+            USD: { EUR: 0.85, GBP: 0.75, JPY: 110, CNY: 6.5, USD: 1 },
+            EUR: { USD: 1.18, GBP: 0.88, JPY: 130, CNY: 7.7, EUR: 1 },
+            GBP: { USD: 1.33, EUR: 1.14, JPY: 150, CNY: 8.8, GBP: 1 },
+            JPY: { USD: 0.0091, EUR: 0.0077, GBP: 0.0067, CNY: 0.059, JPY: 1 },
+            CNY: { USD: 0.15, EUR: 0.13, GBP: 0.11, JPY: 17, CNY: 1 }
+        };
+        
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('currency-amount').value);
+            const from = document.getElementById('currency-from').value;
+            const to = document.getElementById('currency-to').value;
+            
+            if (isNaN(amount)) {
+                document.getElementById('currency-result').textContent = '错误: 请输入有效数字';
+                return;
+            }
+            
+            const rate = exchangeRates[from][to];
+            const result = amount * rate;
+            document.getElementById('currency-result').textContent = `${result.toFixed(2)} ${to}`;
+        }
+        
+        // 日期计算功能 - 计算日期差
+        function calculateDateDifference() {
+            const startDate = new Date(document.getElementById('date-start').value);
+            const endDate = new Date(document.getElementById('date-end').value);
+            
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                document.getElementById('date-difference-result').textContent = '错误: 请输入有效日期';
+                return;
+            }
+            
+            const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+            const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            document.getElementById('date-difference-result').textContent = `${dayDiff} 天`;
+        }
+        
+        // 日期计算功能 - 计算结束日期
+        function calculateEndDate() {
+            const startDate = new Date(document.getElementById('date-start-end').value);
+            const days = parseInt(document.getElementById('date-days').value);
+            
+            if (isNaN(startDate.getTime()) || isNaN(days)) {
+                document.getElementById('date-end-result').textContent = '错误: 请输入有效日期和天数';
+                return;
+            }
+            
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + days);
+            
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date-end-result').textContent = endDate.toLocaleDateString('zh-CN', options);
+        }
+        
+        // 贷款计算功能
+        function calculateLoan() {
+            const amount = parseFloat(document.getElementById('loan-amount').value);
+            const rate = parseFloat(document.getElementById('loan-rate').value) / 100 / 12; // 月利率
+            const term = parseInt(document.getElementById('loan-term').value);
+            
+            if (isNaN(amount) || isNaN(rate) || isNaN(term)) {
+                document.getElementById('loan-result').textContent = '错误: 请输入有效数字';
+                return;
+            }
+            
+            // 计算月供
+            const monthlyPayment = (amount * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
+            document.getElementById('loan-result').textContent = `月供: ${monthlyPayment.toFixed(2)}`;
+        }
+        
+        // 单位换算功能
+        const unitConversions = {
+            // 长度单位
+            meter: { km: 0.001, cm: 100, mm: 1000, inch: 39.3701, foot: 3.28084, yard: 1.09361, mile: 0.000621371, meter: 1 },
+            km: { meter: 1000, cm: 100000, mm: 1000000, inch: 39370.1, foot: 3280.84, yard: 1093.61, mile: 0.621371, km: 1 },
+            cm: { meter: 0.01, km: 0.00001, mm: 10, inch: 0.393701, foot: 0.0328084, yard: 0.0109361, mile: 0.0000062137, cm: 1 },
+            mm: { meter: 0.001, km: 0.000001, cm: 0.1, inch: 0.0393701, foot: 0.00328084, yard: 0.00109361, mile: 0.000000621371, mm: 1 },
+            inch: { meter: 0.0254, km: 0.0000254, cm: 2.54, mm: 25.4, foot: 0.0833333, yard: 0.0277778, mile: 0.000015783, inch: 1 },
+            foot: { meter: 0.3048, km: 0.0003048, cm: 30.48, mm: 304.8, inch: 12, yard: 0.333333, mile: 0.000189394, foot: 1 },
+            yard: { meter: 0.9144, km: 0.0009144, cm: 91.44, mm: 914.4, inch: 36, foot: 3, mile: 0.000568182, yard: 1 },
+            mile: { meter: 1609.34, km: 1.60934, cm: 160934, mm: 1609340, inch: 63360, foot: 5280, yard: 1760, mile: 1 },
+            
+            // 重量单位
+            gram: { kg: 0.001, pound: 0.00220462, ounce: 0.035274, gram: 1 },
+            kg: { gram: 1000, pound: 2.20462, ounce: 35.274, kg: 1 },
+            pound: { gram: 453.592, kg: 0.453592, ounce: 16, pound: 1 },
+            ounce: { gram: 28.3495, kg: 0.0283495, pound: 0.0625, ounce: 1 },
+            
+            // 面积单位
+            sq_meter: { sq_km: 0.000001, hectare: 0.0001, acre: 0.000247105, sq_foot: 10.7639, sq_meter: 1 },
+            sq_km: { sq_meter: 1000000, hectare: 100, acre: 247.105, sq_foot: 10763900, sq_km: 1 },
+            hectare: { sq_meter: 10000, sq_km: 0.01, acre: 2.47105, sq_foot: 107639, hectare: 1 },
+            acre: { sq_meter: 4046.86, sq_km: 0.00404686, hectare: 0.404686, sq_foot: 43560, acre: 1 },
+            sq_foot: { sq_meter: 0.092903, sq_km: 0.000000092903, hectare: 0.0000092903, acre: 0.0000229568, sq_foot: 1 },
+            
+            // 体积单位
+            cubic_meter: { liter: 1000, milliliter: 1000000, gallon: 264.172, cubic_meter: 1 },
+            liter: { cubic_meter: 0.001, milliliter: 1000, gallon: 0.264172, liter: 1 },
+            milliliter: { cubic_meter: 0.000001, liter: 0.001, gallon: 0.000264172, milliliter: 1 },
+            gallon: { cubic_meter: 0.00378541, liter: 3.78541, milliliter: 3785.41, gallon: 1 },
+            
+            // 温度单位 - 特殊处理
+            celsius: { fahrenheit: 'c_to_f', kelvin: 'c_to_k', celsius: 1 },
+            fahrenheit: { celsius: 'f_to_c', kelvin: 'f_to_k', fahrenheit: 1 },
+            kelvin: { celsius: 'k_to_c', fahrenheit: 'k_to_f', kelvin: 1 }
+        };
+        
+        // 温度转换函数
+        function celsiusToFahrenheit(c) {
+            return (c * 9/5) + 32;
+        }
+        
+        function celsiusToKelvin(c) {
+            return c + 273.15;
+        }
+        
+        function fahrenheitToCelsius(f) {
+            return (f - 32) * 5/9;
+        }
+        
+        function fahrenheitToKelvin(f) {
+            return (f - 32) * 5/9 + 273.15;
+        }
+        
+        function kelvinToCelsius(k) {
+            return k - 273.15;
+        }
+        
+        function kelvinToFahrenheit(k) {
+            return (k - 273.15) * 9/5 + 32;
+        }
+        
+        function convertUnit() {
+            const value = parseFloat(document.getElementById('unit-value').value);
+            const from = document.getElementById('unit-from').value;
+            const to = document.getElementById('unit-to').value;
+            const category = document.getElementById('unit-category').value;
+            
+            if (isNaN(value)) {
+                document.getElementById('unit-result').textContent = '错误: 请输入有效数字';
+                return;
+            }
+            
+            // 温度单位特殊处理
+            if (category === 'temperature') {
+                let result;
+                if (from === 'celsius' && to === 'fahrenheit') {
+                    result = celsiusToFahrenheit(value);
+                } else if (from === 'celsius' && to === 'kelvin') {
+                    result = celsiusToKelvin(value);
+                } else if (from === 'fahrenheit' && to === 'celsius') {
+                    result = fahrenheitToCelsius(value);
+                } else if (from === 'fahrenheit' && to === 'kelvin') {
+                    result = fahrenheitToKelvin(value);
+                } else if (from === 'kelvin' && to === 'celsius') {
+                    result = kelvinToCelsius(value);
+                } else if (from === 'kelvin' && to === 'fahrenheit') {
+                    result = kelvinToFahrenheit(value);
+                } else {
+                    result = value; // 相同单位
+                }
+                document.getElementById('unit-result').textContent = result.toFixed(2);
+                return;
+            }
+            
+            // 其他单位转换
+            const conversionRate = unitConversions[from][to];
+            let result;
+            
+            if (typeof conversionRate === 'string') {
+                // 如果是温度转换函数名
+                switch(conversionRate) {
+                    case 'c_to_f': result = celsiusToFahrenheit(value); break;
+                    case 'c_to_k': result = celsiusToKelvin(value); break;
+                    case 'f_to_c': result = fahrenheitToCelsius(value); break;
+                    case 'f_to_k': result = fahrenheitToKelvin(value); break;
+                    case 'k_to_c': result = kelvinToCelsius(value); break;
+                    case 'k_to_f': result = kelvinToFahrenheit(value); break;
+                    default: result = value;
+                }
+            } else {
+                result = value * conversionRate;
+            }
+            
+            document.getElementById('unit-result').textContent = result.toFixed(6);
+        }
+    </script>
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const button = document.querySelector('[data-site-theme-toggle]');
+            const saved = localStorage.getItem('site-theme-preference') || 'system';
+            const apply = mode => {
+                const light = mode === 'light' || (mode === 'system' && !matchMedia('(prefers-color-scheme: dark)').matches);
+                root.dataset.theme = light ? 'light' : 'dark';
+                document.body.classList.toggle('site-light', light);
+                if (button) button.innerHTML = light ? '<i class="ri-moon-line"></i>' : '<i class="ri-sun-line"></i>';
+            };
+            apply(saved);
+            button?.addEventListener('click', () => {
+                const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('site-theme-preference', next);
+                apply(next);
+            });
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if ((localStorage.getItem('site-theme-preference') || 'system') === 'system') apply('system');
+            });
+        })();
+    </script>
+</body>
+</html>

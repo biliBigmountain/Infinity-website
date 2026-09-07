@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强版随机决策器</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://img.cdn1.vip/i/68c41cce83a0f_1757682894.jpeg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .scheme-selector {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .scheme-title {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scheme-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .scheme-option {
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .scheme-option.active {
+            border-color: #6a11cb;
+            background: #6a11cb;
+            color: white;
+        }
+        
+        .scheme-option:hover:not(.active) {
+            border-color: #cbd5e0;
+        }
+        
+        .scheme-description {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .options-control {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .options-title {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .options-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: move;
+            transition: transform 0.2s;
+        }
+        
+        .option-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .option-name {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        
+        .option-weight {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .option-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .add-option {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .add-option input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+        }
+        
+        .add-option button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .probability-bar {
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #e2e8f0;
+            width: 100%;
+            margin: 15px 0;
+            display: flex;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .decision-display {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            perspective: 1000px;
+        }
+        
+        .decision-card {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .decision-card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .decision-front, .decision-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .decision-front {
+            background: #f7fafc;
+            color: #cbd5e0;
+            border: 3px dashed #cbd5e0;
+        }
+        
+        .decision-back {
+            background: white;
+            transform: rotateY(180deg);
+            color: #2d3748;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .result-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        
+        .result-subtext {
+            font-size: 1rem;
+            color: #718096;
+        }
+        
+        .decision-btn {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+            margin-top: 10px;
+        }
+        
+        .decision-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.6);
+        }
+        
+        .decision-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .decision-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .probability-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            color: #4a5568;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            color: #4a5568;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .reset-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .reset-btn:hover {
+            background: #cbd5e0;
+        }
+        
+        .history-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 15px;
+            text-align: left;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .history-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .chart-container {
+            margin-top: 20px;
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .chart-bar {
+            width: 40px;
+            background: #6a11cb;
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .decision-display {
+                height: 150px;
+            }
+            
+            .decision-card {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .result-text {
+                font-size: 2rem;
+            }
+            
+            .options-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .scheme-options {
+                flex-direction: column;
+            }
+            
+            .chart-container {
+                height: 120px;
+            }
+            
+            .chart-bar {
+                width: 30px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="common-theme.css">
+</head>
+<body>
+    <div class="site-common-controls"><a class="site-home-btn" href="/index" aria-label="返回主页"><i class="ri-home-4-line"></i><span>返回主页</span></a><button class="site-theme-btn" type="button" data-site-theme-toggle aria-label="切换深浅色模式"><i class="ri-sun-line"></i></button></div>
+    <div class="container">
+        <h1>增强版随机决策器</h1>
+        <p class="subtitle">预设方案与自定义选项相结合，满足多样化决策需求</p>
+        
+        <div class="scheme-selector">
+            <div class="scheme-title">
+                <i>⚙️</i> 决策方案选择
+            </div>
+            
+            <div class="scheme-options">
+                <div class="scheme-option active" data-scheme="scheme1">方案1：四选项均衡</div>
+                <div class="scheme-option" data-scheme="scheme2">方案2：是/否决策</div>
+                <div class="scheme-option" data-scheme="custom">自定义方案</div>
+            </div>
+            
+            <div class="scheme-description" id="schemeDescription">
+                方案1：是、否、不确定、可能（各25%概率）
+            </div>
+        </div>
+        
+        <div class="options-control">
+            <div class="options-title">
+                <i>📊</i> 决策选项与概率设置
+            </div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- 选项列表将动态生成 -->
+            </div>
+            
+            <div class="probability-bar" id="probabilityBar">
+                <!-- 概率条将动态生成 -->
+            </div>
+            
+            <div class="add-option">
+                <input type="text" id="newOptionName" placeholder="输入新选项名称">
+                <button id="addOptionBtn">添加选项</button>
+            </div>
+            
+            <button class="reset-btn" id="resetWeightsBtn">重置为等概率</button>
+        </div>
+        
+        <div class="decision-display">
+            <div class="decision-card" id="decisionCard">
+                <div class="decision-front">
+                    <span>?</span>
+                </div>
+                <div class="decision-back" id="decisionBack">
+                    <!-- 结果将动态显示在这里 -->
+                </div>
+            </div>
+        </div>
+        
+        <button class="decision-btn" id="decideBtn">做出决策</button>
+        
+        <div class="probability-info">
+            <p>当前方案: <strong id="currentScheme">方案1：四选项均衡</strong> · 概率分布: <strong id="probabilityDistribution">是(25%) 否(25%) 不确定(25%) 可能(25%)</strong></p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-value" id="totalCount">0</span>
+                <span class="stat-label">总决策次数</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="sessionCount">0</span>
+                <span class="stat-label">本次会话</span>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <div class="history-title">
+                <span><i>📋</i> 决策历史</span>
+                <button class="reset-btn" id="clearHistoryBtn">清除历史</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- 历史记录将动态生成 -->
+            </div>
+            <div class="chart-container" id="chartContainer">
+                <!-- 图表将动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM元素引用
+            const decideBtn = document.getElementById('decideBtn');
+            const decisionCard = document.getElementById('decisionCard');
+            const decisionBack = document.getElementById('decisionBack');
+            const probabilityBar = document.getElementById('probabilityBar');
+            const optionsList = document.getElementById('optionsList');
+            const newOptionName = document.getElementById('newOptionName');
+            const addOptionBtn = document.getElementById('addOptionBtn');
+            const resetWeightsBtn = document.getElementById('resetWeightsBtn');
+            const schemeOptions = document.querySelectorAll('.scheme-option');
+            const schemeDescription = document.getElementById('schemeDescription');
+            const currentSchemeElem = document.getElementById('currentScheme');
+            const probabilityDistributionElem = document.getElementById('probabilityDistribution');
+            const totalCountElem = document.getElementById('totalCount');
+            const sessionCountElem = document.getElementById('sessionCount');
+            const historyList = document.getElementById('historyList');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            const chartContainer = document.getElementById('chartContainer');
+            
+            // 状态变量
+            let isAnimating = false;
+            let decisionOptions = [];
+            let totalCount = 0;
+            let sessionCount = 0;
+            let currentScheme = 'scheme1'; // 默认方案
+            let decisionHistory = [];
+            let optionStats = {};
+            
+            // 定义预设方案
+            const schemes = {
+                scheme1: {
+                    name: "方案1：四选项均衡",
+                    description: "方案1：是、否、不确定、可能（各25%概率）",
+                    options: [
+                        { name: '是', weight: 25, color: '#48bb78' },
+                        { name: '否', weight: 25, color: '#f56565' },
+                        { name: '不确定', weight: 25, color: '#4299e1' },
+                        { name: '可能', weight: 25, color: '#ed8936' }
+                    ]
+                },
+                scheme2: {
+                    name: "方案2：是/否决策",
+                    description: "方案2：是、否（各50%概率）",
+                    options: [
+                        { name: '是', weight: 50, color: '#48bb78' },
+                        { name: '否', weight: 50, color: '#f56565' }
+                    ]
+                },
+                custom: {
+                    name: "自定义方案",
+                    description: "自定义：用户自定义选项和概率",
+                    options: [] // 初始为空，由用户自定义
+                }
+            };
+            
+            // 初始化应用
+            initApp();
+            
+            // 方案选择事件
+            schemeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const scheme = this.getAttribute('data-scheme');
+                    selectScheme(scheme);
+                });
+            });
+            
+            // 决策按钮事件
+            decideBtn.addEventListener('click', function() {
+                if (isAnimating) return;
+                
+                isAnimating = true;
+                decideBtn.disabled = true;
+                
+                // 重置卡片状态
+                decisionCard.classList.remove('flipped');
+                decisionBack.className = 'decision-back';
+                decisionBack.innerHTML = '';
+                
+                // 添加脉冲动画
+                decisionCard.classList.add('pulse');
+                decisionCard.classList.add('spinning');
+                
+                // 播放音效
+                playDecisionSound();
+                
+                // 模拟决策过程
+                setTimeout(() => {
+                    // 根据选项权重随机选择结果
+                    const result = getRandomDecision();
+                    
+                    // 更新统计
+                    totalCount++;
+                    sessionCount++;
+                    
+                    // 更新选项统计
+                    if (!optionStats[result.name]) {
+                        optionStats[result.name] = 0;
+                    }
+                    optionStats[result.name]++;
+                    
+                    // 添加历史记录
+                    addToHistory(result);
+                    
+                    // 更新显示
+                    decisionBack.innerHTML = `
+                        <div class="result-text" style="color: ${result.color}">${result.name}</div>
+                        <div class="result-subtext">决策结果</div>
+                    `;
+                    decisionBack.style.borderColor = result.color;
+                    
+                    // 更新统计显示
+                    updateStats();
+                    
+                    // 翻转卡片显示结果
+                    setTimeout(() => {
+                        decisionCard.classList.remove('spinning');
+                        decisionCard.classList.add('flipped');
+                        isAnimating = false;
+                        decideBtn.disabled = false;
+                        decisionCard.classList.remove('pulse');
+                        
+                        // 更新图表
+                        updateChart();
+                        
+                        // 自动保存设置
+                        saveToLocalStorage();
+                    }, 300);
+                }, 1500);
+            });
+            
+            // 添加新选项
+            addOptionBtn.addEventListener('click', function() {
+                const name = newOptionName.value.trim();
+                if (name) {
+                    // 切换到自定义方案
+                    selectScheme('custom');
+                    
+                    // 添加选项
+                    addDecisionOption(name, 10, getRandomColor());
+                    newOptionName.value = '';
+                    updateProbabilityDisplay();
+                    saveToLocalStorage();
+                }
+            });
+            
+            // 回车添加选项
+            newOptionName.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addOptionBtn.click();
+                }
+            });
+            
+            // 重置权重
+            resetWeightsBtn.addEventListener('click', function() {
+                if (decisionOptions.length > 0) {
+                    const weight = Math.floor(100 / decisionOptions.length);
+                    const remainder = 100 % decisionOptions.length;
+                    
+                    decisionOptions.forEach((option, index) => {
+                        option.weight = index === 0 ? weight + remainder : weight;
+                    });
+                    
+                    updateOptionsDisplay();
+                    updateProbabilityDisplay();
+                    saveToLocalStorage();
+                }
+            });
+            
+            // 清除历史记录
+            clearHistoryBtn.addEventListener('click', function() {
+                decisionHistory = [];
+                optionStats = {};
+                updateHistoryDisplay();
+                updateChart();
+                saveToLocalStorage();
+            });
+            
+            // 初始化应用
+            function initApp() {
+                // 从localStorage加载数据
+                loadFromLocalStorage();
+                
+                // 初始化方案（如果没有数据）
+                if (decisionOptions.length === 0) {
+                    selectScheme('scheme1');
+                } else {
+                    // 如果有自定义数据，切换到自定义方案
+                    currentScheme = 'custom';
+                    updateSchemeDisplay();
+                    updateOptionsDisplay();
+                    updateProbabilityDisplay();
+                }
+                
+                // 初始化显示
+                updateStats();
+                updateHistoryDisplay();
+                updateChart();
+            }
+            
+            // 选择方案
+            function selectScheme(scheme) {
+                currentScheme = scheme;
+                
+                // 更新方案显示
+                updateSchemeDisplay();
+                
+                // 设置选项
+                if (scheme !== 'custom') {
+                    decisionOptions = JSON.parse(JSON.stringify(schemes[scheme].options));
+                    updateOptionsDisplay();
+                    updateProbabilityDisplay();
+                }
+                
+                // 保存到本地存储
+                saveToLocalStorage();
+            }
+            
+            // 更新方案显示
+            function updateSchemeDisplay() {
+                // 更新激活状态
+                schemeOptions.forEach(option => {
+                    if (option.getAttribute('data-scheme') === currentScheme) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+                
+                // 更新描述
+                if (currentScheme === 'custom') {
+                    schemeDescription.textContent = `自定义：${decisionOptions.length}个选项，可自由调整概率`;
+                    currentSchemeElem.textContent = "自定义方案";
+                } else {
+                    schemeDescription.textContent = schemes[currentScheme].description;
+                    currentSchemeElem.textContent = schemes[currentScheme].name;
+                }
+            }
+            
+            // 添加决策选项
+            function addDecisionOption(name, weight, color) {
+                decisionOptions.push({ name, weight, color });
+                updateOptionsDisplay();
+            }
+            
+            // 更新选项显示
+            function updateOptionsDisplay() {
+                optionsList.innerHTML = '';
+                
+                decisionOptions.forEach((option, index) => {
+                    const optionItem = document.createElement('div');
+                    optionItem.className = 'option-item';
+                    optionItem.setAttribute('draggable', 'true');
+                    optionItem.setAttribute('data-index', index);
+                    optionItem.innerHTML = `
+                        <span class="option-name">${option.name}</span>
+                        <input type="number" class="option-weight" min="1" max="100" value="${option.weight}" data-index="${index}">
+                        <span>%</span>
+                        <div class="option-color" style="background-color: ${option.color}" data-index="${index}"></div>
+                        <button class="remove-option" data-index="${index}">×</button>
+                    `;
+                    optionsList.appendChild(optionItem);
+                    
+                    // 添加拖拽事件
+                    setupDragAndDrop(optionItem);
+                });
+                
+                // 添加权重改变事件
+                document.querySelectorAll('.option-weight').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        let newWeight = parseInt(this.value) || 1;
+                        
+                        // 限制权重范围
+                        if (newWeight < 1) newWeight = 1;
+                        if (newWeight > 100) newWeight = 100;
+                        
+                        decisionOptions[index].weight = newWeight;
+                        this.value = newWeight;
+                        
+                        // 切换到自定义方案
+                        selectScheme('custom');
+                        
+                        updateProbabilityDisplay();
+                        saveToLocalStorage();
+                    });
+                });
+                
+                // 添加颜色选择事件
+                document.querySelectorAll('.option-color').forEach(colorDiv => {
+                    colorDiv.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        const newColor = getRandomColor();
+                        decisionOptions[index].color = newColor;
+                        this.style.backgroundColor = newColor;
+                        
+                        // 切换到自定义方案
+                        selectScheme('custom');
+                        
+                        updateProbabilityDisplay();
+                        saveToLocalStorage();
+                    });
+                });
+                
+                // 添加删除选项事件
+                document.querySelectorAll('.remove-option').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        if (decisionOptions.length > 2) {
+                            decisionOptions.splice(index, 1);
+                            
+                            // 切换到自定义方案
+                            selectScheme('custom');
+                            
+                            updateOptionsDisplay();
+                            updateProbabilityDisplay();
+                            saveToLocalStorage();
+                        } else {
+                            alert('至少需要保留两个选项！');
+                        }
+                    });
+                });
+                
+                // 更新概率分布显示
+                updateProbabilityDistributionText();
+            }
+            
+            // 设置拖拽功能
+            function setupDragAndDrop(item) {
+                item.addEventListener('dragstart', function(e) {
+                    this.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', this.getAttribute('data-index'));
+                });
+                
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+                
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIndex = parseInt(this.getAttribute('data-index'));
+                    
+                    if (fromIndex !== toIndex) {
+                        // 交换选项位置
+                        [decisionOptions[fromIndex], decisionOptions[toIndex]] = 
+                        [decisionOptions[toIndex], decisionOptions[fromIndex]];
+                        
+                        // 切换到自定义方案
+                        selectScheme('custom');
+                        
+                        updateOptionsDisplay();
+                        updateProbabilityDisplay();
+                        saveToLocalStorage();
+                    }
+                });
+            }
+            
+            // 更新概率显示
+            function updateProbabilityDisplay() {
+                // 计算总权重
+                const totalWeight = decisionOptions.reduce((sum, option) => sum + option.weight, 0);
+                
+                // 更新概率条
+                probabilityBar.innerHTML = '';
+                decisionOptions.forEach(option => {
+                    const width = (option.weight / totalWeight) * 100;
+                    const fill = document.createElement('div');
+                    fill.className = 'probability-fill';
+                    fill.style.width = `${width}%`;
+                    fill.style.backgroundColor = option.color;
+                    fill.title = `${option.name}: ${width.toFixed(1)}%`;
+                    probabilityBar.appendChild(fill);
+                });
+                
+                // 更新概率分布文本
+                updateProbabilityDistributionText();
+            }
+            
+            // 更新概率分布文本
+            function updateProbabilityDistributionText() {
+                const totalWeight = decisionOptions.reduce((sum, option) => sum + option.weight, 0);
+                const distribution = decisionOptions.map(option => {
+                    const percentage = ((option.weight / totalWeight) * 100).toFixed(1);
+                    return `${option.name}(${percentage}%)`;
+                }).join(' ');
+                
+                probabilityDistributionElem.textContent = distribution;
+            }
+            
+            // 更新统计显示
+            function updateStats() {
+                totalCountElem.textContent = totalCount;
+                sessionCountElem.textContent = sessionCount;
+            }
+            
+            // 随机决策函数
+            function getRandomDecision() {
+                // 计算总权重
+                const totalWeight = decisionOptions.reduce((sum, option) => sum + option.weight, 0);
+                
+                // 生成随机数
+                const random = Math.random() * totalWeight;
+                
+                // 根据权重选择选项
+                let weightSum = 0;
+                for (const option of decisionOptions) {
+                    weightSum += option.weight;
+                    if (random <= weightSum) {
+                        return option;
+                    }
+                }
+                
+                // 默认返回最后一个选项
+                return decisionOptions[decisionOptions.length - 1];
+            }
+            
+            // 添加到历史记录
+            function addToHistory(result) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                
+                decisionHistory.unshift({
+                    option: result.name,
+                    time: timeString,
+                    color: result.color
+                });
+                
+                // 限制历史记录数量
+                if (decisionHistory.length > 10) {
+                    decisionHistory.pop();
+                }
+                
+                updateHistoryDisplay();
+            }
+            
+            // 更新历史记录显示
+            function updateHistoryDisplay() {
+                historyList.innerHTML = '';
+                
+                decisionHistory.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <span>${item.option}</span>
+                        <span style="color: ${item.color}">${item.time}</span>
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+                
+                if (decisionHistory.length === 0) {
+                    historyList.innerHTML = '<div class="history-item">暂无历史记录</div>';
+                }
+            }
+            
+            // 更新图表
+            function updateChart() {
+                chartContainer.innerHTML = '';
+                
+                if (Object.keys(optionStats).length === 0) return;
+                
+                // 计算最大值
+                const maxValue = Math.max(...Object.values(optionStats));
+                
+                // 创建图表条
+                decisionOptions.forEach(option => {
+                    const count = optionStats[option.name] || 0;
+                    const height = maxValue > 0 ? (count / maxValue) * 100 : 0;
+                    
+                    const bar = document.createElement('div');
+                    bar.className = 'chart-bar';
+                    bar.style.height = `${height}%`;
+                    bar.style.backgroundColor = option.color;
+                    
+                    const label = document.createElement('div');
+                    label.className = 'chart-label';
+                    label.textContent = option.name;
+                    
+                    const value = document.createElement('div');
+                    value.className = 'chart-value';
+                    value.textContent = count;
+                    
+                    bar.appendChild(value);
+                    bar.appendChild(label);
+                    chartContainer.appendChild(bar);
+                });
+            }
+            
+            // 播放决策音效
+            function playDecisionSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 440;
+                    gainNode.gain.value = 0.1;
+                    
+                    oscillator.start();
+                    
+                    // 在1秒内逐渐降低音量
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
+                    oscillator.stop(audioContext.currentTime + 1);
+                } catch (e) {
+                    console.log('音效播放失败:', e);
+                }
+            }
+            
+            // 保存到localStorage
+            function saveToLocalStorage() {
+                const data = {
+                    options: decisionOptions,
+                    totalCount: totalCount,
+                    sessionCount: sessionCount,
+                    currentScheme: currentScheme,
+                    history: decisionHistory,
+                    stats: optionStats
+                };
+                
+                try {
+                    localStorage.setItem('decisionMakerData', JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存数据失败:', e);
+                }
+            }
+            
+            // 从localStorage加载
+            function loadFromLocalStorage() {
+                try {
+                    const data = JSON.parse(localStorage.getItem('decisionMakerData'));
+                    if (data) {
+                        decisionOptions = data.options || decisionOptions;
+                        totalCount = data.totalCount || totalCount;
+                        sessionCount = data.sessionCount || sessionCount;
+                        currentScheme = data.currentScheme || currentScheme;
+                        decisionHistory = data.history || decisionHistory;
+                        optionStats = data.stats || optionStats;
+                    }
+                } catch (e) {
+                    console.error('加载数据失败:', e);
+                }
+            }
+            
+            // 生成随机颜色
+            function getRandomColor() {
+                const colors = [
+                    '#48bb78', '#f56565', '#4299e1', '#ed8936', 
+                    '#9f7aea', '#ed64a6', '#38b2ac', '#ecc94b'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // 页面卸载前保存数据
+            window.addEventListener('beforeunload', function() {
+                saveToLocalStorage();
+            });
+        });
+    </script>
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const button = document.querySelector('[data-site-theme-toggle]');
+            const saved = localStorage.getItem('site-theme-preference') || 'system';
+            const apply = mode => {
+                const light = mode === 'light' || (mode === 'system' && !matchMedia('(prefers-color-scheme: dark)').matches);
+                root.dataset.theme = light ? 'light' : 'dark';
+                document.body.classList.toggle('site-light', light);
+                if (button) button.innerHTML = light ? '<i class="ri-moon-line"></i>' : '<i class="ri-sun-line"></i>';
+            };
+            apply(saved);
+            button?.addEventListener('click', () => {
+                const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('site-theme-preference', next);
+                apply(next);
+            });
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if ((localStorage.getItem('site-theme-preference') || 'system') === 'system') apply('system');
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简易在线白板工具</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://img.cdn1.vip/i/68c41cce83a0f_1757682894.jpeg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            background-color: #f5f7fa;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tool-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4a6ee0;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        button:hover {
+            background-color: #3a5ec8;
+            transform: translateY(-2px);
+        }
+        
+        button.active {
+            background-color: #2c3e50;
+        }
+        
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            overflow: auto;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+        
+        canvas {
+            display: block;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            margin: 20px auto;
+            cursor: crosshair;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: #f5f7fa;
+            border-top: 1px solid #e1e4e8;
+        }
+        
+        .actions button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+        }
+        
+        .actions button i {
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 工具提示 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tool-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            canvas {
+                width: 95%;
+                height: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="common-theme.css">
+</head>
+<body>
+    <div class="site-common-controls"><a class="site-home-btn" href="/index" aria-label="返回主页"><i class="ri-home-4-line"></i><span>返回主页</span></a><button class="site-theme-btn" type="button" data-site-theme-toggle aria-label="切换深浅色模式"><i class="ri-sun-line"></i></button></div>
+    <div class="container">
+        <header>
+            <h1>简易在线白板工具</h1>
+            <p class="subtitle">绘制您的创意，轻松导出分享</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="toolbar">
+                <div class="tool-group">
+                    <label>画笔工具:</label>
+                    <button id="pencil" class="active">铅笔</button>
+                    <button id="line">直线</button>
+                    <button id="rectangle">矩形</button>
+                    <button id="circle">圆形</button>
+                    <button id="text">文本</button>
+                    <button id="eraser">橡皮擦</button>
+                </div>
+                
+                <div class="tool-group">
+                    <label>画笔粗细:</label>
+                    <input type="range" id="brushSize" min="1" max="50" value="5">
+                    <span id="brushSizeValue">5px</span>
+                </div>
+                
+                <div class="tool-group">
+                    <label>颜色:</label>
+                    <input type="color" id="colorPicker" class="color-picker" value="#000000">
+                </div>
+                
+                <div class="tool-group">
+                    <label>填充:</label>
+                    <input type="checkbox" id="fillShape">
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="whiteboard" width="1000" height="600"></canvas>
+            </div>
+            
+            <div class="actions">
+                <button id="clear" class="tooltip">
+                    <i>🗑️</i> 清空白板
+                    <span class="tooltiptext">清除所有内容</span>
+                </button>
+                <button id="undo" class="tooltip">
+                    <i>↶</i> 撤销
+                    <span class="tooltiptext">撤销上一步操作</span>
+                </button>
+                <button id="redo" class="tooltip">
+                    <i>↷</i> 重做
+                    <span class="tooltiptext">恢复撤销的操作</span>
+                </button>
+                <button id="export" class="tooltip">
+                    <i>📷</i> 导出图片
+                    <span class="tooltiptext">将白板内容导出为PNG图片</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 简易在线白板工具 | 设计用于创意表达和协作</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('whiteboard');
+            const ctx = canvas.getContext('2d');
+            const colorPicker = document.getElementById('colorPicker');
+            const brushSize = document.getElementById('brushSize');
+            const brushSizeValue = document.getElementById('brushSizeValue');
+            const fillShape = document.getElementById('fillShape');
+            const clearBtn = document.getElementById('clear');
+            const undoBtn = document.getElementById('undo');
+            const redoBtn = document.getElementById('redo');
+            const exportBtn = document.getElementById('export');
+            
+            // 工具按钮
+            const tools = {
+                pencil: document.getElementById('pencil'),
+                line: document.getElementById('line'),
+                rectangle: document.getElementById('rectangle'),
+                circle: document.getElementById('circle'),
+                text: document.getElementById('text'),
+                eraser: document.getElementById('eraser')
+            };
+            
+            // 状态变量
+            let currentTool = 'pencil';
+            let isDrawing = false;
+            let startX, startY;
+            let currentText = '';
+            let history = [];
+            let historyStep = -1;
+            
+            // 初始化画布
+            function initCanvas() {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                saveState();
+            }
+            
+            // 保存当前状态到历史记录
+            function saveState() {
+                if (historyStep < history.length - 1) {
+                    history = history.slice(0, historyStep + 1);
+                }
+                
+                history.push(canvas.toDataURL());
+                historyStep++;
+                
+                updateUndoRedoButtons();
+            }
+            
+            // 更新撤销/重做按钮状态
+            function updateUndoRedoButtons() {
+                undoBtn.disabled = historyStep <= 0;
+                redoBtn.disabled = historyStep >= history.length - 1;
+            }
+            
+            // 撤销操作
+            function undo() {
+                if (historyStep > 0) {
+                    historyStep--;
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = history[historyStep];
+                }
+                updateUndoRedoButtons();
+            }
+            
+            // 重做操作
+            function redo() {
+                if (historyStep < history.length - 1) {
+                    historyStep++;
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = history[historyStep];
+                }
+                updateUndoRedoButtons();
+            }
+            
+            // 设置当前工具
+            function setTool(tool) {
+                currentTool = tool;
+                
+                // 更新按钮状态
+                Object.values(tools).forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                tools[tool].classList.add('active');
+                
+                // 更新光标
+                if (tool === 'text') {
+                    canvas.style.cursor = 'text';
+                } else if (tool === 'eraser') {
+                    canvas.style.cursor = 'crosshair';
+                } else {
+                    canvas.style.cursor = 'crosshair';
+                }
+            }
+            
+            // 开始绘图
+            function startDrawing(e) {
+                isDrawing = true;
+                startX = e.offsetX;
+                startY = e.offsetY;
+                
+                if (currentTool === 'pencil' || currentTool === 'eraser') {
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                }
+                
+                if (currentTool === 'text') {
+                    currentText = prompt('请输入文本:', '');
+                    if (currentText) {
+                        ctx.font = `${brushSize.value * 3}px Arial`;
+                        ctx.fillStyle = currentTool === 'eraser' ? 'white' : colorPicker.value;
+                        ctx.fillText(currentText, startX, startY);
+                        saveState();
+                    }
+                }
+            }
+            
+            // 绘图过程中
+            function draw(e) {
+                if (!isDrawing) return;
+                
+                const currentX = e.offsetX;
+                const currentY = e.offsetY;
+                
+                ctx.lineWidth = brushSize.value;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                if (currentTool === 'pencil') {
+                    ctx.strokeStyle = colorPicker.value;
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                } else if (currentTool === 'eraser') {
+                    ctx.strokeStyle = 'white';
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                } else if (currentTool === 'line') {
+                    // 在临时画布上绘制预览
+                    redrawCanvas();
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.strokeStyle = colorPicker.value;
+                    ctx.stroke();
+                } else if (currentTool === 'rectangle') {
+                    redrawCanvas();
+                    const width = currentX - startX;
+                    const height = currentY - startY;
+                    
+                    ctx.strokeStyle = colorPicker.value;
+                    ctx.fillStyle = fillShape.checked ? colorPicker.value : 'transparent';
+                    
+                    if (fillShape.checked) {
+                        ctx.fillRect(startX, startY, width, height);
+                    }
+                    ctx.strokeRect(startX, startY, width, height);
+                } else if (currentTool === 'circle') {
+                    redrawCanvas();
+                    const radius = Math.sqrt(
+                        Math.pow(currentX - startX, 2) + Math.pow(currentY - startY, 2)
+                    );
+                    
+                    ctx.strokeStyle = colorPicker.value;
+                    ctx.fillStyle = fillShape.checked ? colorPicker.value : 'transparent';
+                    
+                    ctx.beginPath();
+                    ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+                    
+                    if (fillShape.checked) {
+                        ctx.fill();
+                    }
+                    ctx.stroke();
+                }
+            }
+            
+            // 重绘画布（用于预览）
+            function redrawCanvas() {
+                const img = new Image();
+                img.src = history[historyStep];
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            }
+            
+            // 结束绘图
+            function stopDrawing() {
+                if (!isDrawing) return;
+                
+                isDrawing = false;
+                
+                if (currentTool !== 'text' && currentTool !== 'pencil' && currentTool !== 'eraser') {
+                    saveState();
+                }
+                
+                ctx.beginPath();
+            }
+            
+            // 清空白板
+            function clearCanvas() {
+                if (confirm('确定要清空整个画布吗？')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    saveState();
+                }
+            }
+            
+            // 导出为图片
+            function exportImage() {
+                const link = document.createElement('a');
+                link.download = '白板内容.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+            
+            // 事件监听器
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // 工具按钮事件
+            Object.keys(tools).forEach(tool => {
+                tools[tool].addEventListener('click', () => setTool(tool));
+            });
+            
+            // 控制元素事件
+            brushSize.addEventListener('input', () => {
+                brushSizeValue.textContent = `${brushSize.value}px`;
+            });
+            
+            clearBtn.addEventListener('click', clearCanvas);
+            undoBtn.addEventListener('click', undo);
+            redoBtn.addEventListener('click', redo);
+            exportBtn.addEventListener('click', exportImage);
+            
+            // 初始化
+            initCanvas();
+        });
+    </script>
+
+    <script>
+        (() => {
+            const root = document.documentElement;
+            const button = document.querySelector('[data-site-theme-toggle]');
+            const saved = localStorage.getItem('site-theme-preference') || 'system';
+            const apply = mode => {
+                const light = mode === 'light' || (mode === 'system' && !matchMedia('(prefers-color-scheme: dark)').matches);
+                root.dataset.theme = light ? 'light' : 'dark';
+                document.body.classList.toggle('site-light', light);
+                if (button) button.innerHTML = light ? '<i class="ri-moon-line"></i>' : '<i class="ri-sun-line"></i>';
+            };
+            apply(saved);
+            button?.addEventListener('click', () => {
+                const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('site-theme-preference', next);
+                apply(next);
+            });
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if ((localStorage.getItem('site-theme-preference') || 'system') === 'system') apply('system');
+            });
+        })();
+    </script>
+</body>
+</html>
