@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Infinity桐桐个人网站 - Windows XP 素材包下载">
+    <title>下载 - Infinity桐桐个人网站</title>
+    <link rel="icon" type="image/x-icon" href="https://img.bloret.net/img/1778369377581/e16d22cdc027bcf461f5c27c07bc0109">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+    <style>
+        :root {
+            --light-bg-primary: #f8fafc; --light-bg-card: rgba(255,255,255,.9); --light-text-primary: #0f172a;
+            --light-text-secondary: #475569; --light-border-color: rgba(0,0,0,.1); --light-shadow-md: 0 4px 20px rgba(0,0,0,.08); --light-shadow-lg: 0 10px 40px rgba(0,0,0,.1);
+            --primary-500: #00a89a; --primary-700: #008379; --primary-900: #005951; --accent-400: #5fc2f1; --accent-500: #44b7ee; --accent-700: #3695c5;
+            --neutral-100: #f1f5f9; --neutral-200: #e2e8f0; --neutral-300: #cbd5e1; --neutral-900: #0f172a;
+            --bg-primary: var(--neutral-900); --bg-card: rgba(30,41,59,.7); --text-primary: var(--neutral-100); --text-secondary: var(--neutral-300); --text-accent: var(--accent-400); --border-color: rgba(255,255,255,.1); --shadow-md: 0 4px 20px rgba(0,0,0,.2); --shadow-lg: 0 10px 40px rgba(0,0,0,.3);
+            --radius-md: 16px; --radius-lg: 24px; --radius-full: 9999px; --transition: .3s cubic-bezier(.25,.8,.25,1); --gradient-primary: linear-gradient(135deg,var(--primary-900),var(--primary-700),var(--accent-700)); --gradient-accent: linear-gradient(135deg,var(--accent-500),var(--accent-700)); --font: 'Noto Sans SC','Segoe UI','Microsoft YaHei',sans-serif;
+        }
+        [data-theme="light"] { --bg-primary: var(--light-bg-primary); --bg-card: var(--light-bg-card); --text-primary: var(--light-text-primary); --text-secondary: var(--light-text-secondary); --text-accent: var(--primary-700); --border-color: var(--light-border-color); --shadow-md: var(--light-shadow-md); --shadow-lg: var(--light-shadow-lg); }
+        *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+        body { min-height:100vh; overflow-x:hidden; background:var(--bg-primary); color:var(--text-primary); font-family:var(--font); line-height:1.6; transition:background-color .3s ease,color .3s ease; }
+        .background-effects { position:fixed; inset:0; z-index:-1; overflow:hidden; }
+        .gradient-bg { position:absolute; inset:0; background:radial-gradient(circle at 20% 50%,rgba(0,89,81,.15),transparent 50%),radial-gradient(circle at 80% 20%,rgba(108,207,247,.1),transparent 50%),radial-gradient(circle at 40% 80%,rgba(15,23,42,.2),transparent 50%); }
+        [data-theme="light"] .gradient-bg { background:radial-gradient(circle at 20% 50%,rgba(0,168,154,.1),transparent 50%),radial-gradient(circle at 80% 20%,rgba(108,207,247,.05),transparent 50%),radial-gradient(circle at 40% 80%,rgba(248,250,252,.1),transparent 50%); }
+        .particles { position:absolute; inset:0; } .particle { position:absolute; border-radius:50%; background:radial-gradient(circle,var(--accent-500),transparent); opacity:.1; animation:float 20s infinite linear; } @keyframes float { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,0)} }
+        .settings-btn { position:fixed; bottom:2rem; left:2rem; z-index:1000; display:flex; align-items:center; justify-content:center; width:56px; height:56px; border:0; border-radius:50%; background:var(--gradient-accent); color:#fff; font-size:1.5rem; line-height:1; cursor:pointer; box-shadow:var(--shadow-lg); transition:var(--transition); }
+        .settings-btn:hover { transform:scale(1.1) rotate(30deg); }
+        .settings-panel { position:fixed; bottom:6.5rem; left:2rem; z-index:999; width:300px; padding:1.5rem; border:1px solid var(--border-color); border-radius:var(--radius-lg); background:var(--bg-card); backdrop-filter:blur(20px); box-shadow:var(--shadow-lg); opacity:0; visibility:hidden; transform:translateY(20px); transition:var(--transition); }
+        .settings-panel.active { opacity:1; visibility:visible; transform:translateY(0); } .settings-panel h3 { display:flex; gap:.5rem; align-items:center; margin-bottom:1rem; color:var(--text-accent); }
+        .theme-options { display:flex; flex-direction:column; gap:1rem; } .theme-option { display:flex; justify-content:space-between; align-items:center; padding:.5rem; border-radius:var(--radius-md); cursor:pointer; transition:.15s ease; } .theme-option:hover { background:rgba(255,255,255,.08); } .theme-option.active { background:rgba(68,183,238,.2); border:1px solid var(--accent-500); } .theme-info { display:flex; gap:.5rem; align-items:center; } .theme-check { color:var(--accent-500); opacity:0; } .theme-option.active .theme-check { opacity:1; }
+        .container { width:100%; max-width:1280px; margin:0 auto; padding:0 1.5rem; } .site-header { padding:2rem 0 1.5rem; text-align:center; } .logo { position:relative; display:inline-block; margin-bottom:.5rem; font-size:clamp(2rem,5vw,3rem); font-weight:800; letter-spacing:-.5px; } .text-gradient { color:transparent; background:var(--gradient-accent); -webkit-background-clip:text; background-clip:text; } .logo::after { content:''; position:absolute; bottom:-8px; left:50%; width:120px; height:4px; transform:translateX(-50%); border-radius:var(--radius-full); background:var(--gradient-accent); } .tagline { margin-top:.75rem; color:var(--text-secondary); font-size:1.125rem; font-weight:300; }
+        .navbar { position:sticky; top:2rem; z-index:100; padding:1rem; border:1px solid var(--border-color); border-radius:var(--radius-lg); background:var(--bg-card); backdrop-filter:blur(20px); box-shadow:var(--shadow-md); } .nav-container { display:flex; align-items:center; } .mobile-menu-toggle { display:none; margin-left:auto; padding:.5rem; border:0; background:none; color:var(--text-primary); font-size:1.5rem; cursor:pointer; } .nav-menu { display:flex; flex-wrap:wrap; gap:.5rem; width:100%; list-style:none; justify-content:center; } .nav-link { display:flex; flex-direction:column; align-items:center; min-width:80px; padding:.5rem 1rem; border-radius:var(--radius-md); color:var(--text-secondary); text-decoration:none; font-weight:500; transition:.15s ease; } .nav-link:hover { color:var(--text-primary); background:rgba(255,255,255,.05); } .nav-link.active { color:var(--text-accent); background:rgba(108,207,247,.1); } .nav-icon { margin-bottom:4px; font-size:1.4rem; } .nav-text { font-size:.875rem; } .nav-indicator { width:6px; height:6px; margin-top:4px; border-radius:50%; background:var(--accent-500); opacity:0; } .nav-link.active .nav-indicator { opacity:1; }
+        .download-section { margin:2rem 0 4rem; padding:clamp(1.5rem,4vw,3rem); border:1px solid var(--border-color); border-radius:var(--radius-lg); background:linear-gradient(135deg,rgba(0,89,81,.8),rgba(30,41,59,.8)); backdrop-filter:blur(20px); box-shadow:var(--shadow-lg); } [data-theme="light"] .download-section { background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(240,240,240,.9)); }
+        .download-heading { margin-bottom:2rem; text-align:center; } .section-title { font-size:clamp(1.6rem,3vw,2.25rem); } .section-subtitle { margin-top:.5rem; color:var(--text-secondary); }
+        .download-card { max-width:860px; margin:0 auto; padding:clamp(1.5rem,4vw,2.5rem); border:1px solid var(--border-color); border-radius:var(--radius-lg); background:var(--bg-card); } .download-card h3 { display:flex; gap:.75rem; align-items:center; margin-bottom:.75rem; font-size:clamp(1.25rem,3vw,1.6rem); } .download-card h3 i { color:var(--accent-500); } .download-description { margin-bottom:1.5rem; color:var(--text-secondary); }
+        .download-layout { display:grid; grid-template-columns:1fr 220px; gap:2rem; align-items:center; } .download-link { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.8rem 1.25rem; border-radius:var(--radius-md); background:var(--gradient-accent); color:#fff; font-weight:600; text-decoration:none; box-shadow:var(--shadow-md); transition:var(--transition); } .download-link:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); } .qr-block { padding:1rem; border:1px solid var(--border-color); border-radius:var(--radius-md); text-align:center; background:rgba(255,255,255,.08); } .qr-block img { display:block; width:100%; max-width:180px; margin:0 auto .75rem; border-radius:8px; } .qr-label { color:var(--text-secondary); font-size:.875rem; }
+        .site-footer { padding:2rem 0; border-top:1px solid var(--border-color); color:var(--text-secondary); text-align:center; font-size:.875rem; }
+        @media (max-width:768px) { .container{padding:0 1rem}.navbar{top:1rem}.mobile-menu-toggle{display:block}.nav-menu{display:none; position:absolute; top:calc(100% + .5rem); left:0; width:100%; padding:1rem; border:1px solid var(--border-color); border-radius:var(--radius-lg); background:var(--bg-card); backdrop-filter:blur(20px); box-shadow:var(--shadow-lg); grid-template-columns:repeat(3,1fr)} .nav-menu.active{display:grid}.nav-link{min-width:0;padding:.5rem .25rem}.download-layout{grid-template-columns:1fr}.qr-block{max-width:220px;margin:0 auto}.settings-btn{bottom:1rem;left:1rem;width:48px;height:48px}.settings-panel{bottom:4.75rem;left:1rem;width:min(300px,calc(100vw - 2rem))} }
+    
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:2000;opacity:0;visibility:hidden;transition:all .3s ease}.modal-overlay.active{opacity:1;visibility:visible}.modal-content{width:90%;max-width:400px;padding:2rem;border:1px solid var(--border-color);border-radius:var(--radius-lg,24px);background:var(--bg-card);box-shadow:var(--shadow-lg);transform:scale(.9);transition:all .3s ease}.modal-overlay.active .modal-content{transform:scale(1)}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.modal-header h3{color:var(--text-primary);font-size:1.25rem}.close-modal{color:var(--text-secondary);font-size:2rem;line-height:1;cursor:pointer}.modal-body{display:flex;flex-direction:column;gap:1rem}.modal-btn{display:flex;align-items:center;justify-content:center;padding:1rem 1.25rem;border:0;border-radius:var(--radius-md,16px);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}.modal-btn.green{background:#10b981}.modal-btn.gray{background:#475569}
+    
+        /* 移动端左上角导航 */
+        @media (max-width: 768px) {
+            .navbar {
+                position: static;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+                backdrop-filter: none;
+            }
+            .nav-container {
+                position: static;
+            }
+            .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1100;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                margin: 0;
+                padding: 0;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md, 16px);
+                background: var(--bg-card);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(20px);
+            }
+            .nav-menu {
+                position: fixed;
+                top: 4.75rem;
+                left: 1rem;
+                z-index: 1099;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: .45rem;
+                width: min(220px, calc(100vw - 2rem));
+                max-height: 0;
+                padding: 0;
+                overflow: hidden;
+                list-style: none;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-.75rem);
+                transform-origin: top left;
+                transition: max-height .35s ease, padding .35s ease, opacity .25s ease, transform .35s ease, visibility 0s linear .35s;
+            }
+            .nav-menu.nav-scrollable { overflow-y: auto; }
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: .75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+                transition-delay: 0s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-lg, 24px);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+            }
+            .nav-menu .nav-item {
+                opacity: 0;
+                transform: translateY(-.65rem);
+                transition: opacity .25s ease, transform .3s ease;
+            }
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .nav-menu.active .nav-item:nth-child(1) { transition-delay: .04s; }
+            .nav-menu.active .nav-item:nth-child(2) { transition-delay: .08s; }
+            .nav-menu.active .nav-item:nth-child(3) { transition-delay: .12s; }
+            .nav-menu.active .nav-item:nth-child(4) { transition-delay: .16s; }
+            .nav-menu.active .nav-item:nth-child(5) { transition-delay: .20s; }
+            .nav-menu.active .nav-item:nth-child(6) { transition-delay: .24s; }
+            .nav-menu.active .nav-item:nth-child(7) { transition-delay: .28s; }
+            .nav-menu.active .nav-item:nth-child(8) { transition-delay: .32s; }
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: .75rem;
+                width: 100%;
+                min-width: 0;
+                padding: .7rem .8rem;
+                text-align: left;
+            }
+            .nav-icon { margin: 0; width: 1.5rem; text-align: center; }
+            .nav-indicator { margin: 0 0 0 auto; }
+        }
+    
+        /* 移动端导航按钮固定在视口左上角 */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                position: fixed !important;
+                inset: 1rem auto auto 1rem !important;
+                z-index: 1100 !important;
+                display: flex;
+            }
+        }
+    
+        /* 统一移动端菜单系统 */
+        @media (max-width: 768px) {
+            .main-content,
+            .navbar,
+            .nav-container {
+                transform: none !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                perspective: none !important;
+                contain: none !important;
+            }
+
+            .mobile-menu-toggle {
+                position: fixed !important;
+                top: 1rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9999 !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                margin: 0;
+                padding: 0;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-md, var(--radius-md, 16px));
+                background: var(--bg-card);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(20px);
+                pointer-events: auto;
+                touch-action: manipulation;
+            }
+
+            .nav-menu {
+                position: fixed !important;
+                top: 4.75rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9998 !important;
+                display: flex !important;
+                flex-direction: column;
+                align-items: stretch;
+                gap: .45rem;
+                width: min(220px, calc(100vw - 2rem)) !important;
+                max-height: 0;
+                padding: 0;
+                overflow-x: hidden;
+                overflow-y: hidden;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-.75rem);
+                transform-origin: top left;
+                transition: max-height .35s ease, padding .35s ease, opacity .25s ease, transform .35s ease, visibility 0s linear .35s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg, var(--radius-lg, 24px));
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: .75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+            }
+
+            .nav-menu .nav-item {
+                width: 100%;
+                opacity: 0;
+                transform: translateY(-.65rem);
+                transition: opacity .25s ease, transform .3s ease;
+            }
+
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-menu.active .nav-item:nth-child(1) { transition-delay: .04s; }
+            .nav-menu.active .nav-item:nth-child(2) { transition-delay: .08s; }
+            .nav-menu.active .nav-item:nth-child(3) { transition-delay: .12s; }
+            .nav-menu.active .nav-item:nth-child(4) { transition-delay: .16s; }
+            .nav-menu.active .nav-item:nth-child(5) { transition-delay: .20s; }
+            .nav-menu.active .nav-item:nth-child(6) { transition-delay: .24s; }
+            .nav-menu.active .nav-item:nth-child(7) { transition-delay: .28s; }
+            .nav-menu.active .nav-item:nth-child(8) { transition-delay: .32s; }
+            .nav-menu.active .nav-item:nth-child(9) { transition-delay: .36s; }
+
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: .75rem;
+                width: 100%;
+                min-width: 0;
+                padding: .7rem .8rem;
+                text-align: left;
+            }
+
+            .nav-icon { margin: 0; width: 1.5rem; text-align: center; }
+
+            .nav-menu .nav-indicator {
+                position: static;
+                order: -1;
+                flex: 0 0 8px;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+                transform: none;
+            }
+        }
+    
+        .nav-link#musicSelectBtn { border: 0; background: transparent; font: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; }
+        .modal-btn.purple { background: #6c63ff; color: white; }
+        .modal-btn.purple:hover { background: #584ff0; transform: translateY(-2px); }
+</style>
+</head>
+<body>
+    <div class="background-effects"><div class="gradient-bg"></div><div class="particles" id="particles"></div></div>
+    <button class="settings-btn" id="settingsBtn" aria-label="打开界面设置"><i class="ri-settings-3-line"></i></button>
+    <div class="settings-panel" id="settingsPanel"><h3><i class="ri-palette-line"></i>界面设置</h3><div class="theme-options">
+        <div class="theme-option active" data-theme="system"><div class="theme-info"><i class="ri-computer-line"></i><span>跟随系统</span></div><i class="ri-check-line theme-check"></i></div>
+        <div class="theme-option" data-theme="time"><div class="theme-info"><i class="ri-time-line"></i><span>跟随时间</span></div><i class="ri-check-line theme-check"></i></div>
+        <div class="theme-option" data-theme="dark"><div class="theme-info"><i class="ri-moon-line"></i><span>深色模式</span></div><i class="ri-check-line theme-check"></i></div>
+        <div class="theme-option" data-theme="light"><div class="theme-info"><i class="ri-sun-line"></i><span>浅色模式</span></div><i class="ri-check-line theme-check"></i></div>
+    </div></div>
+    
+    <!-- 音乐选择弹窗 -->
+    <div class="modal-overlay" id="musicSelectModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>请选择要跳转的音乐盒</h3><span class="close-modal" id="closeMusicModal">&times;</span></div>
+            <div class="modal-body"><button class="modal-btn purple" id="goToMusicBox">音乐盒 Ver5.1</button><button class="modal-btn green" id="goToJayMusic">JayMusic</button><button class="modal-btn gray" id="goToHoyoMix">HOYO-MIX精选</button></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="site-header"><h1 class="logo text-gradient">资源下载</h1><p class="tagline">下载实用资源与素材</p></header>
+        <nav class="navbar" aria-label="主导航">
+    <div class="nav-container">
+        <button class="mobile-menu-toggle" id="menuToggle" aria-label="打开导航菜单" aria-expanded="false"><i class="ri-menu-line"></i></button>
+        <ul class="nav-menu" id="navMenu">
+            <li class="nav-item"><a href="/index.html" class="nav-link"><i class="ri-home-4-line nav-icon"></i><span class="nav-text">主页</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><a href="/contact.html" class="nav-link"><i class="ri-mail-line nav-icon"></i><span class="nav-text">联系我</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><a href="/video.html" class="nav-link"><i class="ri-video-line nav-icon"></i><span class="nav-text">教程视频</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><a href="https://tools.infds.top/" class="nav-link"><i class="ri-star-line nav-icon"></i><span class="nav-text">工具箱</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><a href="/download.html" class="nav-link active"><i class="ri-download-line nav-icon"></i><span class="nav-text">下载</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><a href="/projects.html" class="nav-link"><i class="ri-palette-line nav-icon"></i><span class="nav-text">我的作品</span><span class="nav-indicator"></span></a></li>
+            <li class="nav-item"><button type="button" class="nav-link" id="musicSelectBtn"><i class="ri-music-line nav-icon"></i><span class="nav-text">音乐盒</span><span class="nav-indicator"></span></button></li>
+            <li class="nav-item"><a href="https://games.infds.top/" class="nav-link"><i class="ri-gamepad-line nav-icon"></i><span class="nav-text">游戏中心</span><span class="nav-indicator"></span></a></li>
+                    <li class="nav-item"><a href="/map.html" class="nav-link"><i class="ri-map-2-line nav-icon"></i><span class="nav-text">网站导航</span><span class="nav-indicator"></span></a></li>
+        </ul>
+    </div>
+</nav>
+        <main class="download-section">
+            <div class="download-heading"><h2 class="section-title text-gradient">资源下载</h2><p class="section-subtitle">精选素材，欢迎下载使用</p></div>
+            <article class="download-card"><div class="download-layout"><div><h3><i class="ri-archive-line"></i>📦 Windows XP 素材包下载</h3><p class="download-description">经典XP风格元素，包含壁纸、图标、音效致敬包。</p><a class="download-link" href="https://wwe.lanzoui.com/isMP6swxvze" target="_blank" rel="noopener noreferrer"><i class="ri-download-2-line"></i>下载素材包</a></div><div class="qr-block"><img src="https://img.bloret.net/img/1788008676614/7f685d14b25b4047688daa813f80d3cc" alt="Windows XP 素材包下载二维码"><p class="qr-label">扫码下载</p></div></div></article>
+        </main>
+        <footer class="site-footer">© 2026 Infinity桐桐个人网站. 用❤做好每一个作品.</footer>
+    </div>
+    <script>
+        const root=document.documentElement, settingsBtn=document.getElementById('settingsBtn'), settingsPanel=document.getElementById('settingsPanel'), options=document.querySelectorAll('.theme-option');
+        function getThemeByTime(){const hour=new Date().getHours();return hour>=8&&hour<19?'light':'dark'}
+        function applyTheme(theme){root.dataset.theme=theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme==='time'?getThemeByTime():theme}
+        function selectTheme(theme){options.forEach(option=>option.classList.toggle('active',option.dataset.theme===theme));localStorage.setItem('theme-preference',theme);applyTheme(theme)}
+        selectTheme(localStorage.getItem('theme-preference')||'system'); settingsBtn.addEventListener('click',event=>{event.stopPropagation();settingsPanel.classList.toggle('active')}); settingsPanel.addEventListener('click',event=>event.stopPropagation()); document.addEventListener('click',()=>settingsPanel.classList.remove('active')); options.forEach(option=>option.addEventListener('click',()=>selectTheme(option.dataset.theme))); matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if((localStorage.getItem('theme-preference')||'system')==='system')applyTheme('system')}); setInterval(()=>{if(localStorage.getItem('theme-preference')==='time')applyTheme('time')},300000);
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        if (menuToggle && navMenu) {
+            const setMenuState = open => {
+                navMenu.classList.toggle('active', open);
+                menuToggle.innerHTML = open ? '<i class="ri-close-line"></i>' : '<i class="ri-menu-line"></i>';
+                menuToggle.setAttribute('aria-expanded', String(open));
+            };
+            menuToggle.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+                setMenuState(!navMenu.classList.contains('active'));
+            });
+            navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => setMenuState(false)));
+            document.addEventListener('click', event => {
+                if (!navMenu.contains(event.target) && !menuToggle.contains(event.target)) setMenuState(false);
+            });
+        }
+        const particles=document.getElementById('particles'); for(let i=0;i<24;i++){const particle=document.createElement('span');particle.className='particle';const size=Math.random()*100+50;particle.style.width=`${size}px`;particle.style.height=`${size}px`;particle.style.left=`${Math.random()*100}%`;particle.style.top=`${Math.random()*100}%`;particle.style.animationDelay=`${Math.random()*20}s`;particles.appendChild(particle)}
+    </script>
+
+    <script>
+        (function(){const btn=document.getElementById('musicSelectBtn'),modal=document.getElementById('musicSelectModal');if(!btn||!modal)return;const close=document.getElementById('closeMusicModal');btn.addEventListener('click',e=>{e.preventDefault();modal.classList.add('active')});close.addEventListener('click',()=>modal.classList.remove('active'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('active')});document.getElementById('goToMusicBox').addEventListener('click',()=>{window.location.href='/music-box.html'});document.getElementById('goToJayMusic').addEventListener('click',()=>{window.location.href='/music-jay.html'});document.getElementById('goToHoyoMix').addEventListener('click',()=>{window.location.href='/music-hoyo.html'});})();
+    </script>
+
+    <script>
+        (() => {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (!menuToggle || !navMenu) return;
+            let scrollCheckTimer;
+            const resetMenuOverflow = () => {
+                clearTimeout(scrollCheckTimer);
+                navMenu.classList.remove('nav-scrollable');
+            };
+            const checkMenuOverflow = () => {
+                if (!navMenu.classList.contains('active')) return;
+                navMenu.classList.toggle('nav-scrollable', navMenu.scrollHeight > navMenu.clientHeight);
+            };
+            menuToggle.addEventListener('click', () => {
+                const opening = !navMenu.classList.contains('active');
+                resetMenuOverflow();
+                if (opening) scrollCheckTimer = setTimeout(checkMenuOverflow, 750);
+            }, true);
+            navMenu.addEventListener('click', event => {
+                if (event.target.closest('.nav-link')) resetMenuOverflow();
+            }, true);
+            window.addEventListener('resize', () => {
+                if (navMenu.classList.contains('active')) {
+                    clearTimeout(scrollCheckTimer);
+                    scrollCheckTimer = setTimeout(checkMenuOverflow, 750);
+                }
+            }, { passive: true });
+        })();
+    </script>
+</body>
+</html>

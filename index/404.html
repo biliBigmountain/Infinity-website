@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="页面未找到 - Infinity桐桐个人网站">
+    <title>404 - 页面未找到</title>
+    <link rel="icon" type="image/x-icon" href="https://img.bloret.net/img/1778369377581/e16d22cdc027bcf461f5c27c07bc0109">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: rgba(30, 41, 59, .78);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-accent: #5fc2f1;
+            --border-color: rgba(255, 255, 255, .12);
+            --accent-500: #44b7ee;
+            --accent-700: #3695c5;
+            --gradient-accent: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, .2);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, .3);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --font: 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            --light-bg-primary: #f8fafc;
+            --light-bg-card: rgba(255, 255, 255, .9);
+            --light-text-primary: #0f172a;
+            --light-text-secondary: #475569;
+            --light-border-color: rgba(0, 0, 0, .1);
+            --light-shadow-md: 0 4px 20px rgba(0, 0, 0, .08);
+            --light-shadow-lg: 0 10px 40px rgba(0, 0, 0, .1);
+        }
+        [data-theme="light"] {
+            --bg-primary: var(--light-bg-primary);
+            --bg-card: var(--light-bg-card);
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+            --border-color: var(--light-border-color);
+            --shadow-md: var(--light-shadow-md);
+            --shadow-lg: var(--light-shadow-lg);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { min-height: 100%; }
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 0 1.5rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font);
+            line-height: 1.6;
+        }
+        body::before, body::after {
+            position: fixed;
+            z-index: -1;
+            width: 45vw;
+            height: 45vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 168, 154, .2), transparent 68%);
+            content: '';
+            pointer-events: none;
+        }
+        body::before { top: -20vw; left: -12vw; }
+        body::after { right: -15vw; bottom: -20vw; background: radial-gradient(circle, rgba(68, 183, 238, .16), transparent 68%); }
+
+        .page-shell { width: 100%; max-width: 1280px; margin: 0 auto; }
+        [data-theme="light"] .error-card { background: linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(240, 240, 240, .92)); }
+        [data-theme="light"] .btn-secondary { background: rgba(0, 0, 0, .04); }
+        .site-header { padding: 3rem 0 1.5rem; text-align: center; }
+        .logo { position: relative; display: inline-block; margin-bottom: .5rem; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.5px; }
+        .text-gradient { color: transparent; background: var(--gradient-accent); -webkit-background-clip: text; background-clip: text; }
+        .logo::after { position: absolute; bottom: -8px; left: 50%; width: 120px; height: 4px; border-radius: 999px; background: var(--gradient-accent); content: ''; transform: translateX(-50%); }
+        .tagline { margin-top: .75rem; color: var(--text-secondary); font-size: 1.125rem; font-weight: 300; }
+
+        .error-card { max-width: 720px; margin: 2rem auto 4rem; padding: clamp(2rem, 6vw, 4rem); border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(0, 89, 81, .82), rgba(30, 41, 59, .86)); box-shadow: var(--shadow-lg); text-align: center; backdrop-filter: blur(20px); }
+        .error-code { margin-bottom: .5rem; color: transparent; background: var(--gradient-accent); -webkit-background-clip: text; background-clip: text; font-size: clamp(6rem, 18vw, 10rem); font-weight: 800; line-height: .95; }
+        .error-title { margin-bottom: 1rem; font-size: clamp(1.6rem, 4vw, 2.25rem); }
+        .error-message { color: var(--text-secondary); font-size: 1.05rem; }
+        .lost-icon { margin: 1.5rem 0; color: var(--accent-500); font-size: 4.5rem; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .countdown { margin: 1.75rem 0; color: var(--text-secondary); }
+        .countdown-number { display: inline-block; min-width: 2rem; padding: .15rem .45rem; border-radius: 8px; background: rgba(68, 183, 238, .18); color: var(--text-accent); font-weight: 700; }
+        .button-group { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: .75rem 1.25rem; border: 1px solid transparent; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; cursor: pointer; transition: .2s ease; }
+        .btn-primary { background: var(--gradient-accent); color: #fff; box-shadow: var(--shadow-md); }
+        .btn-secondary { border-color: var(--border-color); background: rgba(255, 255, 255, .05); color: var(--text-primary); }
+        .btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .footer { margin-top: 2rem; color: var(--text-secondary); font-size: .875rem; }
+
+        .settings-btn { position: fixed; bottom: 2rem; left: 2rem; z-index: 1000; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border: 0; border-radius: 50%; background: var(--gradient-accent); color: #fff; font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow-lg); }
+        .settings-panel { position: fixed; bottom: 6.5rem; left: 2rem; z-index: 999; width: 300px; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-card); box-shadow: var(--shadow-lg); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transform: translateY(20px); transition: .3s ease; }
+        .settings-panel.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .settings-panel h3 { display: flex; align-items: center; gap: .5rem; margin-bottom: 1rem; color: var(--text-accent); }
+        .theme-options { display: flex; flex-direction: column; gap: .75rem; }
+        .theme-option { display: flex; align-items: center; justify-content: space-between; padding: .6rem; border-radius: var(--radius-md); background: rgba(255,255,255,.05); cursor: pointer; }
+        .theme-option.active { border: 1px solid var(--accent-500); background: rgba(68,183,238,.2); }
+        .theme-option span { display: flex; align-items: center; gap: .5rem; }
+        .theme-check { color: var(--accent-500); opacity: 0; }
+        .theme-option.active .theme-check { opacity: 1; }
+
+        @media (max-width: 768px) {
+            body { padding: 0 1rem; }
+            .site-header { padding-top: 6rem; }
+            .error-card { margin-top: 1.5rem; }
+            .settings-btn { bottom: 1rem; left: 1rem; width: 48px; height: 48px; }
+            .settings-panel { bottom: 4.75rem; left: 1rem; width: min(300px, calc(100vw - 2rem)); }
+        }
+        @media (max-width: 480px) { .button-group { flex-direction: column; } .btn { width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <button class="settings-btn" id="settingsBtn" type="button" aria-label="打开界面设置"><i class="ri-settings-3-line"></i></button>
+        <div class="settings-panel" id="settingsPanel" aria-label="界面设置">
+            <h3><i class="ri-palette-line"></i> 界面设置</h3>
+            <div class="theme-options">
+                <div class="theme-option" data-theme="system"><span><i class="ri-computer-line"></i> 跟随系统</span><i class="ri-check-line theme-check"></i></div>
+                <div class="theme-option" data-theme="time"><span><i class="ri-time-line"></i> 跟随时间</span><i class="ri-check-line theme-check"></i></div>
+                <div class="theme-option" data-theme="dark"><span><i class="ri-moon-line"></i> 深色模式</span><i class="ri-check-line theme-check"></i></div>
+                <div class="theme-option" data-theme="light"><span><i class="ri-sun-line"></i> 浅色模式</span><i class="ri-check-line theme-check"></i></div>
+            </div>
+        </div>
+        <header class="site-header">
+            <h1 class="logo text-gradient">Infinity桐桐个人网站</h1>
+            <p class="tagline">主页面</p>
+        </header>
+        <main class="error-card">
+            <div class="error-code">404</div>
+            <h2 class="error-title">页面走丢了</h2>
+            <div class="lost-icon" aria-hidden="true"><i class="ri-compass-3-line"></i></div>
+            <p class="error-message">抱歉，您要查找的页面不存在或已被移动。<br>我们正在努力帮您找到正确的方向。</p>
+            <div class="countdown"><span id="countdown-text">页面将在 <span class="countdown-number" id="countdown">3</span> 秒后自动跳转到首页</span></div>
+            <div class="button-group">
+                <a href="/index.html" class="btn btn-primary">立即返回首页</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">返回上一页</a>
+            </div>
+            <div class="footer">Infinity桐桐个人网站 © 2026</div>
+        </main>
+    </div>
+    <script>
+        const root = document.documentElement;
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const getThemeByTime = () => { const hour = new Date().getHours(); return hour >= 8 && hour < 19 ? 'light' : 'dark'; };
+        const applyTheme = theme => { const finalTheme = theme === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme === 'time' ? getThemeByTime() : theme; root.dataset.theme = finalTheme; };
+        const savedTheme = localStorage.getItem('theme-preference') || 'system';
+        themeOptions.forEach(option => option.classList.toggle('active', option.dataset.theme === savedTheme));
+        applyTheme(savedTheme);
+        settingsBtn.addEventListener('click', event => { event.stopPropagation(); settingsPanel.classList.toggle('active'); });
+        settingsPanel.addEventListener('click', event => event.stopPropagation());
+        themeOptions.forEach(option => option.addEventListener('click', () => { localStorage.setItem('theme-preference', option.dataset.theme); themeOptions.forEach(item => item.classList.toggle('active', item === option)); applyTheme(option.dataset.theme); }));
+        document.addEventListener('click', () => settingsPanel.classList.remove('active'));
+        let seconds = 3;
+        const countdownElement = document.getElementById('countdown');
+        const countdownText = document.getElementById('countdown-text');
+        const countdownInterval = setInterval(() => {
+            seconds -= 1;
+            countdownElement.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                countdownText.textContent = '正在跳转...';
+                window.location.href = '/index.html';
+            }
+        }, 1000);
+        document.querySelectorAll('.btn').forEach(button => button.addEventListener('click', () => {
+            clearInterval(countdownInterval);
+            countdownText.textContent = '跳转已取消';
+        }));
+    </script>
+</body>
+</html>

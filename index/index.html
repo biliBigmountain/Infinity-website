@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Infinity桐桐个人网站 - 编程创作者，用❤做好每一个作品">
+    <meta name="keywords" content="Infinity桐桐,编程,创意,作品,开发者">
+    <meta name="author" content="infinity桐桐">
+    <title>Infinity桐桐个人网站 - 编程开发者</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://img.bloret.net/img/1778369377581/e16d22cdc027bcf461f5c27c07bc0109">
+    <link rel="apple-touch-icon" href="https://img.bloret.net/img/1778369377581/e16d22cdc027bcf461f5c27c07bc0109">
+
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+
+    <!-- 外部CSS -->
+    <link rel="stylesheet" href="template">
+
+    <style>
+        /* ===== CSS变量定义 ===== */
+        :root {
+            /* 浅色模式变量 */
+            --light-bg-primary: #f8fafc;
+            --light-bg-secondary: rgba(248, 250, 252, 0.9);
+            --light-bg-card: rgba(255, 255, 255, 0.9);
+            --light-text-primary: #0f172a;
+            --light-text-secondary: #475569;
+            --light-border-color: rgba(0, 0, 0, 0.1);
+            --light-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --light-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --light-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --light-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+            /* 主色调 */
+            --primary-50: #e6f7f5;
+            --primary-100: #b3e8e2;
+            --primary-200: #80d9cf;
+            --primary-300: #4dc9bc;
+            --primary-400: #26b9ab;
+            --primary-500: #00a89a;
+            --primary-600: #00968a;
+            --primary-700: #008379;
+            --primary-800: #007168;
+            --primary-900: #005951;
+
+            /* 强调色 */
+            --accent-50: #e8f7fd;
+            --accent-100: #c6e9fa;
+            --accent-200: #a1dbf7;
+            --accent-300: #7bcdf3;
+            --accent-400: #5fc2f1;
+            --accent-500: #44b7ee;
+            --accent-600: #3ea8dc;
+            --accent-700: #3695c5;
+            --accent-800: #2f82ae;
+            --accent-900: #226088;
+
+            /* 中性色 */
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+
+            /* 功能色 */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+
+            /* 主题变量 - 默认深色 */
+            --bg-primary: var(--neutral-900);
+            --bg-secondary: rgba(15, 23, 42, 0.9);
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-hover: rgba(51, 65, 85, 0.9);
+            --text-primary: var(--neutral-100);
+            --text-secondary: var(--neutral-300);
+            --text-accent: var(--accent-400);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.4);
+
+            /* 其他变量 */
+            --border-radius-sm: 8px;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-xl: 32px;
+            --border-radius-full: 9999px;
+            --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-slow: 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-900), var(--primary-700), var(--accent-700));
+            --gradient-accent: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+            --gradient-card: linear-gradient(135deg, rgba(0, 89, 81, 0.8), rgba(30, 41, 59, 0.8));
+
+            /* 字体变量 */
+            --font-family: 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            --font-size-xs: 0.75rem;
+            /* 12px */
+            --font-size-sm: 0.875rem;
+            /* 14px */
+            --font-size-base: 1rem;
+            /* 16px */
+            --font-size-lg: 1.125rem;
+            /* 18px */
+            --font-size-xl: 1.25rem;
+            /* 20px */
+            --font-size-2xl: 1.5rem;
+            /* 24px */
+            --font-size-3xl: 1.875rem;
+            /* 30px */
+            --font-size-4xl: 2.25rem;
+            /* 36px */
+            --font-size-5xl: 3rem;
+            /* 48px */
+
+            /* 间距变量 */
+            --spacing-xs: 0.25rem;
+            /* 4px */
+            --spacing-sm: 0.5rem;
+            /* 8px */
+            --spacing-md: 1rem;
+            /* 16px */
+            --spacing-lg: 1.5rem;
+            /* 24px */
+            --spacing-xl: 2rem;
+            /* 32px */
+            --spacing-2xl: 3rem;
+            /* 48px */
+            --spacing-3xl: 4rem;
+            /* 64px */
+        }
+
+        /* 浅色模式 */
+        [data-theme="light"] {
+            --bg-primary: var(--light-bg-primary);
+            --bg-secondary: var(--light-bg-secondary);
+            --bg-card: var(--light-bg-card);
+            --bg-card-hover: rgba(255, 255, 255, 1);
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+            --text-accent: var(--primary-700);
+            --border-color: var(--light-border-color);
+            --shadow-sm: var(--light-shadow-sm);
+            --shadow-md: var(--light-shadow-md);
+            --shadow-lg: var(--light-shadow-lg);
+            --shadow-xl: var(--light-shadow-xl);
+            --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
+        }
+
+        /* 优化浅色模式下欢迎区域的文字颜色 */
+        [data-theme="light"] .welcome-section {
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+        }
+
+        [data-theme="light"] .welcome-title {
+            color: var(--light-text-primary);
+        }
+
+        [data-theme="light"] .welcome-text {
+            color: var(--light-text-secondary);
+        }
+
+        /* ===== 重置与基础样式 ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ===== 设置按钮 ===== */
+        .settings-btn {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            left: var(--spacing-xl);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: all var(--transition-base);
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(30deg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: calc(var(--spacing-xl) + 70px);
+            left: var(--spacing-xl);
+            width: 300px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all var(--transition-base);
+        }
+
+        .settings-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .settings-panel h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-md);
+            color: var(--text-accent);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-option.active {
+            background: rgba(68, 183, 238, 0.2);
+            border: 1px solid var(--accent-500);
+        }
+
+        .theme-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .theme-icon {
+            font-size: 1.2rem;
+        }
+
+        .theme-check {
+            color: var(--accent-500);
+            opacity: 0;
+        }
+
+        .theme-option.active .theme-check {
+            opacity: 1;
+        }
+
+        /* ===== 药丸形按钮 ===== */
+        .pill-button {
+            position: fixed;
+            top: var(--spacing-xl);
+            right: var(--spacing-xl);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+
+        .pill-button-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            box-shadow: 0 0 0 rgba(0, 168, 154, 0);
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .pill-button:hover .pill-button-inner {
+            box-shadow: 0 0 30px rgba(0, 168, 154, 0.6);
+            padding-right: var(--spacing-lg);
+        }
+
+        .pill-logo {
+            width: 56px;
+            height: 56px;
+            padding: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pill-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .pill-text {
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            font-size: var(--font-size-sm);
+        }
+
+        .pill-button:hover .pill-text {
+            opacity: 1;
+            width: auto;
+            margin-right: var(--spacing-sm);
+        }
+
+        /* ===== 弹窗样式 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 400px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9);
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-header h3 {
+            font-size: var(--font-size-xl);
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .close-modal:hover {
+            color: var(--text-accent);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .modal-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .modal-btn.green {
+            background: var(--success);
+            color: white;
+        }
+
+        .modal-btn.green:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-btn.gray {
+            background: var(--neutral-600);
+            color: white;
+        }
+
+        .modal-btn.gray:hover {
+            background: var(--neutral-700);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .modal-btn .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 400;
+        }
+
+        /* ===== 背景效果 ===== */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 89, 81, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 207, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(15, 23, 42, 0.2) 0%, transparent 50%);
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="light"] .gradient-bg {
+            background: radial-gradient(circle at 20% 50%, rgba(0, 168, 154, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 207, 247, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(248, 250, 252, 0.1) 0%, transparent 50%);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-500), transparent);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(40px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(20px, -50px) rotate(270deg);
+            }
+        }
+
+        /* ===== 滚动条样式 ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--neutral-800);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-700);
+            border-radius: var(--border-radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-600);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-track {
+            background: var(--neutral-200);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-thumb {
+            background: var(--primary-500);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-600);
+        }
+
+        /* ===== 工具类 ===== */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .text-gradient {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ===== 头部区域 ===== */
+        .site-header {
+            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            position: relative;
+            text-align: center;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .logo {
+            font-size: var(--font-size-5xl);
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: var(--border-radius-full);
+        }
+
+        .tagline {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            font-weight: 300;
+        }
+
+        /* ===== 主布局 ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        /* ===== 侧边栏 ===== */
+        .sidebar {
+            position: sticky;
+            top: var(--spacing-xl);
+            height: fit-content;
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-base);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(108, 207, 247, 0.3);
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .avatar-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            animation: rotate 10s linear infinite;
+            padding: 5px;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--neutral-900);
+        }
+
+        [data-theme="light"] .avatar {
+            border: 4px solid var(--neutral-100);
+        }
+
+        .profile-info {
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .profile-title {
+            color: var(--text-accent);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(108, 207, 247, 0.1);
+            border-radius: var(--border-radius-full);
+            border: 1px solid rgba(108, 207, 247, 0.2);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--text-accent);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+
+        /* ===== 导航栏 ===== */
+        .navbar {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: var(--spacing-xl);
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-sm);
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-fast);
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--text-accent);
+            background: rgba(108, 207, 247, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-text {
+            font-size: var(--font-size-sm);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-500);
+            border-radius: 50%;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .nav-link.active .nav-indicator {
+            opacity: 1;
+        }
+
+        /* ===== 移动端菜单按钮（独立于导航栏，固定在左上角） ===== */
+        .mobile-menu-toggle {
+            display: none;
+            /* 默认隐藏，仅移动端显示 */
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            margin: 0;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            touch-action: manipulation;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--bg-card-hover);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-toggle i {
+            font-size: 1.5rem;
+            pointer-events: none;
+        }
+
+        /* ===== 欢迎区域 ===== */
+        .welcome-section {
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .welcome-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .welcome-text {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .highlight {
+            color: var(--text-accent);
+            font-weight: 600;
+            background: rgba(108, 207, 247, 0.1);
+            padding: 2px 6px;
+            border-radius: var(--border-radius-sm);
+        }
+
+        /* ===== 账号卡片区域 ===== */
+        .accounts-section {
+            margin-top: var(--spacing-lg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: var(--spacing-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-weight: 500;
+        }
+
+        .view-btn.active {
+            background: var(--accent-500);
+            color: var(--neutral-900);
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .account-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            transition: var(--transition-base);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .account-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent-500);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--border-radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .card-title-group {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            background: var(--accent-500);
+            color: var(--neutral-900);
+            font-size: var(--font-size-xs);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--border-radius-full);
+        }
+
+        .card-content {
+            flex: 1;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: var(--font-size-sm);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-username {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-accent);
+        }
+
+        .card-action {
+            color: var(--accent-500);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-fast);
+        }
+
+        .card-action:hover {
+            color: var(--accent-400);
+            gap: 10px;
+        }
+
+        /* ===== 统计区域 ===== */
+        .stats-section {
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .counter-widget {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .counter-widget img {
+            max-width: 200px;
+            margin-bottom: var(--spacing-sm);
+            display: inline-block;
+        }
+
+        .counter-label {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+        }
+
+        .poetry-widget {
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .poetry-text {
+            font-size: var(--font-size-lg);
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.7;
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .poetry-author {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* ===== 页脚 ===== */
+        .site-footer {
+            background: var(--neutral-900);
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-2xl) 0;
+            margin-top: var(--spacing-3xl);
+        }
+
+        [data-theme="light"] .site-footer {
+            background: var(--neutral-100);
+            border-top: 1px solid var(--light-border-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .footer-logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            border: 1px solid var(--border-color);
+        }
+
+        .social-link:hover {
+            background: var(--accent-500);
+            color: var(--neutral-900);
+            transform: translateY(-3px);
+        }
+
+        .footer-heading {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-500);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* ===== 加载动画 ===== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 响应式设计 ===== */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                margin-bottom: var(--spacing-xl);
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-md);
+            }
+
+            .logo {
+                font-size: var(--font-size-4xl);
+            }
+
+            /* ---------- 移动端导航栏 ---------- */
+            .navbar {
+                position: static;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+                backdrop-filter: none;
+                top: auto;
+            }
+
+            .nav-container {
+                position: static;
+                justify-content: center;
+            }
+
+            /* 桌面导航菜单在移动端变为固定浮动菜单 */
+            .nav-menu {
+                position: fixed;
+                z-index: 1099;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.45rem;
+                width: min(220px, calc(100vw - 2rem));
+                max-height: 0;
+                padding: 0;
+                overflow: hidden;
+                list-style: none;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-0.75rem);
+                transform-origin: top left;
+                transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                /* top和left由JS动态设置，此处设为auto */
+                top: auto;
+                left: auto;
+            }
+
+            .nav-menu.nav-scrollable { overflow-y: auto; }
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: 0.75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+                transition-delay: 0s;
+            }
+
+            .nav-menu .nav-item {
+                opacity: 0;
+                transform: translateY(-0.65rem);
+                transition: opacity 0.25s ease, transform 0.3s ease;
+                width: 100%;
+            }
+
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-menu.active .nav-item:nth-child(1) {
+                transition-delay: 0.04s;
+            }
+            .nav-menu.active .nav-item:nth-child(2) {
+                transition-delay: 0.08s;
+            }
+            .nav-menu.active .nav-item:nth-child(3) {
+                transition-delay: 0.12s;
+            }
+            .nav-menu.active .nav-item:nth-child(4) {
+                transition-delay: 0.16s;
+            }
+            .nav-menu.active .nav-item:nth-child(5) {
+                transition-delay: 0.20s;
+            }
+            .nav-menu.active .nav-item:nth-child(6) {
+                transition-delay: 0.24s;
+            }
+            .nav-menu.active .nav-item:nth-child(7) {
+                transition-delay: 0.28s;
+            }
+            .nav-menu.active .nav-item:nth-child(8) {
+                transition-delay: 0.32s;
+            }
+            .nav-menu.active .nav-item:nth-child(9) {
+                transition-delay: 0.36s;
+            }
+
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 0.75rem;
+                width: 100%;
+                min-width: 0;
+                padding: 0.7rem 0.8rem;
+                text-align: left;
+            }
+
+            .nav-icon {
+                margin: 0;
+                width: 1.5rem;
+                text-align: center;
+            }
+
+            .nav-indicator {
+                margin: 0 0 0 auto;
+            }
+
+
+            /* 菜单固定锚定在左上角按钮下方，避免随页面滚动改变位置 */
+            .main-content,
+            .navbar,
+            .nav-container {
+                transform: none !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                perspective: none !important;
+                contain: none !important;
+            }
+
+            .nav-menu {
+                position: fixed !important;
+                top: 4.75rem !important;
+                left: 1rem !important;
+                width: min(220px, calc(100vw - 2rem)) !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+
+            .nav-menu .nav-indicator {
+                position: static;
+                order: -1;
+                flex: 0 0 8px;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+            }
+
+            /* ---------- 移动端菜单按钮（固定在左上角） ---------- */
+            .mobile-menu-toggle {
+                display: flex !important;
+                z-index: 9999 !important;
+                touch-action: manipulation;
+                pointer-events: auto;
+            }
+
+            /* 调整页面顶部间距，避免被固定按钮遮挡 */
+            .site-header {
+                padding-top: calc(var(--spacing-xl) + 3.5rem);
+            }
+
+            .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            /* 设置按钮在移动端保持位置 */
+            .settings-btn {
+                bottom: var(--spacing-md);
+                left: var(--spacing-md);
+                width: 48px;
+                height: 48px;
+            }
+
+            .settings-panel {
+                bottom: calc(var(--spacing-md) + 60px);
+                left: var(--spacing-md);
+                width: calc(100vw - 2 * var(--spacing-md));
+                max-width: 300px;
+            }
+
+            .pill-button {
+                top: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: var(--font-size-3xl);
+            }
+
+            .welcome-section,
+            .profile-card,
+            .account-card {
+                padding: var(--spacing-lg);
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-icon {
+                margin-bottom: var(--spacing-md);
+            }
+        }
+    
+        /* 统一移动端菜单系统 */
+        @media (max-width: 768px) {
+            .main-content,
+            .navbar,
+            .nav-container {
+                transform: none !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                perspective: none !important;
+                contain: none !important;
+            }
+
+            .mobile-menu-toggle {
+                position: fixed !important;
+                top: 1rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9999 !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                margin: 0;
+                padding: 0;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-md, var(--radius-md, 16px));
+                background: var(--bg-card);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(20px);
+                pointer-events: auto;
+                touch-action: manipulation;
+            }
+
+            .nav-menu {
+                position: fixed !important;
+                top: 4.75rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9998 !important;
+                display: flex !important;
+                flex-direction: column;
+                align-items: stretch;
+                gap: .45rem;
+                width: min(220px, calc(100vw - 2rem)) !important;
+                max-height: 0;
+                padding: 0;
+                overflow-x: hidden;
+                overflow-y: hidden;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-.75rem);
+                transform-origin: top left;
+                transition: max-height .35s ease, padding .35s ease, opacity .25s ease, transform .35s ease, visibility 0s linear .35s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg, var(--radius-lg, 24px));
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: .75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+            }
+
+            .nav-menu .nav-item {
+                width: 100%;
+                opacity: 0;
+                transform: translateY(-.65rem);
+                transition: opacity .25s ease, transform .3s ease;
+            }
+
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-menu.active .nav-item:nth-child(1) { transition-delay: .04s; }
+            .nav-menu.active .nav-item:nth-child(2) { transition-delay: .08s; }
+            .nav-menu.active .nav-item:nth-child(3) { transition-delay: .12s; }
+            .nav-menu.active .nav-item:nth-child(4) { transition-delay: .16s; }
+            .nav-menu.active .nav-item:nth-child(5) { transition-delay: .20s; }
+            .nav-menu.active .nav-item:nth-child(6) { transition-delay: .24s; }
+            .nav-menu.active .nav-item:nth-child(7) { transition-delay: .28s; }
+            .nav-menu.active .nav-item:nth-child(8) { transition-delay: .32s; }
+            .nav-menu.active .nav-item:nth-child(9) { transition-delay: .36s; }
+
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: .75rem;
+                width: 100%;
+                min-width: 0;
+                padding: .7rem .8rem;
+                text-align: left;
+            }
+
+            .nav-icon { margin: 0; width: 1.5rem; text-align: center; }
+
+            .nav-menu .nav-indicator {
+                position: static;
+                order: -1;
+                flex: 0 0 8px;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+                transform: none;
+            }
+        }
+    
+        .nav-link#musicSelectBtn { border: 0; background: transparent; font: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; }
+        .modal-btn.purple { background: #6c63ff; color: white; }
+        .modal-btn.purple:hover { background: #584ff0; transform: translateY(-2px); }
+</style>
+</head>
+<body>
+    <!-- 背景效果 -->
+    <div class="background-effects">
+        <div class="gradient-bg"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- ===== 移动端菜单按钮（独立于导航栏，固定在左上角） ===== -->
+    <button class="mobile-menu-toggle" id="menuToggle" aria-label="打开导航菜单" aria-expanded="false">
+        <i class="ri-menu-line"></i>
+    </button>
+
+    <!-- 设置按钮 -->
+    <button class="settings-btn" id="settingsBtn">
+        <i class="ri-settings-3-line"></i>
+    </button>
+
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <h3><i class="ri-palette-line"></i> 界面设置</h3>
+        <div class="theme-options">
+            <div class="theme-option active" data-theme="system">
+                <div class="theme-info">
+                    <i class="ri-computer-line theme-icon"></i>
+                    <span>跟随系统</span>
+                </div>
+                <i class="ri-check-line theme-check"></i>
+            </div>
+            <div class="theme-option" data-theme="time">
+                <div class="theme-info">
+                    <i class="ri-time-line theme-icon"></i>
+                    <span>跟随时间</span>
+                </div>
+                <i class="ri-check-line theme-check"></i>
+            </div>
+            <div class="theme-option" data-theme="dark">
+                <div class="theme-info">
+                    <i class="ri-moon-line theme-icon"></i>
+                    <span>深色模式</span>
+                </div>
+                <i class="ri-check-line theme-check"></i>
+            </div>
+            <div class="theme-option" data-theme="light">
+                <div class="theme-info">
+                    <i class="ri-sun-line theme-icon"></i>
+                    <span>浅色模式</span>
+                </div>
+                <i class="ri-check-line theme-check"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 药丸形按钮 -->
+    <div class="pill-button">
+        <div class="pill-button-inner" id="pillButton" style="cursor:pointer;">
+            <div class="pill-logo">
+                <img src="https://img.bloret.net/img/1778369439164/ea3a4adb6509c6f1d5a712610139ff82" alt="《络的世界》logo">
+            </div>
+            <div class="pill-text">《络的世界》百络谷同人小说项目</div>
+        </div>
+    </div>
+
+    <!-- 弹窗 (络的世界选择) -->
+    <div class="modal-overlay" id="pillModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择跳转目标</h3>
+                <span class="close-modal" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button class="modal-btn green" id="goToOfficial">
+                    <span class="tag">推荐</span> 前往官方站点
+                </button>
+                <button class="modal-btn gray" id="goToOld">
+                    <span class="tag">已关闭</span> 前往老网站停更说明
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音乐选择弹窗 -->
+    <div class="modal-overlay" id="musicSelectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>请选择要跳转的音乐盒</h3>
+                <span class="close-modal" id="closeMusicModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button class="modal-btn purple" id="goToMusicBox">音乐盒 Ver5.1</button>
+                <button class="modal-btn green" id="goToJayMusic">
+                    <img src="https://img.bloret.net/img/1779633210437/d3da3968f9a9dc7968bd4636f553d771" alt="JayMusic" style="width:24px;height:24px;">
+                    JayMusic
+                </button>
+                <button class="modal-btn gray" id="goToHoyoMix">
+                    <img src="https://img.bloret.net/img/1784732682414/a7a1c8495ade9783ff8e1ec8afe2260c" alt="HOYO-MIX" style="width:24px;height:24px;">
+                    HOYO-MIX精选
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 服务器推荐弹窗 -->
+    <div class="modal-overlay" id="serverRecommendationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>百络谷服务器</h3>
+                <span class="close-modal" id="closeServerRecommendationModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button class="modal-btn green" id="copyServerGroup">复制QQ群号 <span class="tag">724060512</span></button>
+                <button class="modal-btn gray" id="serverWikiButton">查看服务器Wiki</button>
+                <button class="modal-btn gray" id="joinServerGroup">一键加入群聊</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 网站头部 -->
+        <header class="site-header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <h1 class="logo text-gradient">Infinity桐桐个人网站</h1>
+                    <p class="tagline">用❤做好每一个作品</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主布局 -->
+        <div class="main-layout">
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <div class="profile-card">
+                    <div class="avatar-wrapper">
+                        <div class="avatar-border">
+                            <img src="https://img.bloret.net/img/1778369377581/e16d22cdc027bcf461f5c27c07bc0109" alt="桐桐头像" class="avatar">
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <h2 class="profile-name">Infinity桐桐</h2>
+                        <span class="profile-title">编程创作者</span>
+
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="projectCount">50+</span>
+                                <span class="stat-label">作品</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="followerCount">2K+</span>
+                                <span class="stat-label">粉丝</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="experienceCount">7+</span>
+                                <span class="stat-label">年经验</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 主内容区 -->
+            <main class="main-content">
+                <!-- 导航栏（移动端菜单按钮已独立，此处仅保留菜单列表） -->
+                <nav class="navbar" aria-label="主导航">
+                    <div class="nav-container">
+                        <ul class="nav-menu" id="navMenu">
+                            <li class="nav-item"><a href="/index.html" class="nav-link active"><i class="ri-home-4-line nav-icon"></i><span class="nav-text">主页</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><a href="/contact.html" class="nav-link"><i class="ri-mail-line nav-icon"></i><span class="nav-text">联系我</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><a href="/video.html" class="nav-link"><i class="ri-video-line nav-icon"></i><span class="nav-text">教程视频</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><a href="https://tools.infds.top/" class="nav-link"><i class="ri-star-line nav-icon"></i><span class="nav-text">工具箱</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><a href="/download.html" class="nav-link"><i class="ri-download-line nav-icon"></i><span class="nav-text">下载</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><a href="/projects.html" class="nav-link"><i class="ri-palette-line nav-icon"></i><span class="nav-text">我的作品</span><span class="nav-indicator"></span></a></li>
+                            <li class="nav-item"><button type="button" class="nav-link" id="musicSelectBtn"><i class="ri-music-line nav-icon"></i><span class="nav-text">音乐盒</span><span class="nav-indicator"></span></button></li>
+                            <li class="nav-item"><a href="https://games.infds.top/" class="nav-link"><i class="ri-gamepad-line nav-icon"></i><span class="nav-text">游戏中心</span><span class="nav-indicator"></span></a></li>
+                    <li class="nav-item"><a href="/map.html" class="nav-link"><i class="ri-map-2-line nav-icon"></i><span class="nav-text">网站导航</span><span class="nav-indicator"></span></a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- 欢迎区域 -->
+                <section class="welcome-section">
+                    <h2 class="welcome-title">欢迎来到我的主页！</h2>
+                    <div class="welcome-text">
+                        <p>欢迎您！这里是Infinity桐桐的个人网站，在这里你可以<span class="highlight">查看我的各种账号信息、联系方式和推荐的优秀素材网站</span>。</p>
+                        <p>我是一个充满热情的编程创作者，致力于用代码创造有趣、有用的作品。下面是我的主要账号信息，点击卡片可以直接访问对应的平台。</p>
+                    </div>
+                </section>
+
+                <!-- 账号卡片区域 -->
+                <section class="accounts-section">
+                    <div class="section-header">
+                        <div>
+                            <h3 class="section-title">我的账号</h3>
+                            <p class="section-subtitle">在不同平台上的创作空间</p>
+                        </div>
+
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="ri-grid-line"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="ri-list-check"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="accounts-grid" id="accountsContainer">
+                        <!-- Infinity论坛 -->
+                        <div class="account-card">
+                            <span class="card-badge">🌟 新！</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <img src="https://img.bloret.net/img/1788090352061/da49855ada90964093972c25889e974d" alt="Infinity论坛" style="width: 30px; height: 30px;">
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Infinity论坛</h4>
+                                    <p class="card-subtitle">个人论坛</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">Infinity的个人论坛，欢迎前往论坛聊天~</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">Infinity论坛</span>
+                                <a href="https://bbs.infds.top/" class="card-action" target="_blank" rel="noopener noreferrer">
+                                    访问论坛
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Bilibili -->
+                        <div class="account-card">
+                            <span class="card-badge">⚠️ 暂时停更</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-bilibili-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Bilibili</h4>
+                                    <p class="card-subtitle">视频创作平台</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">在这里可以看到我的视频教程和创意作品分享，关注获取最新动态和编程技巧！</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@Big_mountain</span>
+                                <a href="https://space.bilibili.com/519158391" class="card-action" target="_blank">
+                                    访问主页
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- CCW共创世界 -->
+                        <div class="account-card">
+                            <span class="card-badge">🔥 推荐!</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <img src="https://m.ccw.site/community/images/logo-ccw.png" alt="CCW" style="width: 30px; height: 30px;">
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">CCW共创世界</h4>
+                                    <p class="card-subtitle">编程创作社区</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">我的编程作品和创意项目集中地，分享编程心得。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@Infinity桐桐</span>
+                                <a href="https://ccw.site/student/5c3d5449b73fd85fd7f9d91b" class="card-action" target="_blank">
+                                    访问主页
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 稽木世界 -->
+                        <div class="account-card">
+                            <span class="card-badge">⚠️ 暂时停更</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <img src="https://gitblock.cn/Content/gitblock.ico" alt="稽木世界" style="width: 30px; height: 30px;">
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">稽木世界</h4>
+                                    <p class="card-subtitle">编程创作社区</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">我的编程作品和创意项目集中地，分享编程心得。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@Infinity大山</span>
+                                <a href="https://gitblock.cn/Users/1136850" class="card-action" target="_blank">
+                                    访问主页
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Infinity Wiki -->
+                        <div class="account-card">
+                            <span class="card-badge">🌟 新！</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <img src="https://img.bloret.net/img/1788093010914/70309e6ed2e85e1b75acc72e5e2222c5" alt="Infinity Wiki" style="width: 30px; height: 30px;">
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Infinity Wiki</h4>
+                                    <p class="card-subtitle">个人 Wiki</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">Infinity的个人Wiki</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">Infinity Wiki</span>
+                                <a href="https://wiki.infds.top/" class="card-action" target="_blank" rel="noopener noreferrer">
+                                    访问 Wiki
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 卡搭163 -->
+                        <div class="account-card">
+                            <span class="card-badge">🚫 关站</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-gamepad-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">卡搭163【无法使用】</h4>
+                                    <p class="card-subtitle">创意编程平台</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">仅能查看主页，其余功能已无法使用。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@Big_mountain</span>
+                                <a href="https://kada.163.com/u/3994325.htm" class="card-action" target="_blank">
+                                    查看页面
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 小码王 -->
+                        <div class="account-card">
+                            <span class="card-badge">⌛ 即将更新</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-computer-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">小码王</h4>
+                                    <p class="card-subtitle">编程创作社区</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">编程创作社区。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@Infinity</span>
+                                <a href="https://world.xiaomawang.com/w/person/project/all/2722554" class="card-action" target="_blank">
+                                    访问主页
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Scratch中国 -->
+                        <div class="account-card">
+                            <span class="card-badge">🚫 关站</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-braces-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Scratch中国【已关闭】</h4>
+                                    <p class="card-subtitle">图形化编程社区</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">这个编程社区已经关站了。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">@桐桐</span>
+                                <a href="https://www.scratch-cn.cn/user/project?comid=6115fd14d956b70dc8e26aba" class="card-action" target="_blank">
+                                    查看作品
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Scratch官网 -->
+                        <div class="account-card">
+                            <span class="card-badge">✨ 需要魔法</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-lightbulb-flash-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Scratch官网</h4>
+                                    <p class="card-subtitle">国际编程社区</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">【国内无法访问，原因你懂的。】</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">ccw-tongtong</span>
+                                <a href="https://scratch.mit.edu/users/ccw-tongtong" class="card-action" target="_blank">
+                                    国际社区
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 成长经历 -->
+                        <div class="account-card">
+                            <span class="card-badge">🚫 停更</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-history-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">编程经历</h4>
+                                    <p class="card-subtitle">个人编程历程分享（18年~22年）</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">记录我在CCW和稽木世界的个人历程。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">桐桐的历程</span>
+                                <a href="/jingli.html" class="card-action">
+                                    阅读经历
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 音乐分享 -->
+                        <div class="account-card">
+                            <span class="card-badge">❔ 难道说</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="ri-music-2-line"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">音乐分享</h4>
+                                    <p class="card-subtitle">休闲时刻</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">分享一首我喜欢的音乐，在创作之余放松心情，寻找灵感。好的音乐能激发更多创意！</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">好听的音乐🤭</span>
+                                <a href="https://m.xiguacity.cn/user_projects_assets/3d9625b71fd312f92480fdcd75fbb486.mp3" class="card-action" target="_blank">
+                                    听听看
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 服务器推荐 - 百络谷 -->
+                        <div class="account-card" id="serverRecommendationCard" style="cursor: pointer;">
+                            <span class="card-badge">🔥推荐！</span>
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <img src="https://img.bloret.net/img/1788017530994/62ddb598bdb4d5f369f9cb36c8601e2c" alt="百络谷 logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px;">
+                                </div>
+                                <div class="card-title-group">
+                                    <h4 class="card-title">Minecraft服务器推荐</h4>
+                                    <p class="card-subtitle">百络谷•Bloret</p>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p class="card-description">加入百络谷服务器交流群，获取最新资讯与进服方式，并与更多朋友交流分享。</p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="card-username">©Bloret. All rights reserved.</span>
+                                <span class="card-action">查看详情 <i class="ri-arrow-right-line"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 统计区域 -->
+                <section class="stats-section">
+                    <div class="stats-container">
+                        <div class="counter-widget">
+                            <img src="https://hitwebcounter.com/counter/counter.php?page=7856865&style=0006&nbdigits=5&type=page&initCount=0"
+                            alt="访问计数器" style="max-width: 200px; margin-bottom: 10px;">
+                            <p class="counter-label">访问人数</p>
+                        </div>
+
+                        <div class="poetry-widget">
+                            <p class="poetry-text" id="jinrishici-sentence">
+                                <span class="loading"></span> 正在加载今日诗词...
+                            </p>
+                            <p class="poetry-author" id="jinrishici-author"></p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-about">
+                        <h3 class="footer-logo text-gradient">桐桐个人网站</h3>
+                        <p class="footer-description">
+                            一个编程创作者的个人空间，致力于分享编程作品、学习经验和创意灵感。用❤做好每一个作品。
+                        </p>
+                        <div class="social-links">
+                            <a href="https://space.bilibili.com/519158391" class="social-link" target="_blank">
+                                <i class="ri-bilibili-line"></i>
+                            </a>
+                            <a href="https://ccw.site/student/5c3d5449b73fd85fd7f9d91b" class="social-link" target="_blank">
+                                <img src="https://m.ccw.site/community/images/logo-ccw.png" alt="CCW" style="width: 20px; height: 20px;">
+                            </a>
+                            <a href="mailto:big_mountain@foxmail.com" class="social-link">
+                                <i class="ri-mail-line"></i>
+                            </a>
+                            <a href="https://gitblock.cn/Users/1136850" class="social-link" target="_blank">
+                                <img src="https://gitblock.cn/Content/gitblock.ico" alt="稽木世界" style="width: 20px; height: 20px;">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="footer-links-col">
+                        <h4 class="footer-heading">快速链接</h4>
+                        <ul class="footer-links">
+                            <li><a href="/index.html">首页</a></li>
+                            <li><a href="/contact.html">联系我</a></li>
+                            <li><a href="/video.html">教程视频</a></li>
+                            <li><a href="/projects.html">我的作品</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-links-col">
+                        <h4 class="footer-heading">资源推荐</h4>
+                        <ul class="footer-links">
+                            <li><a href="/sctj.html">素材网站</a></li>
+                            <li><a href="/download.html">资源下载</a></li>
+                            <li><a href="/jingli.html">成长经历</a></li>
+                            <li><a href="/projects.html">作品合集</a></li>
+                            <li><a href="/map.html">网站导航</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="copyright">
+                    <p>© 2026 Infinity桐桐个人网站. 用❤做好每一个作品. 保留所有权利.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 外部脚本 -->
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+
+    <script>
+        // ===== 页面初始化 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化粒子背景
+            initParticles();
+
+            // 初始化今日诗词
+            initPoetry();
+
+            // 初始化导航栏
+            initNavigation();
+
+            // 初始化视图切换
+            initViewToggle();
+
+            // 初始化卡片悬停效果
+            initCardHover();
+
+            // 初始化主题设置
+            initThemeSettings();
+
+            // 初始化药丸按钮弹窗
+            initPillButtonModal();
+
+            // 初始化弹窗关闭事件
+            initModal();
+
+            // 初始化音乐选择弹窗
+            initMusicSelectModal();
+
+            // 初始化服务器推荐弹窗
+            initServerRecommendationModal();
+        });
+
+        // ===== 粒子背景 =====
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const size = Math.random() * 100 + 50;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+
+                particle.style.animationDelay = Math.random() * 20 + 's';
+
+                particle.style.opacity = Math.random() * 0.1 + 0.05;
+
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // ===== 今日诗词 =====
+        function initPoetry() {
+            const sentenceEl = document.getElementById('jinrishici-sentence');
+            const authorEl = document.getElementById('jinrishici-author');
+
+            const fallbackPoetry = () => {
+                const fallbackSentences = [
+                    "编程如诗，一行一世界，一码一乾坤。",
+                    "创意如泉涌，代码如诗行，用心铸就每一个作品。",
+                    "在数字的海洋中遨游，用代码编织梦想的翅膀。",
+                    "每一次调试都是修行，每一行代码都是诗篇。"
+                ];
+                const randomIndex = Math.floor(Math.random() * fallbackSentences.length);
+                sentenceEl.innerHTML = fallbackSentences[randomIndex];
+                authorEl.textContent = "—— 桐桐";
+            };
+
+            try {
+                jinrishici.load(result => {
+                    if (result && result.data) {
+                        sentenceEl.textContent = result.data.content;
+                        if (result.data.origin) {
+                            authorEl.textContent = '——《' + result.data.origin.title + '》' + result.data.origin.author;
+                        }
+                    } else {
+                        fallbackPoetry();
+                    }
+                });
+            } catch (error) {
+                fallbackPoetry();
+            }
+        }
+
+        // ===== 导航栏 =====
+        function initNavigation() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            if (menuToggle) {
+                // 点击切换菜单
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navMenu.classList.toggle('active');
+                    const isOpen = navMenu.classList.contains('active');
+                    this.innerHTML = isOpen ? '<i class="ri-close-line"></i>' : '<i class="ri-menu-line"></i>';
+                    this.setAttribute('aria-expanded', isOpen);
+                });
+            }
+
+            // 点击导航链接后关闭菜单
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        navMenu.classList.remove('active');
+                        if (menuToggle) {
+                            menuToggle.innerHTML = '<i class="ri-menu-line"></i>';
+                            menuToggle.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 点击页面其他区域关闭菜单
+            document.addEventListener('click', function(e) {
+                if (navMenu && menuToggle) {
+                    if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                        navMenu.classList.remove('active');
+                        menuToggle.innerHTML = '<i class="ri-menu-line"></i>';
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+
+        }
+
+        // ===== 视图切换 =====
+        function initViewToggle() {
+            const viewBtns = document.querySelectorAll('.view-btn');
+            const accountsContainer = document.getElementById('accountsContainer');
+
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const viewType = this.getAttribute('data-view');
+                    accountsContainer.style.gridTemplateColumns = viewType === 'list' ? '1fr' :
+                        'repeat(auto-fill, minmax(320px, 1fr))';
+                });
+            });
+        }
+
+        // ===== 卡片悬停效果 =====
+        function initCardHover() {
+            const cards = document.querySelectorAll('.account-card');
+
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.zIndex = '10';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.zIndex = '';
+                });
+            });
+        }
+
+        // ===== 主题设置 =====
+        function initThemeSettings() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const themeOptions = document.querySelectorAll('.theme-option');
+
+            settingsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                settingsPanel.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function() {
+                settingsPanel.classList.remove('active');
+            });
+
+            settingsPanel.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            initTheme();
+
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+
+                    themeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+
+                    localStorage.setItem('theme-preference', theme);
+
+                    applyTheme(theme);
+                });
+            });
+
+            const systemThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+            systemThemeMedia.addEventListener('change', function(e) {
+                const savedTheme = localStorage.getItem('theme-preference');
+                if (savedTheme === 'system') {
+                    applyTheme('system');
+                }
+            });
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme-preference') || 'system';
+
+            const themeOptions = document.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => option.classList.remove('active'));
+            const activeOption = document.querySelector('.theme-option[data-theme="' + savedTheme + '"]') ||
+                document.querySelector('.theme-option[data-theme="system"]');
+            activeOption.classList.add('active');
+
+            applyTheme(activeOption.getAttribute('data-theme'));
+        }
+
+        function getThemeByTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            return (hour >= 8 && hour < 19) ? 'light' : 'dark';
+        }
+
+        function applyTheme(theme) {
+            let finalTheme = theme;
+
+            if (theme === 'system') {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                finalTheme = isDark ? 'dark' : 'light';
+            } else if (theme === 'time') {
+                finalTheme = getThemeByTime();
+            }
+
+            document.documentElement.setAttribute('data-theme', finalTheme);
+        }
+
+        setInterval(function() {
+            const currentTheme = localStorage.getItem('theme-preference');
+            if (currentTheme === 'time') {
+                applyTheme('time');
+            }
+        }, 5 * 60 * 1000);
+
+        // ===== 药丸按钮弹窗 =====
+        function initPillButtonModal() {
+            const pillButton = document.getElementById('pillButton');
+            const modal = document.getElementById('pillModal');
+
+            if (pillButton) {
+                pillButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.add('active');
+                });
+            }
+        }
+
+        // ===== 弹窗控制 =====
+        function initModal() {
+            const modal = document.getElementById('pillModal');
+            const closeBtn = document.getElementById('closeModal');
+            const goToOfficial = document.getElementById('goToOfficial');
+            const goToOld = document.getElementById('goToOld');
+
+            closeBtn.addEventListener('click', function() {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            goToOfficial.addEventListener('click', function() {
+                window.open('https://bbs.bloret.net/#post-link/rikoland', '_blank');
+                modal.classList.remove('active');
+            });
+
+            goToOld.addEventListener('click', function() {
+                window.open('/404.html', '_blank');
+                modal.classList.remove('active');
+            });
+        }
+
+        // ===== 音乐选择弹窗 =====
+        function initMusicSelectModal() {
+            const musicBtn = document.getElementById('musicSelectBtn');
+            const modal = document.getElementById('musicSelectModal');
+            const closeBtn = document.getElementById('closeMusicModal');
+            const goToJay = document.getElementById('goToJayMusic');
+            const goToHoyo = document.getElementById('goToHoyoMix');
+
+            if (musicBtn) {
+                musicBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.add('active');
+                });
+            }
+
+            closeBtn.addEventListener('click', function() {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            document.getElementById('goToMusicBox').addEventListener('click', function() { window.location.href = '/music-box.html'; });
+
+            goToJay.addEventListener('click', function() {
+                window.location.href = '/music-jay.html';
+                modal.classList.remove('active');
+            });
+
+            goToHoyo.addEventListener('click', function() {
+                window.location.href = '/music-hoyo.html';
+                modal.classList.remove('active');
+            });
+        }
+
+        // ===== 服务器推荐弹窗 =====
+        function initServerRecommendationModal() {
+            const card = document.getElementById('serverRecommendationCard');
+            const modal = document.getElementById('serverRecommendationModal');
+            const closeBtn = document.getElementById('closeServerRecommendationModal');
+            const copyBtn = document.getElementById('copyServerGroup');
+            const joinBtn = document.getElementById('joinServerGroup');
+            const serverWikiButton = document.getElementById('serverWikiButton');
+            const groupNumber = '724060512';
+
+            if (!card || !modal) return;
+
+            card.addEventListener('click', function() {
+                modal.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            copyBtn.addEventListener('click', async function() {
+                try {
+                    await navigator.clipboard.writeText(groupNumber);
+                    this.innerHTML = '<i class="ri-check-line"></i> 已复制QQ群号';
+                    setTimeout(function() {
+                        copyBtn.innerHTML = '复制QQ群号 <span class="tag">724060512</span>';
+                    }, 1800);
+                } catch (error) {
+                    const input = document.createElement('input');
+                    input.value = groupNumber;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    input.remove();
+                    this.innerHTML = '<i class="ri-check-line"></i> 已复制QQ群号';
+                    setTimeout(function() {
+                        copyBtn.innerHTML = '复制QQ群号 <span class="tag">724060512</span>';
+                    }, 1800);
+                }
+            });
+
+            serverWikiButton.addEventListener('click', function() {
+                window.open('https://wiki.bloret.net/', '_blank');
+                modal.classList.remove('active');
+            });
+
+            joinBtn.addEventListener('click', function() {
+                window.open('https://qm.qq.com/q/mbsO7aVb2w', '_blank');
+                modal.classList.remove('active');
+            });
+        }
+
+        // ===== 滚动时导航栏效果 =====
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.backdropFilter = 'blur(30px)';
+                navbar.style.boxShadow = 'var(--shadow-lg)';
+            } else {
+                navbar.style.backdropFilter = 'blur(20px)';
+                navbar.style.boxShadow = 'var(--shadow-md)';
+            }
+        });
+    </script>
+
+    <script>
+        (() => {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (!menuToggle || !navMenu) return;
+            let scrollCheckTimer;
+            const resetMenuOverflow = () => {
+                clearTimeout(scrollCheckTimer);
+                navMenu.classList.remove('nav-scrollable');
+            };
+            const checkMenuOverflow = () => {
+                if (!navMenu.classList.contains('active')) return;
+                navMenu.classList.toggle('nav-scrollable', navMenu.scrollHeight > navMenu.clientHeight);
+            };
+            menuToggle.addEventListener('click', () => {
+                const opening = !navMenu.classList.contains('active');
+                resetMenuOverflow();
+                if (opening) scrollCheckTimer = setTimeout(checkMenuOverflow, 750);
+            }, true);
+            navMenu.addEventListener('click', event => {
+                if (event.target.closest('.nav-link')) resetMenuOverflow();
+            }, true);
+            window.addEventListener('resize', () => {
+                if (navMenu.classList.contains('active')) {
+                    clearTimeout(scrollCheckTimer);
+                    scrollCheckTimer = setTimeout(checkMenuOverflow, 750);
+                }
+            }, { passive: true });
+        })();
+    </script>
+</body>
+</html>
