@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏中心 - Infinity个人网站</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://img.bloret.net/img/1788146175135/918dec462cb18d569369bb89ad043069">
+	<link rel="stylesheet" href="template">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+	<div class="bg-img"></div>
+    <style>
+        /* ===== CSS变量定义 ===== */
+        :root {
+            /* 浅色模式变量 */
+            --light-bg-primary: #f8fafc;
+            --light-bg-secondary: rgba(248, 250, 252, 0.9);
+            --light-bg-card: rgba(255, 255, 255, 0.9);
+            --light-text-primary: #0f172a;
+            --light-text-secondary: #475569;
+            --light-border-color: rgba(0, 0, 0, 0.1);
+            --light-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --light-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --light-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --light-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+            /* 主色调 */
+            --primary-50: #e6f7f5;
+            --primary-100: #b3e8e2;
+            --primary-200: #80d9cf;
+            --primary-300: #4dc9bc;
+            --primary-400: #26b9ab;
+            --primary-500: #00a89a;
+            --primary-600: #00968a;
+            --primary-700: #008379;
+            --primary-800: #007168;
+            --primary-900: #005951;
+
+            /* 强调色 */
+            --accent-50: #e8f7fd;
+            --accent-100: #c6e9fa;
+            --accent-200: #a1dbf7;
+            --accent-300: #7bcdf3;
+            --accent-400: #5fc2f1;
+            --accent-500: #44b7ee;
+            --accent-600: #3ea8dc;
+            --accent-700: #3695c5;
+            --accent-800: #2f82ae;
+            --accent-900: #226088;
+
+            /* 中性色 */
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+
+            /* 功能色 */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+
+            /* 主题变量 - 默认深色 */
+            --bg-primary: var(--neutral-900);
+            --bg-secondary: rgba(15, 23, 42, 0.9);
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-hover: rgba(51, 65, 85, 0.9);
+            --text-primary: var(--neutral-100);
+            --text-secondary: var(--neutral-300);
+            --text-accent: var(--accent-400);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.4);
+
+            /* 其他变量 */
+            --border-radius-sm: 8px;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+            --border-radius-xl: 32px;
+            --border-radius-full: 9999px;
+            --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-slow: 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-900), var(--primary-700), var(--accent-700));
+            --gradient-accent: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+            --gradient-card: linear-gradient(135deg, rgba(0, 89, 81, 0.8), rgba(30, 41, 59, 0.8));
+
+            /* 字体变量 */
+            --font-family: 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            --font-size-xs: 0.75rem;
+            /* 12px */
+            --font-size-sm: 0.875rem;
+            /* 14px */
+            --font-size-base: 1rem;
+            /* 16px */
+            --font-size-lg: 1.125rem;
+            /* 18px */
+            --font-size-xl: 1.25rem;
+            /* 20px */
+            --font-size-2xl: 1.5rem;
+            /* 24px */
+            --font-size-3xl: 1.875rem;
+            /* 30px */
+            --font-size-4xl: 2.25rem;
+            /* 36px */
+            --font-size-5xl: 3rem;
+            /* 48px */
+
+            /* 间距变量 */
+            --spacing-xs: 0.25rem;
+            /* 4px */
+            --spacing-sm: 0.5rem;
+            /* 8px */
+            --spacing-md: 1rem;
+            /* 16px */
+            --spacing-lg: 1.5rem;
+            /* 24px */
+            --spacing-xl: 2rem;
+            /* 32px */
+            --spacing-2xl: 3rem;
+            /* 48px */
+            --spacing-3xl: 4rem;
+            /* 64px */
+        }
+
+        /* 浅色模式 */
+        [data-theme="light"] {
+            --bg-primary: var(--light-bg-primary);
+            --bg-secondary: var(--light-bg-secondary);
+            --bg-card: var(--light-bg-card);
+            --bg-card-hover: rgba(255, 255, 255, 1);
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+            --text-accent: var(--primary-700);
+            --border-color: var(--light-border-color);
+            --shadow-sm: var(--light-shadow-sm);
+            --shadow-md: var(--light-shadow-md);
+            --shadow-lg: var(--light-shadow-lg);
+            --shadow-xl: var(--light-shadow-xl);
+            --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
+        }
+
+        /* 优化浅色模式下欢迎区域的文字颜色 */
+        [data-theme="light"] .welcome-section {
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+        }
+
+        [data-theme="light"] .welcome-title {
+            color: var(--light-text-primary);
+        }
+
+        [data-theme="light"] .welcome-text {
+            color: var(--light-text-secondary);
+        }
+
+        /* ===== 重置与基础样式 ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ===== 设置按钮 ===== */
+        .settings-btn {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            left: var(--spacing-xl);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: all var(--transition-base);
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(30deg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: calc(var(--spacing-xl) + 70px);
+            left: var(--spacing-xl);
+            width: 300px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all var(--transition-base);
+        }
+
+        .settings-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .settings-panel h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-md);
+            color: var(--text-accent);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-option.active {
+            background: rgba(68, 183, 238, 0.2);
+            border: 1px solid var(--accent-500);
+        }
+
+        .theme-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .theme-icon {
+            font-size: 1.2rem;
+        }
+
+        .theme-check {
+            color: var(--accent-500);
+            opacity: 0;
+        }
+
+        .theme-option.active .theme-check {
+            opacity: 1;
+        }
+
+        .test-game-setting {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .setting-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex: 0 0 auto;
+        }
+
+        .toggle-switch input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .toggle-track {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--border-radius-full);
+            background: var(--neutral-500);
+            transition: var(--transition-fast);
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            transition: var(--transition-fast);
+        }
+
+        .toggle-switch input:checked + .toggle-track {
+            background: var(--accent-500);
+        }
+
+        .toggle-switch input:checked + .toggle-track::after {
+            transform: translateX(20px);
+        }
+
+        .test-game-card {
+            display: none !important;
+        }
+
+        .test-game-card.is-visible {
+            display: block !important;
+        }
+
+        /* ===== 药丸形按钮 ===== */
+        .pill-button {
+            position: fixed;
+            top: var(--spacing-xl);
+            right: var(--spacing-xl);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+
+        .pill-button-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            box-shadow: 0 0 0 rgba(0, 168, 154, 0);
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .pill-button:hover .pill-button-inner {
+            box-shadow: 0 0 30px rgba(0, 168, 154, 0.6);
+            padding-right: var(--spacing-lg);
+        }
+
+        .pill-logo {
+            width: 56px;
+            height: 56px;
+            padding: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pill-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .pill-text {
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            font-size: var(--font-size-sm);
+        }
+
+        .pill-button:hover .pill-text {
+            opacity: 1;
+            width: auto;
+            margin-right: var(--spacing-sm);
+        }
+
+        /* ===== 弹窗样式 ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 400px;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9);
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-header h3 {
+            font-size: var(--font-size-xl);
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .close-modal:hover {
+            color: var(--text-accent);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .modal-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .modal-btn.green {
+            background: var(--success);
+            color: white;
+        }
+
+        .modal-btn.green:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-btn.gray {
+            background: var(--neutral-600);
+            color: white;
+        }
+
+        .modal-btn.gray:hover {
+            background: var(--neutral-700);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .modal-btn .tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 400;
+        }
+
+        /* ===== 背景效果 ===== */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 89, 81, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 207, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(15, 23, 42, 0.2) 0%, transparent 50%);
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="light"] .gradient-bg {
+            background: radial-gradient(circle at 20% 50%, rgba(0, 168, 154, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(108, 207, 247, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(248, 250, 252, 0.1) 0%, transparent 50%);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-500), transparent);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(40px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(20px, -50px) rotate(270deg);
+            }
+        }
+
+        /* ===== 滚动条样式 ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--neutral-800);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-700);
+            border-radius: var(--border-radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-600);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-track {
+            background: var(--neutral-200);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-thumb {
+            background: var(--primary-500);
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-600);
+        }
+
+        /* ===== 工具类 ===== */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .text-gradient {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ===== 头部区域 ===== */
+        .site-header {
+            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            position: relative;
+            text-align: center;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .logo {
+            font-size: var(--font-size-5xl);
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: var(--border-radius-full);
+        }
+
+        .tagline {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            font-weight: 300;
+        }
+
+        /* ===== 主布局 ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        /* ===== 侧边栏 ===== */
+        .sidebar {
+            position: sticky;
+            top: var(--spacing-xl);
+            height: fit-content;
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-base);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(108, 207, 247, 0.3);
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .avatar-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            animation: rotate 10s linear infinite;
+            padding: 5px;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--neutral-900);
+        }
+
+        [data-theme="light"] .avatar {
+            border: 4px solid var(--neutral-100);
+        }
+
+        .profile-info {
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .profile-title {
+            color: var(--text-accent);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(108, 207, 247, 0.1);
+            border-radius: var(--border-radius-full);
+            border: 1px solid rgba(108, 207, 247, 0.2);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--text-accent);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+
+        /* ===== 导航栏 ===== */
+        .navbar {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: var(--spacing-xl);
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-sm);
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-fast);
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--text-accent);
+            background: rgba(108, 207, 247, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-text {
+            font-size: var(--font-size-sm);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-500);
+            border-radius: 50%;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .nav-link.active .nav-indicator {
+            opacity: 1;
+        }
+
+        /* ===== 移动端菜单按钮（独立于导航栏，固定在左上角） ===== */
+        .mobile-menu-toggle {
+            display: none;
+            /* 默认隐藏，仅移动端显示 */
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            margin: 0;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            touch-action: manipulation;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: var(--bg-card-hover);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-toggle i {
+            font-size: 1.5rem;
+            pointer-events: none;
+        }
+
+        /* ===== 欢迎区域 ===== */
+        .welcome-section {
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .welcome-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .welcome-text {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .highlight {
+            color: var(--text-accent);
+            font-weight: 600;
+            background: rgba(108, 207, 247, 0.1);
+            padding: 2px 6px;
+            border-radius: var(--border-radius-sm);
+        }
+
+        /* ===== 账号卡片区域 ===== */
+        .accounts-section {
+            margin-top: var(--spacing-lg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: var(--spacing-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-weight: 500;
+        }
+
+        .view-btn.active {
+            background: var(--accent-500);
+            color: var(--neutral-900);
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .account-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            transition: var(--transition-base);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .account-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent-500);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--border-radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .card-title-group {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            background: var(--accent-500);
+            color: var(--neutral-900);
+            font-size: var(--font-size-xs);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--border-radius-full);
+        }
+
+        .card-content {
+            flex: 1;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: var(--font-size-sm);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-username {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-accent);
+        }
+
+        .card-action {
+            color: var(--accent-500);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-fast);
+        }
+
+        .card-action:hover {
+            color: var(--accent-400);
+            gap: 10px;
+        }
+
+        /* ===== 统计区域 ===== */
+        .stats-section {
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .counter-widget {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .counter-widget img {
+            max-width: 200px;
+            margin-bottom: var(--spacing-sm);
+            display: inline-block;
+        }
+
+        .counter-label {
+            font-size: var(--font-size-lg);
+            color: var(--text-secondary);
+        }
+
+        .poetry-widget {
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .poetry-text {
+            font-size: var(--font-size-lg);
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.7;
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .poetry-author {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* ===== 页脚 ===== */
+        .site-footer {
+            background: var(--neutral-900);
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-2xl) 0;
+            margin-top: var(--spacing-3xl);
+        }
+
+        [data-theme="light"] .site-footer {
+            background: var(--neutral-100);
+            border-top: 1px solid var(--light-border-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .footer-logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            border: 1px solid var(--border-color);
+        }
+
+        .social-link:hover {
+            background: var(--accent-500);
+            color: var(--neutral-900);
+            transform: translateY(-3px);
+        }
+
+        .footer-heading {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-500);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* ===== 加载动画 ===== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 响应式设计 ===== */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                margin-bottom: var(--spacing-xl);
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-md);
+            }
+
+            .logo {
+                font-size: var(--font-size-4xl);
+            }
+
+            /* ---------- 移动端导航栏 ---------- */
+            .navbar {
+                position: static;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+                backdrop-filter: none;
+                top: auto;
+            }
+
+            .nav-container {
+                position: static;
+                justify-content: center;
+            }
+
+            /* 桌面导航菜单在移动端变为固定浮动菜单 */
+            .nav-menu {
+                position: fixed;
+                z-index: 1099;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.45rem;
+                width: min(220px, calc(100vw - 2rem));
+                max-height: 0;
+                padding: 0;
+                overflow: hidden;
+                list-style: none;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-0.75rem);
+                transform-origin: top left;
+                transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                /* top和left由JS动态设置，此处设为auto */
+                top: auto;
+                left: auto;
+            }
+
+            .nav-menu.nav-scrollable { overflow-y: auto; }
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: 0.75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+                transition-delay: 0s;
+            }
+
+            .nav-menu .nav-item {
+                opacity: 0;
+                transform: translateY(-0.65rem);
+                transition: opacity 0.25s ease, transform 0.3s ease;
+                width: 100%;
+            }
+
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-menu.active .nav-item:nth-child(1) {
+                transition-delay: 0.04s;
+            }
+            .nav-menu.active .nav-item:nth-child(2) {
+                transition-delay: 0.08s;
+            }
+            .nav-menu.active .nav-item:nth-child(3) {
+                transition-delay: 0.12s;
+            }
+            .nav-menu.active .nav-item:nth-child(4) {
+                transition-delay: 0.16s;
+            }
+            .nav-menu.active .nav-item:nth-child(5) {
+                transition-delay: 0.20s;
+            }
+            .nav-menu.active .nav-item:nth-child(6) {
+                transition-delay: 0.24s;
+            }
+            .nav-menu.active .nav-item:nth-child(7) {
+                transition-delay: 0.28s;
+            }
+            .nav-menu.active .nav-item:nth-child(8) {
+                transition-delay: 0.32s;
+            }
+            .nav-menu.active .nav-item:nth-child(9) {
+                transition-delay: 0.36s;
+            }
+
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 0.75rem;
+                width: 100%;
+                min-width: 0;
+                padding: 0.7rem 0.8rem;
+                text-align: left;
+            }
+
+            .nav-icon {
+                margin: 0;
+                width: 1.5rem;
+                text-align: center;
+            }
+
+            .nav-indicator {
+                margin: 0 0 0 auto;
+            }
+
+
+            /* 菜单固定锚定在左上角按钮下方，避免随页面滚动改变位置 */
+            .main-content,
+            .navbar,
+            .nav-container {
+                transform: none !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                perspective: none !important;
+                contain: none !important;
+            }
+
+            .nav-menu {
+                position: fixed !important;
+                top: 4.75rem !important;
+                left: 1rem !important;
+                width: min(220px, calc(100vw - 2rem)) !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+
+            .nav-menu .nav-indicator {
+                position: static;
+                order: -1;
+                flex: 0 0 8px;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+            }
+
+            /* ---------- 移动端菜单按钮（固定在左上角） ---------- */
+            .mobile-menu-toggle {
+                display: flex !important;
+                z-index: 9999 !important;
+                touch-action: manipulation;
+                pointer-events: auto;
+            }
+
+            /* 调整页面顶部间距，避免被固定按钮遮挡 */
+            .site-header {
+                padding-top: calc(var(--spacing-xl) + 3.5rem);
+            }
+
+            .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            /* 设置按钮在移动端保持位置 */
+            .settings-btn {
+                bottom: var(--spacing-md);
+                left: var(--spacing-md);
+                width: 48px;
+                height: 48px;
+            }
+
+            .settings-panel {
+                bottom: calc(var(--spacing-md) + 60px);
+                left: var(--spacing-md);
+                width: calc(100vw - 2 * var(--spacing-md));
+                max-width: 300px;
+            }
+
+            .pill-button {
+                top: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: var(--font-size-3xl);
+            }
+
+            .welcome-section,
+            .profile-card,
+            .account-card {
+                padding: var(--spacing-lg);
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-icon {
+                margin-bottom: var(--spacing-md);
+            }
+        }
+    
+        /* 统一移动端菜单系统 */
+        @media (max-width: 768px) {
+            .main-content,
+            .navbar,
+            .nav-container {
+                transform: none !important;
+                filter: none !important;
+                backdrop-filter: none !important;
+                perspective: none !important;
+                contain: none !important;
+            }
+
+            .mobile-menu-toggle {
+                position: fixed !important;
+                top: 1rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9999 !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 3rem;
+                height: 3rem;
+                margin: 0;
+                padding: 0;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-md, var(--radius-md, 16px));
+                background: var(--bg-card);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(20px);
+                pointer-events: auto;
+                touch-action: manipulation;
+            }
+
+            .nav-menu {
+                position: fixed !important;
+                top: 4.75rem !important;
+                left: 1rem !important;
+                right: auto !important;
+                bottom: auto !important;
+                z-index: 9998 !important;
+                display: flex !important;
+                flex-direction: column;
+                align-items: stretch;
+                gap: .45rem;
+                width: min(220px, calc(100vw - 2rem)) !important;
+                max-height: 0;
+                padding: 0;
+                overflow-x: hidden;
+                overflow-y: hidden;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-.75rem);
+                transform-origin: top left;
+                transition: max-height .35s ease, padding .35s ease, opacity .25s ease, transform .35s ease, visibility 0s linear .35s;
+                border: 1px solid var(--border-color);
+                border-radius: var(--border-radius-lg, var(--radius-lg, 24px));
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+
+            .nav-menu.active {
+                max-height: calc(100vh - 6rem);
+                padding: .75rem;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0);
+            }
+
+            .nav-menu .nav-item {
+                width: 100%;
+                opacity: 0;
+                transform: translateY(-.65rem);
+                transition: opacity .25s ease, transform .3s ease;
+            }
+
+            .nav-menu.active .nav-item {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-menu.active .nav-item:nth-child(1) { transition-delay: .04s; }
+            .nav-menu.active .nav-item:nth-child(2) { transition-delay: .08s; }
+            .nav-menu.active .nav-item:nth-child(3) { transition-delay: .12s; }
+            .nav-menu.active .nav-item:nth-child(4) { transition-delay: .16s; }
+            .nav-menu.active .nav-item:nth-child(5) { transition-delay: .20s; }
+            .nav-menu.active .nav-item:nth-child(6) { transition-delay: .24s; }
+            .nav-menu.active .nav-item:nth-child(7) { transition-delay: .28s; }
+            .nav-menu.active .nav-item:nth-child(8) { transition-delay: .32s; }
+            .nav-menu.active .nav-item:nth-child(9) { transition-delay: .36s; }
+
+            .nav-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: .75rem;
+                width: 100%;
+                min-width: 0;
+                padding: .7rem .8rem;
+                text-align: left;
+            }
+
+            .nav-icon { margin: 0; width: 1.5rem; text-align: center; }
+
+            .nav-menu .nav-indicator {
+                position: static;
+                order: -1;
+                flex: 0 0 8px;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+                transform: none;
+            }
+        }
+    
+        .nav-link#musicSelectBtn { border: 0; background: transparent; font: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; }
+        .modal-btn.purple { background: #6c63ff; color: white; }
+        .modal-btn.purple:hover { background: #584ff0; transform: translateY(-2px); }
+</style>
+    <style>
+        /* 游戏中心页面适配 */
+        .game-page { padding-top: 0; }
+        .game-page .container { max-width: 1280px; padding: 0 1.5rem; }
+        .game-page .page-title { background: var(--gradient-card); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 2rem clamp(1.25rem, 4vw, 3rem); margin: 2rem auto 1.5rem; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; animation: fadeIn 1s ease; }
+        .game-page .page-title::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--gradient-accent); }
+        .game-page .page-title h1 { color: var(--text-primary); font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: .75rem; text-shadow: none; }
+        .game-page .page-title p { color: var(--text-secondary); font-size: 1rem; max-width: 760px; }
+        .back-home-button { position: fixed; top: 2rem; right: 2rem; z-index: 1000; display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.15rem; background: var(--gradient-primary); color: white; border: 1px solid rgba(255,255,255,.15); border-radius: var(--border-radius-full); box-shadow: var(--shadow-lg); text-decoration: none; font-weight: 600; transition: var(--transition-base); }
+        .back-home-button:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); color: white; }
+        .game-page .game-card { position: relative; }
+        .game-page .new-badge, .game-page .not-recommended-badge { position: absolute; top: .75rem; right: .75rem; z-index: 2; }
+        .game-page .game-icon .new-badge, .game-page .game-icon .not-recommended-badge { top: .75rem; right: .75rem; }
+        .game-page .game-info .new-badge, .game-page .game-info .not-recommended-badge { top: .75rem; right: .75rem; }
+        .game-page .mobile-menu-toggle { display: none !important; }
+        .game-page .site-header { padding: 2rem 0 1.5rem; }
+        .game-page .logo-container { margin-bottom: 1rem; }
+        .game-page .logo { font-size: clamp(2rem, 5vw, 3rem); }
+        .game-page .tagline { font-size: 1.125rem; margin-bottom: 0; }
+        .game-page .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .game-page .game-card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); overflow: hidden; transition: var(--transition-base); box-shadow: var(--shadow-md); animation: fadeInUp .6s ease both; }
+        .game-page .game-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-xl); border-color: var(--accent-500); }
+        .game-page .game-icon { height: 170px; display: flex; justify-content: center; align-items: center; font-size: 4rem; color: white; background: var(--gradient-primary); position: relative; overflow: hidden; }
+        .game-page .game-info { padding: 1.25rem; text-align: center; }
+        .game-page .game-info h3 { color: var(--text-primary); font-size: 1.25rem; margin-bottom: .625rem; }
+        .game-page .game-info p { color: var(--text-secondary); margin-bottom: 1rem; font-size: .9rem; line-height: 1.6; min-height: 4.3em; }
+        .game-page .game-stats { display: flex; justify-content: center; flex-wrap: wrap; margin-top: .75rem; font-size: .8rem; color: var(--text-secondary); }
+        .game-page .game-stats span { margin: 0 .35rem; }
+        .game-page .play-btn { display: inline-block; padding: .7rem 1.35rem; background: var(--gradient-accent); color: white; text-decoration: none; border-radius: var(--border-radius-full); font-weight: 600; transition: var(--transition-fast); margin-top: .25rem; }
+        .game-page .play-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 15px rgba(68,183,238,.3); }
+        .game-page .new-badge, .game-page .not-recommended-badge { top: .75rem; right: .75rem; padding: .3rem .7rem; border-radius: var(--border-radius-full); font-size: .8rem; }
+        .game-page .new-badge { background: var(--error); }
+        .game-page .not-recommended-badge { background: var(--neutral-600); }
+        .game-page .search-container { max-width: 560px; margin: 1.5rem auto; position: relative; }
+        .game-page .search-input { width: 100%; padding: .9rem 1.25rem; border-radius: var(--border-radius-full); border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); font-size: 1rem; outline: none; transition: var(--transition-fast); }
+        .game-page .search-input::placeholder { color: var(--text-secondary); }
+        .game-page .search-input:focus { border-color: var(--accent-500); box-shadow: 0 0 0 3px rgba(68,183,238,.18); }
+        .game-page .category-filter { display: flex; justify-content: center; margin: 1rem 0 2rem; flex-wrap: wrap; gap: .5rem; }
+        .game-page .category-btn { padding: .5rem 1rem; background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-full); cursor: pointer; transition: var(--transition-fast); }
+        .game-page .category-btn.active, .game-page .category-btn:hover { background: var(--accent-500); color: var(--neutral-900); border-color: var(--accent-500); }
+        .game-page footer { text-align: center; padding: 2rem 0; margin-top: 3rem; color: var(--text-secondary); border-top: 1px solid var(--border-color); }
+        @media (max-width: 768px) { .game-page .container { padding: 0 1rem; } .game-page .games-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; } .game-page .site-header { padding-top: 5.5rem; } .back-home-button { top: 1rem; right: 1rem; padding: .65rem .9rem; font-size: .875rem; } .back-home-button span { display: none; } }
+        @media (max-width: 480px) { .game-page .games-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="game-page">
+    <!-- 主题设置 -->
+    <button class="settings-btn" id="settingsBtn" aria-label="打开界面设置"><i class="ri-settings-3-line"></i></button>
+    <div class="settings-panel" id="settingsPanel" role="dialog" aria-label="界面设置">
+        <h3><i class="ri-palette-line"></i> 界面设置</h3>
+        <div class="theme-options">
+            <div class="theme-option active" data-theme="system"><div class="theme-info"><i class="ri-computer-line theme-icon"></i><span>跟随系统</span></div><i class="ri-check-line theme-check"></i></div>
+            <div class="theme-option" data-theme="time"><div class="theme-info"><i class="ri-time-line theme-icon"></i><span>跟随时间</span></div><i class="ri-check-line theme-check"></i></div>
+            <div class="theme-option" data-theme="dark"><div class="theme-info"><i class="ri-moon-line theme-icon"></i><span>深色模式</span></div><i class="ri-check-line theme-check"></i></div>
+            <div class="theme-option" data-theme="light"><div class="theme-info"><i class="ri-sun-line theme-icon"></i><span>浅色模式</span></div><i class="ri-check-line theme-check"></i></div>
+        </div>
+        <div class="test-game-setting">
+            <label class="setting-toggle" for="test-game-toggle">
+                <span><i class="ri-flask-line"></i> 测试游戏显示</span>
+                <span class="toggle-switch"><input id="test-game-toggle" type="checkbox" aria-label="测试游戏显示"><span class="toggle-track"></span></span>
+            </label>
+        </div>
+    </div>
+    <div class="background-effects"><div class="gradient-bg"></div><div class="particles" id="particles"></div></div>
+
+    <!-- 返回个人网站主页 -->
+    <a class="back-home-button" href="https://infds.top/" aria-label="返回个人网站主页">
+        <i class="ri-home-4-line"></i>
+        <span>返回个人网站主页</span>
+    </a>
+
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="page-title">
+            <h1>HTML5小游戏集合</h1>
+            <p>精选17款经典小游戏，点击即可开始游玩！每款游戏都有独特玩法与挑战，尽情享受游戏乐趣吧！</p>
+        </div>
+
+        <!-- 搜索和分类筛选 -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索游戏...">
+        </div>
+        
+        <div class="category-filter">
+            <button class="category-btn active">全部</button>
+            <button class="category-btn">棋类</button>
+            <button class="category-btn">益智</button>
+            <button class="category-btn">动作</button>
+            <button class="category-btn">经典</button>
+        </div>
+
+        <!-- 游戏网格 -->
+        <div class="games-grid" id="games">
+            <!-- 测试游戏：默认由界面设置隐藏 -->
+            <div class="game-card test-game-card" data-test-game="true">
+                <div class="game-icon">
+                    <i class="ri-flask-line"></i>
+                    <span class="not-recommended-badge">Dev</span>
+                </div>
+                <div class="game-info">
+                    <h3>络可Galgame</h3>
+                    <p>水彩治愈系夏日物语。</p>
+                    <div class="game-stats"><span><i class="ri-code-line"></i> Dev</span></div>
+                    <a href="rikoggame.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+            <!-- MountainCraft -->
+            <div class="game-card" data-url="https://mc.infds.top" role="link" tabindex="0" aria-label="进入 MountainCraft">
+                <div class="game-icon">
+                    <i class="fas fa-cube"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>MountainCraft</h3>
+                    <p>个人Minecraft小服务器，支持26.X版本。已安装各种基础插件，欢迎前来游玩。</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-server"></i> 服务器</span>
+                        <span><i class="fas fa-cubes"></i> Minecraft</span>
+                    </div>
+                    <a href="https://mc.infds.top" class="play-btn">进入官网</a>
+                </div>
+            </div>
+
+            <!-- 谁是卧底 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <div class="game-info">
+                    <h3>谁是卧底</h3>
+                    <p>找出隐藏在玩家中的卧底，用智慧和观察力赢得胜利！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-users"></i> 多人</span>
+                        <span><i class="fas fa-brain"></i> 推理</span>
+                    </div>
+                    <a href="sswd.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 五子棋 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-chess-board"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>五子棋</h3>
+                    <p>经典五子棋游戏，黑白对弈，先连成五子者获胜！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-chess"></i> 棋类</span>
+                        <span><i class="fas fa-brain"></i> 策略</span>
+                    </div>
+                    <a href="wzq.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 扫雷 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-land-mine-on"></i>
+                </div>
+                <div class="game-info">
+                    <h3>扫雷</h3>
+                    <p>经典扫雷游戏，标记所有地雷位置，挑战你的推理能力！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 推理</span>
+                    </div>
+                    <a href="sl.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 大富翁【简易版】 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>大富翁【简易版】</h3>
+                    <p>经典大富翁游戏简化版，掷骰子买地收租，成为最富有的玩家！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-dice"></i> 策略</span>
+                        <span><i class="fas fa-star"></i> 经典</span>
+                    </div>
+                    <a href="DFW.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- XO井字棋 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="game-info">
+                    <h3>XO井字棋</h3>
+                    <p>经典井字棋游戏，挑战你的策略思维，三个相同符号连成一线即获胜。</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-chess"></i> 棋类</span>
+                        <span><i class="fas fa-brain"></i> 策略</span>
+                    </div>
+                    <a href="jzq.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 数独 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-brain"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>数独</h3>
+                    <p>挑战经典数独游戏，从入门到专家级难度。</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 逻辑</span>
+                    </div>
+                    <a href="shudu.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- Flappy Bird -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-dove"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>Flappy Bird</h3>
+                    <p>控制小鸟穿过管道障碍，挑战你的反应速度和节奏感！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-bolt"></i> 反应</span>
+                    </div>
+                    <a href="flappybird.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- Granny Smith -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fa-solid fa-apple-whole"></i>
+                    <span class="new-badge">新</span>
+                </div>
+                <div class="game-info">
+                    <h3>Granny Smith</h3>
+                    <p>控制老奶奶，夺回被窃取的苹果！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-bolt"></i> 反应</span>
+                    </div>
+                    <a href="smsnn.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 记忆翻牌 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <div class="game-info">
+                    <h3>记忆翻牌</h3>
+                    <p>测试你的记忆力，找出所有匹配的卡片对，挑战最高分！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-brain"></i> 记忆</span>
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                    </div>
+                    <a href="jyfp.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 贪吃蛇 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-worm"></i>
+                </div>
+                <div class="game-info">
+                    <h3>贪吃蛇</h3>
+                    <p>控制小蛇吃食物并成长，避免撞到墙壁或自己的身体！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-star"></i> 经典</span>
+                    </div>
+                    <a href="tcs.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 数字华容道 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="game-info">
+                    <h3>数字华容道</h3>
+                    <p>移动数字滑块，按顺序排列所有数字，挑战你的逻辑思维！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 逻辑</span>
+                    </div>
+                    <a href="hrd.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 平台跳跃游戏 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-running"></i>
+                </div>
+                <div class="game-info">
+                    <h3>平台跳跃</h3>
+                    <p>控制角色跳跃穿越各种平台障碍，挑战最高分数！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-bolt"></i> 敏捷</span>
+                    </div>
+                    <a href="pj.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 打砖块 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-grip-lines"></i>
+                </div>
+                <div class="game-info">
+                    <h3>打砖块</h3>
+                    <p>控制挡板反弹球击碎所有砖块，经典游戏全新体验！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-star"></i> 经典</span>
+                    </div>
+                    <a href="dzk.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 猜数字 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="game-info">
+                    <h3>猜数字</h3>
+                    <p>猜出计算机随机生成的数字，考验你的逻辑推理能力！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 推理</span>
+                    </div>
+                    <a href="guess_number.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 2048 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-th"></i>
+                </div>
+                <div class="game-info">
+                    <h3>2048</h3>
+                    <p>通过合并相同数字达到2048目标，挑战你的策略规划能力！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 策略</span>
+                    </div>
+                    <a href="2048.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 简易拼图 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="game-info">
+                    <h3>简易拼图</h3>
+                    <p>将打乱的图片碎片重新拼合完整，锻炼你的空间思维能力！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-brain"></i> 空间</span>
+                    </div>
+                    <a href="jypt.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 连连看 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div class="game-info">
+                    <h3>连连看</h3>
+                    <p>连接相同的图案消除所有方块，考验你的观察力和速度！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-puzzle-piece"></i> 益智</span>
+                        <span><i class="fas fa-eye"></i> 观察</span>
+                    </div>
+                    <a href="llk.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 打地鼠 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-hammer"></i>
+                </div>
+                <div class="game-info">
+                    <h3>打地鼠</h3>
+                    <p>快速击打随机出现的地鼠，测试你的反应速度和手眼协调！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-bolt"></i> 反应</span>
+                    </div>
+                    <a href="dds.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 雷霆战机 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-space-shuttle"></i>
+                    <span class="not-recommended-badge">未完成</span>
+                </div>
+                <div class="game-info">
+                    <h3>雷霆战机</h3>
+                    <p>驾驶飞船对抗敌人，保卫人类的最后防线！</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-gamepad"></i> 动作</span>
+                        <span><i class="fas fa-star"></i> 经典</span>
+                    </div>
+                    <a href="tkqxz.html" class="play-btn">开始游戏</a>
+                </div>
+            </div>
+
+            <!-- 敬请期待 -->
+            <div class="game-card">
+                <div class="game-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="game-info">
+                    <h3>敬请期待</h3>
+                    <p>更多精彩游戏正在开发中，即将上线，敬请期待！</p>
+                    <a href="jqqd.html" class="play-btn">查看详情</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 大山 2025 html游戏中心 - HTML小游戏集合 | 设计精美，体验流畅</p>
+    </footer>
+
+    <script>
+        (() => {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            const testGameToggle = document.getElementById('test-game-toggle');
+            const testGameCard = document.querySelector('[data-test-game="true"]');
+            const applyTestGameVisibility = visible => {
+                if (testGameCard) testGameCard.classList.toggle('is-visible', visible);
+                if (testGameToggle) testGameToggle.checked = visible;
+            };
+            const applyTheme = preference => {
+                let theme = preference;
+                if (preference === 'system') theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                if (preference === 'time') { const hour = new Date().getHours(); theme = hour >= 8 && hour < 19 ? 'light' : 'dark'; }
+                document.documentElement.setAttribute('data-theme', theme);
+            };
+            const initTheme = () => {
+                const preference = localStorage.getItem('theme-preference') || 'system';
+                themeOptions.forEach(option => option.classList.toggle('active', option.dataset.theme === preference));
+                applyTheme(preference);
+            };
+            settingsBtn.addEventListener('click', event => { event.stopPropagation(); settingsPanel.classList.toggle('active'); });
+            settingsPanel.addEventListener('click', event => event.stopPropagation());
+            document.addEventListener('click', () => settingsPanel.classList.remove('active'));
+            themeOptions.forEach(option => option.addEventListener('click', () => { localStorage.setItem('theme-preference', option.dataset.theme); themeOptions.forEach(item => item.classList.remove('active')); option.classList.add('active'); applyTheme(option.dataset.theme); }));
+            matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if ((localStorage.getItem('theme-preference') || 'system') === 'system') applyTheme('system'); });
+            setInterval(() => { if (localStorage.getItem('theme-preference') === 'time') applyTheme('time'); }, 5 * 60 * 1000);
+            initTheme();
+            applyTestGameVisibility(localStorage.getItem('test-game-visible') === 'true');
+            if (testGameToggle) {
+                testGameToggle.addEventListener('change', () => {
+                    localStorage.setItem('test-game-visible', String(testGameToggle.checked));
+                    applyTestGameVisibility(testGameToggle.checked);
+                });
+            }
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 18; i++) { const particle = document.createElement('div'); particle.className = 'particle'; particle.style.width = `${Math.random() * 80 + 20}px`; particle.style.height = particle.style.width; particle.style.left = `${Math.random() * 100}%`; particle.style.top = `${Math.random() * 100}%`; particle.style.animationDelay = `${Math.random() * -20}s`; particles.appendChild(particle); }
+        })();
+    </script>
+
+	<script>
+        // 滚动时导航栏效果
+        // 游戏卡片动画延迟
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // 搜索功能
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const cards = document.querySelectorAll('.game-card');
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 分类筛选功能
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有active类
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    
+                    const category = this.textContent;
+                    const cards = document.querySelectorAll('.game-card');
+                    
+                    if (category === '全部') {
+                        cards.forEach(card => {
+                            card.style.display = 'block';
+                        });
+                        return;
+                    }
+                    
+                    cards.forEach(card => {
+                        const stats = card.querySelector('.game-stats').textContent;
+                        if (stats.includes(category)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // 游戏卡片点击效果
+            const gameCards = document.querySelectorAll('.game-card');
+            gameCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (this.dataset.url && !e.target.closest('a')) {
+                        window.location.href = this.dataset.url;
+                        return;
+                    }
+                    if (!e.target.classList.contains('play-btn')) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    }
+                });
+                card.addEventListener('keydown', function(e) {
+                    if (this.dataset.url && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        window.location.href = this.dataset.url;
+                    }
+                });
+            });
+            
+            // 页面加载动画
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 添加加载完成后的样式
+        const style = document.createElement('style');
+        style.textContent = `
+            body {
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+            body.loaded {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大富翁游戏 - 增强版</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://img.cdn1.vip/i/68c41cce83a0f_1757682894.jpeg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .board-container {
+            flex: 3;
+            min-width: 600px;
+        }
+        
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .board {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #2c5530;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+        
+        .tile {
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            background: #f5f5f5;
+            border: 2px solid #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 5px;
+            font-size: 0.8rem;
+            color: #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .tile:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 10px gold;
+        }
+        
+        .tile.owned {
+            border: 3px dashed;
+        }
+        
+        .tile.start {
+            background: #90EE90;
+        }
+        
+        .tile.property {
+            background: #FFE4B5;
+        }
+        
+        .tile.chance {
+            background: #ADD8E6;
+        }
+        
+        .tile.tax {
+            background: #FFB6C1;
+        }
+        
+        .tile.jail {
+            background: #D3D3D3;
+        }
+        
+        .player {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            z-index: 5;
+            transition: all 0.5s ease-in-out;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+        
+        .player-1 {
+            background: #FF5252;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .player-2 {
+            background: #2196F3;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .dice {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+        }
+        
+        .player-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .player-info.active {
+            background: rgba(255, 215, 0, 0.3);
+            border: 2px solid gold;
+        }
+        
+        .player-info h3 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .properties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .property-chip {
+            padding: 5px 10px;
+            background: #4CAF50;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .event-log {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            height: 200px;
+            overflow-y: auto;
+        }
+        
+        .event-log h3 {
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .event {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #fff;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal h2 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        
+        .modal p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .modal button {
+            padding: 10px 20px;
+            min-width: 100px;
+        }
+        
+        .modal .confirm-btn {
+            background: #d32f2f;
+        }
+        
+        .modal .confirm-btn:hover {
+            background: #b71c1c;
+        }
+        
+        .modal .cancel-btn {
+            background: #757575;
+        }
+        
+        .modal .cancel-btn:hover {
+            background: #616161;
+        }
+        
+        /* 游戏结束样式 */
+        .game-over {
+            background: linear-gradient(135deg, #ff9800, #f44336);
+        }
+        
+        .game-over-content {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .winner-trophy {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: gold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        @media (max-width: 1000px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .board-container, .info-panel {
+                min-width: 100%;
+            }
+        }
+    </style>
+
+    <style id="game-center-return-style">
+        .game-center-return {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .7rem 1.15rem;
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #00a89a, #3695c5);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+            text-decoration: none;
+            font: 600 .95rem/1.2 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .game-center-return:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 168, 154, .35);
+            filter: brightness(1.08);
+        }
+        .game-center-return:focus-visible {
+            outline: 3px solid rgba(68, 183, 238, .55);
+            outline-offset: 3px;
+        }
+        @media (max-width: 600px) {
+            .game-center-return {
+                top: .75rem;
+                right: .75rem;
+                padding: .6rem .85rem;
+                font-size: .85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="game-center-return" href="/index" aria-label="返回至游戏中心">返回至游戏中心</a>
+    <div class="container">
+        <header>
+            <h1>大富翁游戏 - 增强版</h1>
+            <p>掷骰子、购买地产、成为最富有的玩家！</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="board-container">
+                <div class="board" id="gameBoard">
+                    <!-- 棋盘格子将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="controls">
+                    <button id="rollDice">掷骰子</button>
+                    <div class="dice" id="diceValue">?</div>
+                    <button id="buyProperty" disabled>购买地产</button>
+                    <button id="endTurn" disabled>结束回合</button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="player-info active" id="player1Info">
+                    <h3>玩家1 <span id="player1Money">¥1500</span></h3>
+                    <p>位置: <span id="player1Position">起点</span></p>
+                    <div class="properties" id="player1Properties">
+                        <!-- 玩家1的地产将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="player-info" id="player2Info">
+                    <h3>玩家2 <span id="player2Money">¥1500</span></h3>
+                    <p>位置: <span id="player2Position">起点</span></p>
+                    <div class="properties" id="player2Properties">
+                        <!-- 玩家2的地产将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="event-log">
+                    <h3>游戏事件</h3>
+                    <div id="eventList">
+                        <div class="event">游戏开始！玩家1先行动。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 破产确认弹窗 -->
+    <div class="modal" id="bankruptcyModal">
+        <div class="modal-content">
+            <h2>资金不足！</h2>
+            <p>您没有足够的资金支付这笔费用。如果继续支付，您的余额将变为负数，并被视为破产。</p>
+            <p>确认要继续支付吗？</p>
+            <div class="modal-buttons">
+                <button class="confirm-btn" id="confirmBankruptcy">确认支付</button>
+                <button class="cancel-btn" id="cancelBankruptcy">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content game-over">
+            <div class="winner-trophy">🏆</div>
+            <h2>游戏结束！</h2>
+            <p id="winnerMessage"></p>
+            <button id="restartGame">重新开始游戏</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameData = {
+            players: [
+                { id: 1, name: "玩家1", money: 1500, position: 0, properties: [], isActive: true, isBankrupt: false },
+                { id: 2, name: "玩家2", money: 1500, position: 0, properties: [], isActive: false, isBankrupt: false }
+            ],
+            currentPlayerIndex: 0,
+            tiles: [
+                { id: 0, name: "起点", type: "start", price: 0, owner: null },
+                { id: 1, name: "北京", type: "property", price: 200, owner: null },
+                { id: 2, name: "上海", type: "property", price: 250, owner: null },
+                { id: 3, name: "机会", type: "chance", price: 0, owner: null },
+                { id: 4, name: "广州", type: "property", price: 300, owner: null },
+                { id: 5, name: "所得税", type: "tax", price: 100, owner: null },
+                { id: 6, name: "深圳", type: "property", price: 350, owner: null },
+                { id: 7, name: "监狱", type: "jail", price: 0, owner: null },
+                { id: 8, name: "杭州", type: "property", price: 400, owner: null },
+                { id: 9, name: "机会", type: "chance", price: 0, owner: null },
+                { id: 10, name: "成都", type: "property", price: 450, owner: null },
+                { id: 11, name: "重庆", type: "property", price: 500, owner: null }
+            ],
+            diceValue: 0,
+            gameOver: false
+        };
+
+        // 初始化游戏
+        function initGame() {
+            createBoard();
+            updatePlayerInfo();
+            positionPlayers();
+            
+            // 重置游戏状态
+            gameData.gameOver = false;
+            document.getElementById('gameOverModal').style.display = 'none';
+        }
+
+        // 创建棋盘
+        function createBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            gameData.tiles.forEach((tile, index) => {
+                const tileElement = document.createElement('div');
+                tileElement.className = `tile ${tile.type}`;
+                tileElement.innerHTML = `
+                    <strong>${tile.name}</strong>
+                    ${tile.price > 0 ? `¥${tile.price}` : ''}
+                    ${tile.owner ? `<div>所有者: 玩家${tile.owner}</div>` : ''}
+                `;
+                
+                // 计算每个格子在圆形棋盘上的位置
+                const angle = (index / gameData.tiles.length) * 2 * Math.PI;
+                const radius = 40; // 百分比半径
+                const x = 50 + radius * Math.cos(angle);
+                const y = 50 + radius * Math.sin(angle);
+                
+                tileElement.style.left = `${x}%`;
+                tileElement.style.top = `${y}%`;
+                tileElement.style.transform = `translate(-50%, -50%) rotate(${angle + Math.PI/2}rad)`;
+                
+                board.appendChild(tileElement);
+            });
+            
+            // 添加玩家棋子
+            const player1 = document.createElement('div');
+            player1.className = 'player player-1';
+            player1.id = 'player1';
+            player1.textContent = '1';
+            board.appendChild(player1);
+            
+            const player2 = document.createElement('div');
+            player2.className = 'player player-2';
+            player2.id = 'player2';
+            player2.textContent = '2';
+            board.appendChild(player2);
+        }
+
+        // 定位玩家在棋盘上的位置
+        function positionPlayers() {
+            gameData.players.forEach(player => {
+                const playerElement = document.getElementById(`player${player.id}`);
+                const tileIndex = player.position;
+                const angle = (tileIndex / gameData.tiles.length) * 2 * Math.PI;
+                const radius = 40;
+                const x = 50 + radius * Math.cos(angle);
+                const y = 50 + radius * Math.sin(angle);
+                
+                // 为同一位置的玩家添加偏移，避免完全重叠
+                const offset = player.id === 1 ? -5 : 5;
+                const offsetX = x + offset * Math.cos(angle + Math.PI/2);
+                const offsetY = y + offset * Math.sin(angle + Math.PI/2);
+                
+                playerElement.style.left = `${offsetX}%`;
+                playerElement.style.top = `${offsetY}%`;
+            });
+        }
+
+        // 更新玩家信息显示
+        function updatePlayerInfo() {
+            gameData.players.forEach(player => {
+                const playerInfo = document.getElementById(`player${player.id}Info`);
+                const moneyElement = document.getElementById(`player${player.id}Money`);
+                const positionElement = document.getElementById(`player${player.id}Position`);
+                const propertiesElement = document.getElementById(`player${player.id}Properties`);
+                
+                // 更新金钱和位置
+                moneyElement.textContent = `¥${player.money}`;
+                positionElement.textContent = gameData.tiles[player.position].name;
+                
+                // 更新地产列表
+                propertiesElement.innerHTML = '';
+                player.properties.forEach(propertyId => {
+                    const property = gameData.tiles[propertyId];
+                    const propertyChip = document.createElement('div');
+                    propertyChip.className = 'property-chip';
+                    propertyChip.textContent = property.name;
+                    propertiesElement.appendChild(propertyChip);
+                });
+                
+                // 更新活动玩家高亮
+                if (player.isActive) {
+                    playerInfo.classList.add('active');
+                } else {
+                    playerInfo.classList.remove('active');
+                }
+                
+                // 如果玩家破产，添加特殊样式
+                if (player.isBankrupt) {
+                    playerInfo.style.background = 'rgba(211, 47, 47, 0.3)';
+                    playerInfo.style.border = '2px solid #d32f2f';
+                }
+            });
+        }
+
+        // 掷骰子
+        function rollDice() {
+            if (gameData.gameOver) return;
+            
+            const diceValue = Math.floor(Math.random() * 6) + 1;
+            gameData.diceValue = diceValue;
+            
+            document.getElementById('diceValue').textContent = diceValue;
+            document.getElementById('rollDice').disabled = true;
+            
+            addEvent(`玩家${gameData.currentPlayerIndex + 1}掷出了${diceValue}点`);
+            
+            // 移动玩家
+            movePlayer(diceValue);
+        }
+
+        // 移动玩家
+        function movePlayer(steps) {
+            const currentPlayer = gameData.players[gameData.currentPlayerIndex];
+            currentPlayer.position = (currentPlayer.position + steps) % gameData.tiles.length;
+            
+            positionPlayers();
+            
+            // 更新位置显示
+            updatePlayerInfo();
+            
+            // 检查当前格子类型并处理
+            const currentTile = gameData.tiles[currentPlayer.position];
+            addEvent(`玩家${gameData.currentPlayerIndex + 1}移动到了${currentTile.name}`);
+            
+            handleTileAction(currentTile);
+        }
+
+        // 处理格子事件
+        function handleTileAction(tile) {
+            const currentPlayer = gameData.players[gameData.currentPlayerIndex];
+            
+            switch(tile.type) {
+                case 'property':
+                    if (tile.owner === null) {
+                        // 无人拥有的地产，可以购买
+                        document.getElementById('buyProperty').disabled = false;
+                        addEvent(`${tile.name}无人拥有，玩家${gameData.currentPlayerIndex + 1}可以购买`);
+                    } else if (tile.owner !== currentPlayer.id) {
+                        // 其他玩家的地产，需要支付租金
+                        const rent = Math.floor(tile.price * 0.2);
+                        
+                        // 检查玩家是否有足够资金
+                        if (currentPlayer.money >= rent) {
+                            // 正常支付租金
+                            currentPlayer.money -= rent;
+                            
+                            const ownerPlayer = gameData.players.find(p => p.id === tile.owner);
+                            ownerPlayer.money += rent;
+                            
+                            addEvent(`玩家${gameData.currentPlayerIndex + 1}支付了¥${rent}租金给玩家${tile.owner}`);
+                            updatePlayerInfo();
+                            
+                            document.getElementById('endTurn').disabled = false;
+                        } else {
+                            // 资金不足，显示破产确认弹窗
+                            showBankruptcyModal(rent, tile.owner);
+                        }
+                    } else {
+                        // 自己的地产，无需操作
+                        addEvent(`玩家${gameData.currentPlayerIndex + 1}来到了自己的地产${tile.name}`);
+                        document.getElementById('endTurn').disabled = false;
+                    }
+                    break;
+                    
+                case 'tax':
+                    const taxAmount = tile.price;
+                    
+                    // 检查玩家是否有足够资金
+                    if (currentPlayer.money >= taxAmount) {
+                        // 正常支付税款
+                        currentPlayer.money -= taxAmount;
+                        addEvent(`玩家${gameData.currentPlayerIndex + 1}支付了¥${taxAmount}所得税`);
+                        updatePlayerInfo();
+                        document.getElementById('endTurn').disabled = false;
+                    } else {
+                        // 资金不足，显示破产确认弹窗
+                        showBankruptcyModal(taxAmount, 'bank');
+                    }
+                    break;
+                    
+                case 'chance':
+                    const chanceEvents = [
+                        { text: "获得彩票奖金¥200", amount: 200, type: "gain" },
+                        { text: "支付维修费¥100", amount: 100, type: "loss" },
+                        { text: "前进2格", move: 2, type: "move" },
+                        { text: "后退1格", move: -1, type: "move" },
+                        { text: "获得遗产¥150", amount: 150, type: "gain" }
+                    ];
+                    const randomEvent = chanceEvents[Math.floor(Math.random() * chanceEvents.length)];
+                    addEvent(`机会卡: ${randomEvent.text}`);
+                    
+                    if (randomEvent.type === "gain") {
+                        const amount = randomEvent.amount;
+                        currentPlayer.money += amount;
+                        addEvent(`玩家${gameData.currentPlayerIndex + 1}获得了¥${amount}`);
+                        updatePlayerInfo();
+                        document.getElementById('endTurn').disabled = false;
+                    } else if (randomEvent.type === "loss") {
+                        const amount = randomEvent.amount;
+                        
+                        // 检查玩家是否有足够资金
+                        if (currentPlayer.money >= amount) {
+                            currentPlayer.money -= amount;
+                            addEvent(`玩家${gameData.currentPlayerIndex + 1}支付了¥${amount}`);
+                            updatePlayerInfo();
+                            document.getElementById('endTurn').disabled = false;
+                        } else {
+                            // 资金不足，显示破产确认弹窗
+                            showBankruptcyModal(amount, 'bank');
+                        }
+                    } else if (randomEvent.type === "move") {
+                        addEvent(`玩家${gameData.currentPlayerIndex + 1}移动了${randomEvent.move > 0 ? '前进' : '后退'}${Math.abs(randomEvent.move)}格`);
+                        movePlayer(randomEvent.move);
+                        // 注意：这里会递归调用handleTileAction，所以不需要启用结束回合按钮
+                    }
+                    break;
+                    
+                case 'jail':
+                    addEvent(`玩家${gameData.currentPlayerIndex + 1}正在探监`);
+                    document.getElementById('endTurn').disabled = false;
+                    break;
+                    
+                default:
+                    document.getElementById('endTurn').disabled = false;
+                    break;
+            }
+        }
+
+        // 显示破产确认弹窗
+        function showBankruptcyModal(amount, recipient) {
+            const modal = document.getElementById('bankruptcyModal');
+            const currentPlayer = gameData.players[gameData.currentPlayerIndex];
+            
+            modal.style.display = 'flex';
+            
+            // 设置确认按钮事件
+            document.getElementById('confirmBankruptcy').onclick = function() {
+                modal.style.display = 'none';
+                
+                // 执行支付
+                currentPlayer.money -= amount;
+                
+                // 如果recipient是玩家ID，则给该玩家钱
+                if (recipient !== 'bank') {
+                    const ownerPlayer = gameData.players.find(p => p.id === parseInt(recipient));
+                    ownerPlayer.money += amount;
+                    addEvent(`玩家${currentPlayer.id}支付了¥${amount}给玩家${recipient}（余额：¥${currentPlayer.money}）`);
+                } else {
+                    addEvent(`玩家${currentPlayer.id}支付了¥${amount}（余额：¥${currentPlayer.money}）`);
+                }
+                
+                updatePlayerInfo();
+                
+                // 检查玩家是否破产
+                if (currentPlayer.money < 0) {
+                    currentPlayer.isBankrupt = true;
+                    addEvent(`玩家${currentPlayer.id}破产了！`);
+                    
+                    // 检查游戏是否结束
+                    checkGameOver();
+                } else {
+                    document.getElementById('endTurn').disabled = false;
+                }
+            };
+            
+            // 设置取消按钮事件
+            document.getElementById('cancelBankruptcy').onclick = function() {
+                modal.style.display = 'none';
+                addEvent(`玩家${currentPlayer.id}取消了支付`);
+                document.getElementById('endTurn').disabled = false;
+            };
+        }
+
+        // 检查游戏是否结束
+        function checkGameOver() {
+            const activePlayers = gameData.players.filter(player => !player.isBankrupt);
+            
+            if (activePlayers.length === 1) {
+                // 游戏结束，只有一个玩家没有破产
+                gameData.gameOver = true;
+                const winner = activePlayers[0];
+                
+                // 显示游戏结束弹窗
+                const modal = document.getElementById('gameOverModal');
+                const winnerMessage = document.getElementById('winnerMessage');
+                
+                winnerMessage.textContent = `玩家${winner.id}获胜！最终余额：¥${winner.money}`;
+                modal.style.display = 'flex';
+                
+                addEvent(`游戏结束！玩家${winner.id}获胜！`);
+            } else if (activePlayers.length === 0) {
+                // 所有玩家都破产了（理论上不会发生，但处理一下）
+                gameData.gameOver = true;
+                
+                const modal = document.getElementById('gameOverModal');
+                const winnerMessage = document.getElementById('winnerMessage');
+                
+                winnerMessage.textContent = "所有玩家都破产了！游戏平局！";
+                modal.style.display = 'flex';
+                
+                addEvent(`游戏结束！所有玩家都破产了！`);
+            }
+        }
+
+        // 购买地产
+        function buyProperty() {
+            const currentPlayer = gameData.players[gameData.currentPlayerIndex];
+            const currentTile = gameData.tiles[currentPlayer.position];
+            
+            if (currentPlayer.money >= currentTile.price) {
+                currentPlayer.money -= currentTile.price;
+                currentTile.owner = currentPlayer.id;
+                currentPlayer.properties.push(currentTile.id);
+                
+                addEvent(`玩家${gameData.currentPlayerIndex + 1}购买了${currentTile.name}`);
+                
+                updatePlayerInfo();
+                createBoard(); // 重新创建棋盘以更新地产所有者显示
+                
+                document.getElementById('buyProperty').disabled = true;
+                document.getElementById('endTurn').disabled = false;
+            } else {
+                addEvent(`玩家${gameData.currentPlayerIndex + 1}资金不足，无法购买${currentTile.name}`);
+            }
+        }
+
+        // 结束回合
+        function endTurn() {
+            // 切换玩家
+            gameData.players[gameData.currentPlayerIndex].isActive = false;
+            gameData.currentPlayerIndex = (gameData.currentPlayerIndex + 1) % gameData.players.length;
+            gameData.players[gameData.currentPlayerIndex].isActive = true;
+            
+            addEvent(`轮到玩家${gameData.currentPlayerIndex + 1}的回合`);
+            
+            // 重置按钮状态
+            document.getElementById('rollDice').disabled = false;
+            document.getElementById('buyProperty').disabled = true;
+            document.getElementById('endTurn').disabled = true;
+            document.getElementById('diceValue').textContent = '?';
+            
+            updatePlayerInfo();
+        }
+
+        // 添加事件到事件日志
+        function addEvent(message) {
+            const eventList = document.getElementById('eventList');
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event';
+            eventElement.textContent = message;
+            eventList.appendChild(eventElement);
+            
+            // 自动滚动到底部
+            eventList.scrollTop = eventList.scrollHeight;
+        }
+
+        // 绑定按钮事件
+        document.getElementById('rollDice').addEventListener('click', rollDice);
+        document.getElementById('buyProperty').addEventListener('click', buyProperty);
+        document.getElementById('endTurn').addEventListener('click', endTurn);
+        document.getElementById('restartGame').addEventListener('click', initGame);
+
+        // 初始化游戏
+        window.onload = initGame;
+    </script>
+</body>
+</html>

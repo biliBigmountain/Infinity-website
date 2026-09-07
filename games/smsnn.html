@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>史密斯奶奶 - Granny Smith</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            background: #1a2a1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            overflow: hidden;
+        }
+        /* ===== 游戏容器 ===== */
+        #game-container {
+            position: relative;
+            width: 900px;
+            max-width: 98vw;
+            height: 620px;
+            max-height: 98vh;
+            background: #87CEEB;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            border: 4px solid #5a3e1b;
+        }
+        /* ===== 返回游戏中心（右上角） ===== */
+        #back-to-center {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.25s ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        #back-to-center:hover {
+            background: rgba(255, 215, 0, 0.8);
+            color: #1a2a1a;
+            border-color: #ffd700;
+            transform: scale(1.04);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+        #back-to-center::before {
+            content: "🏠";
+            font-size: 17px;
+        }
+
+        /* ===== Canvas ===== */
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #87CEEB;
+            cursor: pointer;
+        }
+
+        /* ===== 界面层 (绝对定位) ===== */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.40);
+            backdrop-filter: blur(4px);
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            z-index: 10;
+            padding: 20px;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* ===== 主界面 ===== */
+        #menu-overlay {
+            background: rgba(30, 50, 30, 0.55);
+            backdrop-filter: blur(6px);
+        }
+        .menu-title {
+            font-size: 62px;
+            font-weight: 900;
+            color: #f9e7b3;
+            text-shadow: 0 6px 0 #6b4f2a, 0 12px 30px rgba(0, 0, 0, 0.6);
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+            line-height: 1.1;
+            text-align: center;
+        }
+        .menu-sub {
+            font-size: 22px;
+            color: #d4c8a0;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            letter-spacing: 6px;
+            font-weight: 300;
+        }
+        .menu-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 220px;
+        }
+        .menu-btn {
+            padding: 14px 0;
+            font-size: 22px;
+            font-weight: 700;
+            border: none;
+            border-radius: 60px;
+            background: #f5e6b0;
+            color: #3d2b13;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 0 #9f7e4a, 0 8px 24px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .menu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #9f7e4a, 0 12px 32px rgba(0, 0, 0, 0.4);
+            background: #fff3cc;
+        }
+        .menu-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #9f7e4a;
+        }
+        .menu-btn.secondary {
+            background: #d4c8a0;
+            box-shadow: 0 6px 0 #8a7a5a;
+            font-size: 18px;
+        }
+        .menu-btn.secondary:hover {
+            background: #e8ddb8;
+        }
+        .menu-footer {
+            position: absolute;
+            bottom: 18px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 选关界面 ===== */
+        #level-select-overlay {
+            background: rgba(20, 30, 20, 0.70);
+            backdrop-filter: blur(8px);
+            padding: 20px 30px;
+        }
+        .select-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 18px;
+            color: #f5e6b0;
+        }
+        .select-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        }
+        .select-header .close-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .select-header .close-btn:hover {
+            background: rgba(255, 80, 80, 0.5);
+            transform: rotate(90deg);
+        }
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 4px 8px 8px 8px;
+        }
+        .level-card {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 18px 12px 14px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .level-card.locked {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+        }
+        .level-card.unlocked {
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+        .level-card.unlocked:hover {
+            background: rgba(255, 215, 0, 0.18);
+            border-color: #ffd700;
+            transform: scale(1.03);
+        }
+        .level-card .lv-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5e6b0;
+            line-height: 1.2;
+        }
+        .level-card .lv-name {
+            font-size: 14px;
+            color: #d4c8a0;
+            margin: 4px 0 6px;
+        }
+        .level-card .lv-stars {
+            font-size: 22px;
+            letter-spacing: 4px;
+            color: #ffd700;
+        }
+        .level-card .lv-lock {
+            font-size: 32px;
+            color: #aaa;
+        }
+        .level-card .lv-status {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+        /* 滚动条美化 */
+        .level-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .level-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .level-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        /* ===== 存档弹窗 ===== */
+        #save-load-overlay {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            z-index: 20;
+        }
+        .save-load-box {
+            background: rgba(40, 50, 35, 0.92);
+            border-radius: 28px;
+            padding: 32px 36px;
+            max-width: 520px;
+            width: 90%;
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .save-load-box h3 {
+            color: #f5e6b0;
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .save-load-box .code-area {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: #d4c8a0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            min-height: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 16px;
+            max-height: 120px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .save-load-box .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .save-load-box .btn-row .sm-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            background: #f5e6b0;
+            color: #3d2b13;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 3px 0 #9f7e4a;
+            flex: 1 1 auto;
+            min-width: 80px;
+        }
+        .save-load-box .btn-row .sm-btn:hover {
+            background: #fff3cc;
+            transform: translateY(-2px);
+        }
+        .save-load-box .btn-row .sm-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0px 0 #9f7e4a;
+        }
+        .save-load-box .btn-row .sm-btn.sec {
+            background: #7a8a7a;
+            color: #fff;
+            box-shadow: 0 3px 0 #4a5a4a;
+        }
+        .save-load-box .btn-row .sm-btn.sec:hover {
+            background: #8a9a8a;
+        }
+        .save-load-box .file-input-wrap {
+            text-align: center;
+            margin-top: 6px;
+        }
+        .save-load-box .file-input-wrap input[type="file"] {
+            display: none;
+        }
+        .save-load-box .file-input-wrap label {
+            display: inline-block;
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 2px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            color: #d4c8a0;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .save-load-box .file-input-wrap label:hover {
+            background: rgba(255, 215, 0, 0.10);
+            border-color: #ffd700;
+        }
+        .save-load-box .close-save-btn {
+            display: block;
+            margin: 16px auto 0;
+            padding: 10px 32px;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ccc;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .save-load-box .close-save-btn:hover {
+            background: rgba(255, 80, 80, 0.25);
+            color: #fff;
+        }
+
+        /* ===== 游戏HUD (覆盖在canvas上) ===== */
+        #game-hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        #game-hud .hud-top {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+            pointer-events: auto;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        #game-hud .hud-top .hud-left {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        #game-hud .hud-top .hud-left .hud-apples {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #game-hud .hud-top .hud-left .hud-apples span {
+            font-size: 22px;
+        }
+        #game-hud .hud-top .hud-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            pointer-events: auto;
+        }
+        #game-hud .hud-top .hud-right button {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            pointer-events: auto;
+            backdrop-filter: blur(4px);
+        }
+        #game-hud .hud-top .hud-right button:hover {
+            background: rgba(255, 215, 0, 0.25);
+            border-color: #ffd700;
+        }
+        #game-hud .hud-lives {
+            display: flex;
+            gap: 4px;
+            font-size: 22px;
+        }
+        /* 关卡完成/失败弹窗 */
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            z-index: 15;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            padding: 20px;
+        }
+        .result-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .result-box {
+            background: rgba(40, 50, 35, 0.92);
+            border-radius: 30px;
+            padding: 32px 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            color: #f5e6b0;
+        }
+        .result-box .big-icon {
+            font-size: 64px;
+            margin-bottom: 4px;
+        }
+        .result-box h2 {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+        .result-box .sub-text {
+            color: #d4c8a0;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .result-box .stars-display {
+            font-size: 48px;
+            letter-spacing: 8px;
+            color: #ffd700;
+            margin: 6px 0 12px;
+        }
+        .result-box .result-detail {
+            color: #b0a888;
+            font-size: 16px;
+            margin-bottom: 18px;
+        }
+        .result-box .result-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        .result-box .result-btns button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 40px;
+            font-size: 17px;
+            font-weight: 700;
+            background: #f5e6b0;
+            color: #3d2b13;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #9f7e4a;
+            flex: 1 1 auto;
+            min-width: 100px;
+        }
+        .result-box .result-btns button:hover {
+            background: #fff3cc;
+            transform: translateY(-2px);
+        }
+        .result-box .result-btns button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #9f7e4a;
+        }
+        .result-box .result-btns button.sec {
+            background: #6a7a6a;
+            color: #fff;
+            box-shadow: 0 4px 0 #3a4a3a;
+        }
+        .result-box .result-btns button.sec:hover {
+            background: #7a8a7a;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 700px) {
+            #game-container {
+                height: 92vh;
+                max-height: 92vh;
+                border-radius: 16px;
+            }
+            .menu-title {
+                font-size: 36px;
+            }
+            .menu-sub {
+                font-size: 16px;
+                letter-spacing: 4px;
+            }
+            .level-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                max-height: 280px;
+            }
+            .level-card .lv-num {
+                font-size: 22px;
+            }
+            .level-card {
+                min-height: 80px;
+                padding: 12px 8px;
+            }
+            .select-header h2 {
+                font-size: 24px;
+            }
+            .save-load-box {
+                padding: 24px 20px;
+            }
+            #back-to-center {
+                font-size: 12px;
+                padding: 5px 12px;
+                top: 8px;
+                right: 10px;
+            }
+            #back-to-center::before {
+                font-size: 13px;
+            }
+            .result-box {
+                padding: 24px 20px;
+            }
+            .result-box .big-icon {
+                font-size: 44px;
+            }
+            .result-box h2 {
+                font-size: 26px;
+            }
+            .result-box .stars-display {
+                font-size: 36px;
+            }
+            #game-hud .hud-top {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            #game-hud .hud-top .hud-left {
+                gap: 14px;
+            }
+            #game-hud .hud-top .hud-right button {
+                font-size: 12px;
+                padding: 3px 10px;
+            }
+        }
+        @media (max-width: 450px) {
+            .level-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .menu-title {
+                font-size: 28px;
+            }
+            .menu-btn-group {
+                width: 170px;
+            }
+            .menu-btn {
+                font-size: 18px;
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- 返回游戏中心 -->
+        <a id="back-to-center" href="/index" target="_self">返回游戏中心</a>
+
+        <!-- Canvas 游戏渲染 -->
+        <canvas id="gameCanvas" width="900" height="620"></canvas>
+
+        <!-- HUD -->
+        <div id="game-hud" style="display:none;">
+            <div class="hud-top">
+                <div class="hud-left">
+                    <span id="hud-level">第 1 关</span>
+                    <span class="hud-apples">🍎 <span id="hud-apple-count">0</span></span>
+                </div>
+                <div class="hud-right">
+                    <span class="hud-lives" id="hud-lives">❤️❤️❤️</span>
+                    <button id="hud-pause-btn" onclick="togglePause()">⏸</button>
+                    <button onclick="exitToSelect()">✕</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="menu-overlay" class="overlay active">
+            <div class="menu-title">🍎 史密斯奶奶</div>
+            <div class="menu-sub">Granny Smith</div>
+            <div class="menu-btn-group">
+                <button class="menu-btn" onclick="startGame()">开始游戏</button>
+                <button class="menu-btn secondary" onclick="openSaveLoad()">💾 存档管理</button>
+            </div>
+            <div class="menu-footer">— 果园大冒险 —</div>
+        </div>
+
+        <!-- 选关界面 -->
+        <div id="level-select-overlay" class="overlay">
+            <div class="select-header">
+                <h2>🏆 选择关卡</h2>
+                <button class="close-btn" onclick="closeLevelSelect()">✕</button>
+            </div>
+            <div class="level-grid" id="level-grid"></div>
+            <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                <button class="menu-btn secondary" style="padding:10px 30px;font-size:16px;width:auto;" onclick="openSaveLoad()">💾 存档</button>
+                <button class="menu-btn secondary" style="padding:10px 30px;font-size:16px;width:auto;background:#8a7a5a;box-shadow:0 4px 0 #5a4a3a;" onclick="closeLevelSelect()">返回</button>
+            </div>
+        </div>
+
+        <!-- 存档/读档弹窗 -->
+        <div id="save-load-overlay" class="overlay">
+            <div class="save-load-box">
+                <h3>💾 存档管理</h3>
+                <div style="text-align:center;color:#b0a888;font-size:14px;margin-bottom:10px;">
+                    存档码包含所有关卡进度和星级
+                </div>
+                <div class="code-area" id="save-code-display">暂无存档</div>
+                <div class="btn-row">
+                    <button class="sm-btn" onclick="generateSaveCode()">生成存档码</button>
+                    <button class="sm-btn sec" onclick="copySaveCode()">📋 复制</button>
+                    <button class="sm-btn sec" onclick="downloadSaveFile()">⬇ 下载 .txt</button>
+                </div>
+                <div class="btn-row">
+                    <button class="sm-btn" onclick="loadSaveFromInput()">📂 读档 (输入码)</button>
+                </div>
+                <div class="file-input-wrap">
+                    <label for="file-upload">📤 上传 .txt 存档文件</label>
+                    <input type="file" id="file-upload" accept=".txt" onchange="loadSaveFromFile(event)">
+                </div>
+                <button class="close-save-btn" onclick="closeSaveLoad()">关闭</button>
+            </div>
+        </div>
+
+        <!-- 游戏结果 (过关/失败) -->
+        <div id="result-overlay" class="result-overlay">
+            <div class="result-box">
+                <div class="big-icon" id="result-icon">🎉</div>
+                <h2 id="result-title">太棒了！</h2>
+                <div class="sub-text" id="result-sub">关卡完成</div>
+                <div class="stars-display" id="result-stars">⭐⭐⭐</div>
+                <div class="result-detail" id="result-detail">🍎 收集 10 / 12 个苹果</div>
+                <div class="result-btns" id="result-btns">
+                    <button onclick="resultNext()">下一关 ➜</button>
+                    <button class="sec" onclick="resultRetry()">🔄 重试</button>
+                    <button class="sec" onclick="resultToSelect()">选关</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 暂停遮罩 -->
+        <div id="pause-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(3px);z-index:12;display:none;justify-content:center;align-items:center;pointer-events:auto;">
+            <div style="background:rgba(40,50,35,0.92);border-radius:28px;padding:32px 44px;text-align:center;border:1px solid rgba(255,215,0,0.15);color:#f5e6b0;">
+                <h2 style="font-size:36px;margin-bottom:8px;">⏸ 暂停</h2>
+                <p style="color:#b0a888;margin-bottom:20px;">休息一下 ~</p>
+                <button onclick="togglePause()" style="padding:12px 40px;border:none;border-radius:40px;font-size:20px;font-weight:700;background:#f5e6b0;color:#3d2b13;cursor:pointer;box-shadow:0 4px 0 #9f7e4a;">继续游戏</button>
+                <br><br>
+                <button onclick="exitToSelect()" style="padding:10px 30px;border:none;border-radius:40px;font-size:16px;background:rgba(255,255,255,0.08);color:#ccc;cursor:pointer;">退出到选关</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  1. 配置 & 常量
+        // ============================================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 900,
+            H = 620;
+
+        const GRAVITY = 0.55;
+        const JUMP_SPEED = -10.8;
+        const MOVE_SPEED = 3.8;
+        const FRICTION = 0.88;
+        const PLAYER_W = 30;
+        const PLAYER_H = 44;
+
+        // ============================================================
+        //  2. 游戏状态
+        // ============================================================
+        let gameState = 'menu'; // menu | playing | paused | result
+        let currentLevel = 0;
+        let player = {};
+        let apples = [];
+        let obstacles = [];
+        let platforms = [];
+        let flagX = 0;
+        let levelWidth = 0;
+        let cameraX = 0;
+        let collectedApples = 0;
+        let totalApples = 0;
+        let lives = 3;
+        let maxLives = 3;
+        let levelComplete = false;
+        let gameOver = false;
+        let frameId = null;
+        let keys = {};
+        let canJump = true;
+        let levelStartX = 120;
+        let playerStartY = 0;
+        let isPaused = false;
+        let resultCallback = null;
+
+        // 存档数据
+        let saveData = {
+            maxUnlocked: 0, // 0-based index
+            stars: [], // 每关星级 0-3
+            appleCounts: [] // 每关收集的苹果数
+        };
+
+        // ============================================================
+        //  3. 关卡数据
+        // ============================================================
+        const LEVELS = [
+            // 关卡0: 果园小径
+            {
+                name: '果园小径',
+                ground: [
+                    { x: 0, y: 480, w: 1200, h: 140 },
+                    { x: 1240, y: 480, w: 800, h: 140 },
+                    { x: 2080, y: 480, w: 1000, h: 140 }
+                ],
+                apples: [
+                    { x: 200, y: 440 }, { x: 350, y: 440 }, { x: 500, y: 440 },
+                    { x: 700, y: 440 }, { x: 850, y: 440 }, { x: 1000, y: 440 },
+                    { x: 1300, y: 440 }, { x: 1450, y: 440 }, { x: 1600, y: 440 },
+                    { x: 1800, y: 440 }, { x: 2100, y: 440 }, { x: 2250, y: 440 }
+                ],
+                obstacles: [
+                    { x: 420, w: 30, h: 40, y: 440 },
+                    { x: 920, w: 30, h: 40, y: 440 },
+                    { x: 1500, w: 30, h: 40, y: 440 }
+                ],
+                flagX: 2800,
+                bgColor: '#87CEEB',
+                groundColor: '#6da56a'
+            },
+            // 关卡1: 起伏果园
+            {
+                name: '起伏果园',
+                ground: [
+                    { x: 0, y: 480, w: 600, h: 140 },
+                    { x: 640, y: 460, w: 500, h: 160 },
+                    { x: 1180, y: 480, w: 700, h: 140 },
+                    { x: 1920, y: 460, w: 500, h: 160 },
+                    { x: 2460, y: 480, w: 700, h: 140 }
+                ],
+                apples: [
+                    { x: 150, y: 440 }, { x: 300, y: 440 }, { x: 450, y: 440 },
+                    { x: 680, y: 420 }, { x: 820, y: 420 }, { x: 960, y: 420 },
+                    { x: 1200, y: 440 }, { x: 1350, y: 440 }, { x: 1500, y: 440 },
+                    { x: 1650, y: 440 }, { x: 1950, y: 420 }, { x: 2100, y: 420 },
+                    { x: 2250, y: 420 }, { x: 2500, y: 440 }, { x: 2650, y: 440 }
+                ],
+                obstacles: [
+                    { x: 500, w: 30, h: 40, y: 440 },
+                    { x: 1100, w: 30, h: 40, y: 440 },
+                    { x: 1700, w: 30, h: 40, y: 440 },
+                    { x: 2300, w: 30, h: 40, y: 420 }
+                ],
+                flagX: 3000,
+                bgColor: '#7ec8e3',
+                groundColor: '#5f9a5f'
+            },
+            // 关卡2: 苹果丛林
+            {
+                name: '苹果丛林',
+                ground: [
+                    { x: 0, y: 480, w: 400, h: 140 },
+                    { x: 440, y: 470, w: 350, h: 150 },
+                    { x: 830, y: 490, w: 300, h: 130 },
+                    { x: 1170, y: 470, w: 400, h: 150 },
+                    { x: 1610, y: 490, w: 300, h: 130 },
+                    { x: 1950, y: 470, w: 400, h: 150 },
+                    { x: 2390, y: 480, w: 500, h: 140 }
+                ],
+                apples: [
+                    { x: 80, y: 440 }, { x: 180, y: 440 }, { x: 280, y: 440 },
+                    { x: 460, y: 430 }, { x: 560, y: 430 }, { x: 660, y: 430 },
+                    { x: 850, y: 450 }, { x: 950, y: 450 }, { x: 1050, y: 450 },
+                    { x: 1200, y: 430 }, { x: 1300, y: 430 }, { x: 1400, y: 430 },
+                    { x: 1630, y: 450 }, { x: 1730, y: 450 }, { x: 1830, y: 450 },
+                    { x: 1970, y: 430 }, { x: 2070, y: 430 }, { x: 2170, y: 430 },
+                    { x: 2420, y: 440 }, { x: 2550, y: 440 }, { x: 2680, y: 440 }
+                ],
+                obstacles: [
+                    { x: 350, w: 30, h: 40, y: 440 },
+                    { x: 780, w: 30, h: 40, y: 450 },
+                    { x: 1120, w: 30, h: 40, y: 430 },
+                    { x: 1550, w: 30, h: 40, y: 450 },
+                    { x: 1890, w: 30, h: 40, y: 430 },
+                    { x: 2320, w: 30, h: 40, y: 440 }
+                ],
+                flagX: 3200,
+                bgColor: '#6ab8d4',
+                groundColor: '#4d8f4d'
+            },
+            // 关卡3: 峡谷飞越
+            {
+                name: '峡谷飞越',
+                ground: [
+                    { x: 0, y: 480, w: 350, h: 140 },
+                    { x: 390, y: 470, w: 250, h: 150 },
+                    { x: 680, y: 490, w: 200, h: 130 },
+                    { x: 920, y: 470, w: 250, h: 150 },
+                    { x: 1210, y: 490, w: 200, h: 130 },
+                    { x: 1450, y: 470, w: 250, h: 150 },
+                    { x: 1740, y: 490, w: 200, h: 130 },
+                    { x: 1980, y: 470, w: 250, h: 150 },
+                    { x: 2270, y: 480, w: 500, h: 140 }
+                ],
+                apples: [
+                    { x: 80, y: 440 }, { x: 180, y: 440 }, { x: 280, y: 440 },
+                    { x: 410, y: 430 }, { x: 510, y: 430 },
+                    { x: 700, y: 450 }, { x: 800, y: 450 },
+                    { x: 940, y: 430 }, { x: 1040, y: 430 },
+                    { x: 1230, y: 450 }, { x: 1330, y: 450 },
+                    { x: 1470, y: 430 }, { x: 1570, y: 430 },
+                    { x: 1760, y: 450 }, { x: 1860, y: 450 },
+                    { x: 2000, y: 430 }, { x: 2100, y: 430 },
+                    { x: 2300, y: 440 }, { x: 2450, y: 440 }, { x: 2600, y: 440 }
+                ],
+                obstacles: [
+                    { x: 340, w: 30, h: 40, y: 440 },
+                    { x: 670, w: 30, h: 40, y: 450 },
+                    { x: 910, w: 30, h: 40, y: 430 },
+                    { x: 1200, w: 30, h: 40, y: 450 },
+                    { x: 1440, w: 30, h: 40, y: 430 },
+                    { x: 1730, w: 30, h: 40, y: 450 },
+                    { x: 1970, w: 30, h: 40, y: 430 }
+                ],
+                flagX: 3200,
+                bgColor: '#5ba8c4',
+                groundColor: '#3d7a3d'
+            },
+            // 关卡4: 丰收果园
+            {
+                name: '丰收果园',
+                ground: [
+                    { x: 0, y: 480, w: 500, h: 140 },
+                    { x: 540, y: 475, w: 400, h: 145 },
+                    { x: 980, y: 485, w: 350, h: 135 },
+                    { x: 1370, y: 475, w: 400, h: 145 },
+                    { x: 1810, y: 485, w: 350, h: 135 },
+                    { x: 2200, y: 475, w: 400, h: 145 },
+                    { x: 2640, y: 480, w: 500, h: 140 }
+                ],
+                apples: [
+                    { x: 60, y: 440 }, { x: 140, y: 440 }, { x: 220, y: 440 }, { x: 300, y: 440 }, { x: 380, y: 440 },
+                    { x: 560, y: 435 }, { x: 660, y: 435 }, { x: 760, y: 435 }, { x: 860, y: 435 },
+                    { x: 1000, y: 445 }, { x: 1100, y: 445 }, { x: 1200, y: 445 },
+                    { x: 1390, y: 435 }, { x: 1490, y: 435 }, { x: 1590, y: 435 }, { x: 1690, y: 435 },
+                    { x: 1830, y: 445 }, { x: 1930, y: 445 }, { x: 2030, y: 445 },
+                    { x: 2220, y: 435 }, { x: 2320, y: 435 }, { x: 2420, y: 435 }, { x: 2520, y: 435 },
+                    { x: 2680, y: 440 }, { x: 2800, y: 440 }, { x: 2920, y: 440 }
+                ],
+                obstacles: [
+                    { x: 490, w: 30, h: 40, y: 440 },
+                    { x: 970, w: 30, h: 40, y: 445 },
+                    { x: 1360, w: 30, h: 40, y: 435 },
+                    { x: 1800, w: 30, h: 40, y: 445 },
+                    { x: 2190, w: 30, h: 40, y: 435 },
+                    { x: 2600, w: 30, h: 40, y: 440 }
+                ],
+                flagX: 3400,
+                bgColor: '#4da0c0',
+                groundColor: '#2e6b2e'
+            },
+            // 关卡5: 终极果园
+            {
+                name: '终极果园',
+                ground: [
+                    { x: 0, y: 480, w: 300, h: 140 },
+                    { x: 340, y: 465, w: 200, h: 155 },
+                    { x: 580, y: 485, w: 150, h: 135 },
+                    { x: 770, y: 465, w: 200, h: 155 },
+                    { x: 1010, y: 485, w: 150, h: 135 },
+                    { x: 1200, y: 465, w: 200, h: 155 },
+                    { x: 1440, y: 485, w: 150, h: 135 },
+                    { x: 1630, y: 465, w: 200, h: 155 },
+                    { x: 1870, y: 485, w: 150, h: 135 },
+                    { x: 2060, y: 465, w: 200, h: 155 },
+                    { x: 2300, y: 480, w: 500, h: 140 }
+                ],
+                apples: [
+                    { x: 60, y: 440 }, { x: 140, y: 440 }, { x: 220, y: 440 },
+                    { x: 360, y: 425 }, { x: 440, y: 425 },
+                    { x: 600, y: 445 }, { x: 680, y: 445 },
+                    { x: 790, y: 425 }, { x: 870, y: 425 },
+                    { x: 1030, y: 445 }, { x: 1110, y: 445 },
+                    { x: 1220, y: 425 }, { x: 1300, y: 425 },
+                    { x: 1460, y: 445 }, { x: 1540, y: 445 },
+                    { x: 1650, y: 425 }, { x: 1730, y: 425 },
+                    { x: 1890, y: 445 }, { x: 1970, y: 445 },
+                    { x: 2080, y: 425 }, { x: 2160, y: 425 },
+                    { x: 2320, y: 440 }, { x: 2440, y: 440 }, { x: 2560, y: 440 },
+                    { x: 2680, y: 440 }, { x: 2800, y: 440 }
+                ],
+                obstacles: [
+                    { x: 290, w: 30, h: 40, y: 440 },
+                    { x: 570, w: 30, h: 40, y: 445 },
+                    { x: 760, w: 30, h: 40, y: 425 },
+                    { x: 1000, w: 30, h: 40, y: 445 },
+                    { x: 1190, w: 30, h: 40, y: 425 },
+                    { x: 1430, w: 30, h: 40, y: 445 },
+                    { x: 1620, w: 30, h: 40, y: 425 },
+                    { x: 1860, w: 30, h: 40, y: 445 },
+                    { x: 2050, w: 30, h: 40, y: 425 },
+                    { x: 2290, w: 30, h: 40, y: 440 }
+                ],
+                flagX: 3500,
+                bgColor: '#3d8fb0',
+                groundColor: '#1f5a1f'
+            }
+        ];
+
+        // ============================================================
+        //  4. 存档系统
+        // ============================================================
+        function initSaveData() {
+            saveData.maxUnlocked = 0;
+            saveData.stars = new Array(LEVELS.length).fill(0);
+            saveData.appleCounts = new Array(LEVELS.length).fill(0);
+            // 第一关默认解锁
+            saveData.stars[0] = 0;
+        }
+        initSaveData();
+
+        function generateSaveCode() {
+            const data = {
+                mu: saveData.maxUnlocked,
+                st: saveData.stars,
+                ac: saveData.appleCounts,
+                v: 1
+            };
+            const json = JSON.stringify(data);
+            const base64 = btoa(unescape(encodeURIComponent(json)));
+            document.getElementById('save-code-display').textContent = base64;
+            return base64;
+        }
+
+        function copySaveCode() {
+            const code = document.getElementById('save-code-display').textContent;
+            if (code && code !== '暂无存档') {
+                navigator.clipboard.writeText(code).then(() => {
+                    showToast('✅ 存档码已复制');
+                }).catch(() => {
+                    // fallback
+                    const ta = document.createElement('textarea');
+                    ta.value = code;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                    showToast('✅ 存档码已复制');
+                });
+            } else {
+                showToast('⚠️ 请先生成存档码');
+            }
+        }
+
+        function downloadSaveFile() {
+            const code = document.getElementById('save-code-display').textContent;
+            if (!code || code === '暂无存档') {
+                showToast('⚠️ 请先生成存档码');
+                return;
+            }
+            const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `granny_smith_save_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('✅ 存档文件已下载');
+        }
+
+        function loadSaveFromInput() {
+            const code = prompt('请输入存档码：');
+            if (code && code.trim()) {
+                applySaveCode(code.trim());
+            }
+        }
+
+        function loadSaveFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result.trim();
+                if (content) {
+                    applySaveCode(content);
+                } else {
+                    showToast('⚠️ 文件为空');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function applySaveCode(code) {
+            try {
+                const json = decodeURIComponent(escape(atob(code)));
+                const data = JSON.parse(json);
+                if (data.v && data.mu !== undefined && data.st && data.ac) {
+                    saveData.maxUnlocked = Math.min(data.mu, LEVELS.length - 1);
+                    saveData.stars = data.st.map((s, i) => i < LEVELS.length ? Math.min(3, Math.max(0, s)) : 0);
+                    saveData.appleCounts = data.ac.map((c, i) => i < LEVELS.length ? Math.max(0, c) : 0);
+                    while (saveData.stars.length < LEVELS.length) saveData.stars.push(0);
+                    while (saveData.appleCounts.length < LEVELS.length) saveData.appleCounts.push(0);
+                    // 保证第一关解锁
+                    if (saveData.maxUnlocked < 0) saveData.maxUnlocked = 0;
+                    // 同步星级
+                    for (let i = 0; i < LEVELS.length; i++) {
+                        if (saveData.stars[i] === undefined) saveData.stars[i] = 0;
+                        if (saveData.appleCounts[i] === undefined) saveData.appleCounts[i] = 0;
+                    }
+                    document.getElementById('save-code-display').textContent = code;
+                    showToast('✅ 存档读取成功！');
+                    renderLevelGrid();
+                    // 如果当前在选关界面，刷新
+                } else {
+                    showToast('⚠️ 存档格式无效');
+                }
+            } catch (e) {
+                showToast('⚠️ 存档解析失败: ' + e.message);
+            }
+        }
+
+        function updateSaveDataFromGame(levelIdx, stars, apples) {
+            if (levelIdx >= 0 && levelIdx < LEVELS.length) {
+                if (stars > saveData.stars[levelIdx]) {
+                    saveData.stars[levelIdx] = stars;
+                }
+                if (apples > saveData.appleCounts[levelIdx]) {
+                    saveData.appleCounts[levelIdx] = apples;
+                }
+                if (levelIdx + 1 > saveData.maxUnlocked && levelIdx + 1 < LEVELS.length) {
+                    saveData.maxUnlocked = levelIdx + 1;
+                }
+                // 保证第一关解锁
+                if (saveData.maxUnlocked < 0) saveData.maxUnlocked = 0;
+            }
+        }
+
+        // ============================================================
+        //  5. Toast 提示
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(msg) {
+            let el = document.getElementById('toast-msg');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'toast-msg';
+                el.style.cssText = `
+                        position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+                        background:rgba(0,0,0,0.8); color:#fff; padding:12px 30px;
+                        border-radius:40px; font-size:16px; font-weight:500;
+                        z-index:9999; pointer-events:none; opacity:0;
+                        transition: opacity 0.3s ease; backdrop-filter:blur(6px);
+                        border:1px solid rgba(255,215,0,0.2);
+                        max-width:85vw; text-align:center;
+                    `;
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.style.opacity = '1';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2500);
+        }
+
+        // ============================================================
+        //  6. 游戏初始化 & 关卡加载
+        // ============================================================
+        function loadLevel(idx) {
+            const data = LEVELS[idx];
+            if (!data) return false;
+
+            // 重置玩家
+            const startY = data.ground[0] ? data.ground[0].y - PLAYER_H : 440;
+            player = {
+                x: levelStartX,
+                y: startY,
+                w: PLAYER_W,
+                h: PLAYER_H,
+                vx: 0,
+                vy: 0,
+                onGround: false,
+                facing: 1
+            };
+            playerStartY = startY;
+
+            // 复制关卡数据
+            platforms = data.ground.map(g => ({ ...g }));
+            apples = data.apples.map(a => ({ ...a, collected: false }));
+            obstacles = data.obstacles.map(o => ({ ...o }));
+            flagX = data.flagX;
+            levelWidth = data.flagX + 200;
+            collectedApples = 0;
+            totalApples = apples.length;
+            lives = maxLives;
+            levelComplete = false;
+            gameOver = false;
+            cameraX = 0;
+            canJump = true;
+            isPaused = false;
+            document.getElementById('pause-overlay').style.display = 'none';
+
+            // 更新HUD
+            document.getElementById('hud-level').textContent = `第 ${idx+1} 关 · ${data.name}`;
+            document.getElementById('hud-apple-count').textContent = '0';
+            updateLivesHUD();
+            document.getElementById('game-hud').style.display = 'block';
+
+            // 隐藏结果
+            document.getElementById('result-overlay').classList.remove('active');
+
+            gameState = 'playing';
+            return true;
+        }
+
+        function updateLivesHUD() {
+            const el = document.getElementById('hud-lives');
+            el.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, maxLives - Math.max(0, lives)));
+        }
+
+        // ============================================================
+        //  7. 物理 & 碰撞
+        // ============================================================
+        function updatePlayer() {
+            if (gameState !== 'playing' || isPaused) return;
+
+            const p = player;
+
+            // 水平输入
+            let move = 0;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) move = -1;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) move = 1;
+
+            // 跳跃
+            if ((keys['ArrowUp'] || keys['w'] || keys['W'] || keys[' ']) && p.onGround) {
+                p.vy = JUMP_SPEED;
+                p.onGround = false;
+                canJump = false;
+            }
+            if (!(keys['ArrowUp'] || keys['w'] || keys['W'] || keys[' '])) {
+                canJump = true;
+            }
+
+            // 物理
+            p.vx += move * 0.5;
+            p.vx *= FRICTION;
+            if (Math.abs(p.vx) > MOVE_SPEED) p.vx = MOVE_SPEED * Math.sign(p.vx);
+            if (Math.abs(p.vx) < 0.1) p.vx = 0;
+
+            p.vy += GRAVITY;
+            if (p.vy > 12) p.vy = 12;
+
+            // 水平移动 + 碰撞
+            p.x += p.vx;
+            // 边界
+            if (p.x < 0) p.x = 0;
+            if (p.x + p.w > levelWidth) p.x = levelWidth - p.w;
+
+            // 垂直移动 + 碰撞
+            p.y += p.vy;
+            p.onGround = false;
+
+            // 平台碰撞
+            for (const plat of platforms) {
+                if (p.x + p.w > plat.x && p.x < plat.x + plat.w) {
+                    // 从上方落下
+                    if (p.vy >= 0 && p.y + p.h >= plat.y && p.y + p.h <= plat.y + 20) {
+                        p.y = plat.y - p.h;
+                        p.vy = 0;
+                        p.onGround = true;
+                    }
+                    // 从下方撞头
+                    else if (p.vy < 0 && p.y <= plat.y + plat.h && p.y >= plat.y) {
+                        p.y = plat.y + plat.h;
+                        p.vy = 0;
+                    }
+                }
+            }
+
+            // 掉坑检测
+            if (p.y > H + 50) {
+                loseLife();
+                return;
+            }
+
+            // 苹果收集
+            for (const apple of apples) {
+                if (!apple.collected) {
+                    const dx = (p.x + p.w / 2) - apple.x;
+                    const dy = (p.y + p.h / 2) - apple.y;
+                    if (Math.abs(dx) < 22 && Math.abs(dy) < 22) {
+                        apple.collected = true;
+                        collectedApples++;
+                        document.getElementById('hud-apple-count').textContent = collectedApples;
+                    }
+                }
+            }
+
+            // 障碍物碰撞 (视为死亡)
+            for (const obs of obstacles) {
+                if (p.x + p.w > obs.x + 6 && p.x < obs.x + obs.w - 6 &&
+                    p.y + p.h > obs.y + 6 && p.y < obs.y + obs.h - 6) {
+                    loseLife();
+                    return;
+                }
+            }
+
+            // 旗帜到达
+            if (p.x + p.w > flagX && p.x < flagX + 60) {
+                if (!levelComplete) {
+                    levelComplete = true;
+                    onLevelComplete();
+                }
+            }
+
+            // 更新朝向
+            if (move > 0) p.facing = 1;
+            else if (move < 0) p.facing = -1;
+
+            // 更新相机
+            const targetCam = p.x - W * 0.35;
+            cameraX += (targetCam - cameraX) * 0.08;
+            cameraX = Math.max(0, Math.min(cameraX, levelWidth - W));
+        }
+
+        function loseLife() {
+            lives--;
+            updateLivesHUD();
+            if (lives <= 0) {
+                gameOver = true;
+                showResult(false);
+            } else {
+                // 重置到关卡起点
+                const data = LEVELS[currentLevel];
+                const startY = data.ground[0] ? data.ground[0].y - PLAYER_H : 440;
+                player.x = levelStartX;
+                player.y = startY;
+                player.vx = 0;
+                player.vy = 0;
+                player.onGround = false;
+                // 重置苹果收集状态 (保留已收集的？ 简单处理：重置全部)
+                for (const apple of apples) {
+                    apple.collected = false;
+                }
+                collectedApples = 0;
+                document.getElementById('hud-apple-count').textContent = '0';
+                showToast('💔 失去一条命！');
+            }
+        }
+
+        // ============================================================
+        //  8. 关卡完成 / 结果
+        // ============================================================
+        function onLevelComplete() {
+            const total = totalApples;
+            const collected = collectedApples;
+            const ratio = collected / total;
+            let stars = 0;
+            if (ratio >= 0.9) stars = 3;
+            else if (ratio >= 0.6) stars = 2;
+            else if (ratio >= 0.3) stars = 1;
+
+            // 更新存档
+            updateSaveDataFromGame(currentLevel, stars, collected);
+
+            showResult(true, stars, collected, total);
+        }
+
+        function showResult(success, stars = 0, collected = 0, total = 0) {
+            const overlay = document.getElementById('result-overlay');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const sub = document.getElementById('result-sub');
+            const starsEl = document.getElementById('result-stars');
+            const detail = document.getElementById('result-detail');
+            const btns = document.getElementById('result-btns');
+
+            if (success) {
+                icon.textContent = '🎉';
+                title.textContent = '🍎 闯关成功！';
+                sub.textContent = LEVELS[currentLevel].name;
+                starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+                detail.textContent = `🍎 收集 ${collected} / ${total} 个苹果`;
+                btns.innerHTML = `
+                        <button onclick="resultNext()">下一关 ➜</button>
+                        <button class="sec" onclick="resultRetry()">🔄 重试</button>
+                        <button class="sec" onclick="resultToSelect()">选关</button>
+                    `;
+                // 如果已经是最后一关
+                if (currentLevel >= LEVELS.length - 1) {
+                    btns.querySelector('button:first-child').textContent = '🏆 已通关！';
+                    btns.querySelector('button:first-child').onclick = resultToSelect;
+                }
+                // 检查下一关是否解锁
+                if (currentLevel + 1 >= LEVELS.length || saveData.maxUnlocked <= currentLevel) {
+                    // 没有下一关或未解锁
+                }
+            } else {
+                icon.textContent = '😢';
+                title.textContent = '💔 失败了...';
+                sub.textContent = '再试一次吧！';
+                starsEl.textContent = '💪 加油！';
+                detail.textContent = `🍎 已收集 ${collectedApples} 个苹果`;
+                btns.innerHTML = `
+                        <button onclick="resultRetry()">🔄 重新挑战</button>
+                        <button class="sec" onclick="resultToSelect()">选关</button>
+                    `;
+            }
+
+            overlay.classList.add('active');
+            gameState = 'result';
+        }
+
+        function resultNext() {
+            document.getElementById('result-overlay').classList.remove('active');
+            if (currentLevel < LEVELS.length - 1) {
+                currentLevel++;
+                loadLevel(currentLevel);
+            } else {
+                exitToSelect();
+            }
+        }
+
+        function resultRetry() {
+            document.getElementById('result-overlay').classList.remove('active');
+            loadLevel(currentLevel);
+        }
+
+        function resultToSelect() {
+            document.getElementById('result-overlay').classList.remove('active');
+            exitToSelect();
+        }
+
+        // ============================================================
+        //  9. 渲染
+        // ============================================================
+        function render() {
+            ctx.clearRect(0, 0, W, H);
+
+            const data = LEVELS[currentLevel];
+            if (!data) return;
+
+            // 背景
+            const grad = ctx.createLinearGradient(0, 0, 0, H);
+            grad.addColorStop(0, data.bgColor || '#87CEEB');
+            grad.addColorStop(0.7, '#8fc9a0');
+            grad.addColorStop(1, '#6a9a6a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            // 太阳
+            ctx.fillStyle = '#fff7d0';
+            ctx.shadowColor = '#ffdd44';
+            ctx.shadowBlur = 40;
+            ctx.beginPath();
+            ctx.arc(780, 70, 44, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 云朵
+            drawCloud(120, 60, 0.7);
+            drawCloud(400, 40, 0.5);
+            drawCloud(650, 80, 0.6);
+            drawCloud(50, 120, 0.4);
+
+            // 树 (背景装饰)
+            drawTree(30, 350, 0.8);
+            drawTree(160, 370, 0.6);
+            drawTree(270, 340, 0.9);
+            drawTree(580, 355, 0.7);
+            drawTree(720, 375, 0.5);
+            drawTree(880, 345, 0.8);
+
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+
+            // 地面
+            for (const plat of platforms) {
+                const x = plat.x,
+                    y = plat.y,
+                    w = plat.w,
+                    h = plat.h;
+                // 草地
+                const grd = ctx.createLinearGradient(x, y, x, y + h);
+                grd.addColorStop(0, data.groundColor || '#6da56a');
+                grd.addColorStop(0.15, '#5a8a4a');
+                grd.addColorStop(1, '#4a6a3a');
+                ctx.fillStyle = grd;
+                ctx.fillRect(x, y, w, h);
+
+                // 草叶片
+                ctx.strokeStyle = '#4d8f4d';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < w; i += 12) {
+                    const hh = 4 + Math.sin(i * 0.5 + x) * 3;
+                    ctx.beginPath();
+                    ctx.moveTo(x + i, y);
+                    ctx.quadraticCurveTo(x + i + 2, y - hh, x + i + 4, y);
+                    ctx.stroke();
+                }
+            }
+
+            // 障碍物 (木箱)
+            for (const obs of obstacles) {
+                const x = obs.x,
+                    y = obs.y;
+                ctx.fillStyle = '#8b6b4d';
+                ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(x, y, obs.w, obs.h);
+                // 木纹
+                ctx.strokeStyle = '#6b4d2a';
+                ctx.lineWidth = 1.5;
+                for (let i = 0; i < obs.h; i += 10) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + 2, y + i);
+                    ctx.lineTo(x + obs.w - 2, y + i + 4);
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+                // 高光
+                ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                ctx.fillRect(x + 2, y + 2, obs.w - 4, 4);
+            }
+
+            // 苹果 (未收集)
+            for (const apple of apples) {
+                if (apple.collected) continue;
+                const ax = apple.x,
+                    ay = apple.y;
+                // 苹果身体
+                const gradA = ctx.createRadialGradient(ax - 4, ay - 4, 2, ax, ay, 14);
+                gradA.addColorStop(0, '#ff3a2a');
+                gradA.addColorStop(0.7, '#cc1a0a');
+                gradA.addColorStop(1, '#8a0a00');
+                ctx.fillStyle = gradA;
+                ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(ax, ay, 11, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                // 高光
+                ctx.fillStyle = 'rgba(255,255,255,0.35)';
+                ctx.beginPath();
+                ctx.arc(ax - 4, ay - 5, 4, 0, Math.PI * 2);
+                ctx.fill();
+                // 叶子
+                ctx.fillStyle = '#2d8a2d';
+                ctx.beginPath();
+                ctx.ellipse(ax + 8, ay - 8, 6, 4, 0.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#3a9a3a';
+                ctx.beginPath();
+                ctx.ellipse(ax + 6, ay - 10, 4, 3, -0.2, 0, Math.PI * 2);
+                ctx.fill();
+                // 梗
+                ctx.strokeStyle = '#5a3a1a';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(ax + 4, ay - 10);
+                ctx.quadraticCurveTo(ax + 6, ay - 16, ax + 10, ay - 14);
+                ctx.stroke();
+            }
+
+            // 旗帜 (终点)
+            ctx.shadowBlur = 0;
+            // 旗杆
+            ctx.fillStyle = '#8a7a6a';
+            ctx.fillRect(flagX + 16, 350, 6, 150);
+            // 旗杆顶球
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            ctx.arc(flagX + 19, 350, 8, 0, Math.PI * 2);
+            ctx.fill();
+            // 旗帜
+            const flagWave = Math.sin(Date.now() / 600) * 3;
+            ctx.fillStyle = '#ff3a3a';
+            ctx.beginPath();
+            ctx.moveTo(flagX + 22, 358);
+            ctx.lineTo(flagX + 70 + flagWave, 378);
+            ctx.lineTo(flagX + 22, 398);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#ff6a6a';
+            ctx.beginPath();
+            ctx.moveTo(flagX + 22, 365);
+            ctx.lineTo(flagX + 58 + flagWave * 0.8, 378);
+            ctx.lineTo(flagX + 22, 391);
+            ctx.closePath();
+            ctx.fill();
+            // 星标
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('★', flagX + 44 + flagWave * 0.6, 388);
+
+            // 玩家 (老奶奶)
+            drawPlayer(player.x, player.y, player.w, player.h, player.facing);
+
+            ctx.restore();
+
+            // HUD 额外信息 (在canvas上)
+            if (gameState === 'playing' || gameState === 'paused') {
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.roundRect(W - 120, 12, 100, 28, 14);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`🍎 ${collectedApples}/${totalApples}`, W - 70, 33);
+            }
+        }
+
+        // 辅助: roundRect
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (r > w / 2) r = w / 2;
+            if (r > h / 2) r = h / 2;
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            return this;
+        };
+
+        function drawPlayer(x, y, w, h, facing) {
+            ctx.save();
+            ctx.translate(x + w / 2, y + h);
+            ctx.scale(facing, 1);
+
+            // 阴影
+            ctx.shadowColor = 'rgba(0,0,0,0.15)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 4;
+
+            // 身体 (裙子)
+            const bodyGrad = ctx.createLinearGradient(-8, -30, 8, 0);
+            bodyGrad.addColorStop(0, '#6a4a8a');
+            bodyGrad.addColorStop(0.5, '#8a6aaa');
+            bodyGrad.addColorStop(1, '#5a3a7a');
+            ctx.fillStyle = bodyGrad;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(-12, -6);
+            ctx.quadraticCurveTo(-14, -18, -8, -28);
+            ctx.quadraticCurveTo(0, -34, 8, -28);
+            ctx.quadraticCurveTo(14, -18, 12, -6);
+            ctx.quadraticCurveTo(0, 0, -12, -6);
+            ctx.fill();
+
+            // 围裙
+            ctx.fillStyle = 'rgba(255,255,240,0.3)';
+            ctx.beginPath();
+            ctx.moveTo(-8, -8);
+            ctx.quadraticCurveTo(0, -2, 8, -8);
+            ctx.quadraticCurveTo(0, 2, -8, -8);
+            ctx.fill();
+
+            // 头
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#f5d0b0';
+            ctx.beginPath();
+            ctx.arc(0, -34, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 发髻 (老奶奶发型)
+            ctx.fillStyle = '#d0b0a0';
+            ctx.beginPath();
+            ctx.arc(8, -44, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#c0a090';
+            ctx.beginPath();
+            ctx.arc(10, -46, 5, 0, Math.PI * 2);
+            ctx.fill();
+            // 头发
+            ctx.fillStyle = '#d0b0a0';
+            ctx.beginPath();
+            ctx.arc(-2, -44, 5, 0.2, 1.8);
+            ctx.fill();
+
+            // 眼睛
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#222';
+            ctx.beginPath();
+            ctx.arc(4, -36, 2.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(-4, -36, 2.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(5, -37, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(-3, -37, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 眼镜 (老奶奶标志)
+            ctx.strokeStyle = '#8a7a5a';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(4, -36, 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(-4, -36, 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-9, -36);
+            ctx.lineTo(-4, -36);
+            ctx.moveTo(4, -36);
+            ctx.lineTo(9, -36);
+            ctx.stroke();
+            // 眼镜腿
+            ctx.beginPath();
+            ctx.moveTo(9, -36);
+            ctx.lineTo(14, -32);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-9, -36);
+            ctx.lineTo(-14, -32);
+            ctx.stroke();
+
+            // 嘴巴 (微笑)
+            ctx.strokeStyle = '#8a4a3a';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(0, -30, 5, 0.1, Math.PI - 0.1);
+            ctx.stroke();
+
+            // 围巾
+            ctx.fillStyle = '#cc2a2a';
+            ctx.shadowBlur = 4;
+            ctx.beginPath();
+            ctx.moveTo(-10, -22);
+            ctx.quadraticCurveTo(-14, -18, -6, -16);
+            ctx.quadraticCurveTo(0, -14, 6, -16);
+            ctx.quadraticCurveTo(14, -18, 10, -22);
+            ctx.quadraticCurveTo(0, -20, -10, -22);
+            ctx.fill();
+
+            // 手臂 (拿拐杖)
+            ctx.shadowBlur = 4;
+            ctx.strokeStyle = '#f5d0b0';
+            ctx.lineWidth = 4;
+            // 左臂
+            ctx.beginPath();
+            ctx.moveTo(-10, -24);
+            ctx.lineTo(-18, -14);
+            ctx.stroke();
+            // 右臂 (举着)
+            ctx.beginPath();
+            ctx.moveTo(10, -24);
+            ctx.lineTo(16, -14);
+            ctx.stroke();
+
+            // 拐杖
+            ctx.strokeStyle = '#6a4a2a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(-18, -14);
+            ctx.lineTo(-22, 4);
+            ctx.stroke();
+            // 拐杖弯头
+            ctx.beginPath();
+            ctx.arc(-20, 4, 4, 0, Math.PI * 0.8);
+            ctx.stroke();
+
+            // 腿 (简单)
+            ctx.strokeStyle = '#5a3a5a';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(-5, -4);
+            ctx.lineTo(-6, 4);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(5, -4);
+            ctx.lineTo(6, 4);
+            ctx.stroke();
+
+            // 鞋子
+            ctx.fillStyle = '#3a2a2a';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.ellipse(-6, 5, 7, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(6, 5, 7, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        function drawCloud(x, y, scale) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.shadowColor = 'rgba(255,255,255,0.1)';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(0, 0, 30, 0, Math.PI * 2);
+            ctx.arc(25, -10, 35, 0, Math.PI * 2);
+            ctx.arc(50, 0, 28, 0, Math.PI * 2);
+            ctx.arc(20, 15, 25, 0, Math.PI * 2);
+            ctx.arc(40, 15, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        function drawTree(x, y, scale) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            // 树干
+            ctx.fillStyle = '#6a4a2a';
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(-5, -10, 10, 50);
+            // 树冠
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = '#3a7a3a';
+            ctx.beginPath();
+            ctx.arc(0, -20, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#4a8a4a';
+            ctx.beginPath();
+            ctx.arc(-12, -30, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(14, -28, 24, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#5a9a5a';
+            ctx.beginPath();
+            ctx.arc(0, -38, 18, 0, Math.PI * 2);
+            ctx.fill();
+            // 苹果在树上 (装饰)
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#cc1a0a';
+            ctx.beginPath();
+            ctx.arc(-10, -22, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(12, -20, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, -14, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // ============================================================
+        //  10. 游戏循环
+        // ============================================================
+        function gameLoop() {
+            if (gameState === 'playing' && !isPaused) {
+                updatePlayer();
+            }
+            render();
+            frameId = requestAnimationFrame(gameLoop);
+        }
+
+        // ============================================================
+        //  11. UI 控制
+        // ============================================================
+        function startGame() {
+            document.getElementById('menu-overlay').classList.remove('active');
+            openLevelSelect();
+        }
+
+        function openLevelSelect() {
+            document.getElementById('level-select-overlay').classList.add('active');
+            document.getElementById('menu-overlay').classList.remove('active');
+            renderLevelGrid();
+        }
+
+        function closeLevelSelect() {
+            document.getElementById('level-select-overlay').classList.remove('active');
+            if (gameState === 'playing' || gameState === 'paused') {
+                // 保持游戏
+            } else {
+                document.getElementById('menu-overlay').classList.add('active');
+            }
+        }
+
+        function renderLevelGrid() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < LEVELS.length; i++) {
+                const level = LEVELS[i];
+                const unlocked = i <= saveData.maxUnlocked;
+                const stars = saveData.stars[i] || 0;
+                const card = document.createElement('div');
+                card.className = 'level-card' + (unlocked ? ' unlocked' : ' locked');
+                if (unlocked) {
+                    card.onclick = () => selectLevel(i);
+                }
+                const starStr = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+                card.innerHTML = `
+                        <div class="lv-num">${unlocked ? '🍎' : '🔒'} ${i+1}</div>
+                        <div class="lv-name">${level.name}</div>
+                        <div class="lv-stars">${unlocked ? starStr : '—'}</div>
+                        <div class="lv-status">${unlocked ? (stars > 0 ? '✅ 已通关' : '▶ 可挑战') : '🔒 未解锁'}</div>
+                    `;
+                grid.appendChild(card);
+            }
+        }
+
+        function selectLevel(idx) {
+            if (idx > saveData.maxUnlocked) {
+                showToast('🔒 此关卡尚未解锁');
+                return;
+            }
+            currentLevel = idx;
+            document.getElementById('level-select-overlay').classList.remove('active');
+            document.getElementById('result-overlay').classList.remove('active');
+            loadLevel(idx);
+            if (frameId) cancelAnimationFrame(frameId);
+            gameLoop();
+        }
+
+        function exitToSelect() {
+            gameState = 'menu';
+            document.getElementById('game-hud').style.display = 'none';
+            document.getElementById('pause-overlay').style.display = 'none';
+            document.getElementById('result-overlay').classList.remove('active');
+            document.getElementById('level-select-overlay').classList.add('active');
+            document.getElementById('menu-overlay').classList.remove('active');
+            renderLevelGrid();
+            if (frameId) cancelAnimationFrame(frameId);
+        }
+
+        function togglePause() {
+            if (gameState !== 'playing') return;
+            isPaused = !isPaused;
+            document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+            document.getElementById('hud-pause-btn').textContent = isPaused ? '▶' : '⏸';
+        }
+
+        function openSaveLoad() {
+            document.getElementById('save-load-overlay').classList.add('active');
+            // 显示当前存档码
+            const code = document.getElementById('save-code-display');
+            if (code.textContent === '暂无存档' || code.textContent === '') {
+                // 尝试生成
+                generateSaveCode();
+            }
+        }
+
+        function closeSaveLoad() {
+            document.getElementById('save-load-overlay').classList.remove('active');
+        }
+
+        // ============================================================
+        //  12. 键盘 & 事件
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+            }
+            if (e.key === 'Escape' && gameState === 'playing') {
+                togglePause();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        // 触摸/点击canvas跳跃支持
+        canvas.addEventListener('click', () => {
+            if (gameState === 'playing' && !isPaused) {
+                if (player.onGround && canJump) {
+                    player.vy = JUMP_SPEED;
+                    player.onGround = false;
+                    canJump = false;
+                }
+            }
+        });
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameState === 'playing' && !isPaused) {
+                if (player.onGround && canJump) {
+                    player.vy = JUMP_SPEED;
+                    player.onGround = false;
+                    canJump = false;
+                }
+            }
+        });
+
+        // 关闭弹窗点击外部
+        document.getElementById('save-load-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeSaveLoad();
+        });
+        document.getElementById('level-select-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeLevelSelect();
+        });
+        document.getElementById('result-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                // 不关闭，必须点击按钮
+            }
+        });
+
+        // ============================================================
+        //  13. 初始化
+        // ============================================================
+        // 确保第一关解锁
+        if (saveData.maxUnlocked < 0) saveData.maxUnlocked = 0;
+        if (saveData.stars.length < LEVELS.length) {
+            while (saveData.stars.length < LEVELS.length) saveData.stars.push(0);
+        }
+        if (saveData.appleCounts.length < LEVELS.length) {
+            while (saveData.appleCounts.length < LEVELS.length) saveData.appleCounts.push(0);
+        }
+
+        // 预渲染选关
+        renderLevelGrid();
+
+        // 启动菜单循环 (渲染背景)
+        function menuLoop() {
+            if (gameState === 'menu' || gameState === 'levelSelect') {
+                // 画一个简单的背景动画
+                ctx.clearRect(0, 0, W, H);
+                const grad = ctx.createLinearGradient(0, 0, 0, H);
+                grad.addColorStop(0, '#87CEEB');
+                grad.addColorStop(0.7, '#8fc9a0');
+                grad.addColorStop(1, '#6a9a6a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+                drawCloud(120, 60, 0.7);
+                drawCloud(400, 40, 0.5);
+                drawCloud(650, 80, 0.6);
+                drawTree(30, 350, 0.8);
+                drawTree(160, 370, 0.6);
+                drawTree(580, 355, 0.7);
+                drawTree(720, 375, 0.5);
+                drawTree(880, 345, 0.8);
+                // 画一个简单老奶奶在菜单上
+                drawPlayer(400, 420, 30, 44, 1);
+                // 苹果装饰
+                for (let i = 0; i < 6; i++) {
+                    const ax = 100 + i * 130 + Math.sin(Date.now() / 2000 + i) * 10;
+                    const ay = 370 + Math.sin(Date.now() / 1500 + i * 0.7) * 8;
+                    ctx.fillStyle = '#cc1a0a';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                    ctx.beginPath();
+                    ctx.arc(ax, ay, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#2d8a2d';
+                    ctx.beginPath();
+                    ctx.ellipse(ax + 7, ay - 7, 5, 3, 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(menuLoop);
+            }
+        }
+        menuLoop();
+
+        // 预加载第一个关卡的数据用于展示
+        console.log('🍎 史密斯奶奶游戏已加载！');
+        console.log(`📚 共 ${LEVELS.length} 个关卡`);
+
+        // 暴露一些函数给全局
+        window.startGame = startGame;
+        window.openLevelSelect = openLevelSelect;
+        window.closeLevelSelect = closeLevelSelect;
+        window.selectLevel = selectLevel;
+        window.exitToSelect = exitToSelect;
+        window.togglePause = togglePause;
+        window.openSaveLoad = openSaveLoad;
+        window.closeSaveLoad = closeSaveLoad;
+        window.generateSaveCode = generateSaveCode;
+        window.copySaveCode = copySaveCode;
+        window.downloadSaveFile = downloadSaveFile;
+        window.loadSaveFromInput = loadSaveFromInput;
+        window.loadSaveFromFile = loadSaveFromFile;
+        window.resultNext = resultNext;
+        window.resultRetry = resultRetry;
+        window.resultToSelect = resultToSelect;
+        window.showToast = showToast;
+        window.renderLevelGrid = renderLevelGrid;
+
+        // 如果用户从选关进入游戏，需要确保canvas循环启动
+        // 初次加载时，显示菜单
+        console.log('✅ 游戏就绪！');
+    </script>
+</body>
+</html>

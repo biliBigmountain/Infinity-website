@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜数字游戏</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .game-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #6e8efb;
+            margin-bottom: 1.5rem;
+        }
+        .instruction {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .input-area {
+            margin-bottom: 1.5rem;
+        }
+        #guessInput {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            width: 60%;
+            max-width: 200px;
+            transition: border-color 0.3s;
+        }
+        #guessInput:focus {
+            outline: none;
+            border-color: #6e8efb;
+        }
+        button {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        #restartBtn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+        #feedback {
+            min-height: 2rem;
+            margin: 1.5rem 0;
+            font-weight: bold;
+            color: #6e8efb;
+        }
+        .attempts {
+            color: #888;
+            font-style: italic;
+        }
+        .success {
+            color: #4ecdc4;
+            font-weight: bold;
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <style id="game-center-return-style">
+        .game-center-return {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .7rem 1.15rem;
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #00a89a, #3695c5);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+            text-decoration: none;
+            font: 600 .95rem/1.2 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .game-center-return:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 168, 154, .35);
+            filter: brightness(1.08);
+        }
+        .game-center-return:focus-visible {
+            outline: 3px solid rgba(68, 183, 238, .55);
+            outline-offset: 3px;
+        }
+        @media (max-width: 600px) {
+            .game-center-return {
+                top: .75rem;
+                right: .75rem;
+                padding: .6rem .85rem;
+                font-size: .85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="game-center-return" href="/index" aria-label="返回至游戏中心">返回至游戏中心</a>
+    <div class="game-container">
+        <h1>猜数字游戏</h1>
+        <p class="instruction">我已经想好了一个<strong>1到100之间</strong>的整数。请在下方输入你的猜测，我会告诉你猜高了还是猜低了。</p>
+        
+        <div class="input-area">
+            <input type="number" id="guessInput" min="1" max="100" placeholder="输入1-100的数字">
+            <button id="submitGuess">提交猜测</button>
+            <button id="restartBtn">重新开始</button>
+        </div>
+        
+        <div id="feedback"></div>
+        <div class="attempts">猜测次数: <span id="attemptCount">0</span></div>
+    </div>
+
+    <script>
+        // 游戏状态变量
+        let targetNumber; // 目标数字
+        let attemptCount; // 尝试次数
+        let gameOver;     // 游戏是否结束
+
+        // DOM 元素
+        const guessInput = document.getElementById('guessInput');
+        const submitButton = document.getElementById('submitGuess');
+        const restartButton = document.getElementById('restartBtn');
+        const feedbackDiv = document.getElementById('feedback');
+        const attemptDisplay = document.getElementById('attemptCount');
+
+        // 初始化游戏
+        function initGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1; // 生成1-100的随机整数[1,6](@ref)
+            attemptCount = 0;
+            gameOver = false;
+            guessInput.value = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = '';
+            attemptDisplay.textContent = '0';
+            guessInput.disabled = false;
+            submitButton.disabled = false;
+            console.log(`目标数字(测试用): ${targetNumber}`); // 便于测试，实际游戏中可移除
+        }
+
+        // 处理猜测逻辑
+        function processGuess() {
+            if (gameOver) return;
+            
+            const userGuess = parseInt(guessInput.value);
+            
+            // 验证输入有效性[1](@ref)
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                feedbackDiv.textContent = '请输入1到100之间的有效数字！';
+                return;
+            }
+            
+            attemptCount++;
+            attemptDisplay.textContent = attemptCount;
+            
+            // 比较猜测与目标数字[1,6](@ref)
+            if (userGuess === targetNumber) {
+                feedbackDiv.textContent = `恭喜！你猜对了！数字就是 ${targetNumber}。`;
+                feedbackDiv.className = 'success';
+                gameOver = true;
+                guessInput.disabled = true;
+                submitButton.disabled = true;
+            } else if (userGuess < targetNumber) {
+                feedbackDiv.textContent = '猜低了，再试一次！';
+            } else {
+                feedbackDiv.textContent = '猜高了，再试一次！';
+            }
+            
+            guessInput.value = ''; // 清空输入框
+            guessInput.focus();    // 焦点重新回到输入框
+        }
+
+        // 事件监听
+        submitButton.addEventListener('click', processGuess);
+        restartButton.addEventListener('click', initGame);
+        guessInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                processGuess();
+            }
+        });
+
+        // 启动游戏
+        initGame();
+    </script>
+</body>
+</html>

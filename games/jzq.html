@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>井字棋游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        header {
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 25px;
+            min-width: 120px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .current-player {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .player-symbol {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            line-height: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .player-symbol.x {
+            background: #2ecc71;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin: 0 auto;
+            max-width: 350px;
+            aspect-ratio: 1/1;
+        }
+        
+        .cell {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .cell.x {
+            color: #2ecc71;
+        }
+        
+        .cell.o {
+            color: #ff6b6b;
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-reset {
+            background: #2ecc71;
+        }
+        
+        .btn-reset:hover {
+            background: #27ae60;
+        }
+        
+        .winning-cell {
+            animation: pulse 1s infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .result-modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .result-content {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .result-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .result-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .info-box {
+                padding: 10px 15px;
+                min-width: 90px;
+            }
+            
+            .info-value {
+                font-size: 1.5rem;
+            }
+            
+            .cell {
+                font-size: 3rem;
+            }
+            
+            .board {
+                max-width: 300px;
+            }
+        }
+    </style>
+
+    <style id="game-center-return-style">
+        .game-center-return {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .7rem 1.15rem;
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #00a89a, #3695c5);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+            text-decoration: none;
+            font: 600 .95rem/1.2 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .game-center-return:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 168, 154, .35);
+            filter: brightness(1.08);
+        }
+        .game-center-return:focus-visible {
+            outline: 3px solid rgba(68, 183, 238, .55);
+            outline-offset: 3px;
+        }
+        @media (max-width: 600px) {
+            .game-center-return {
+                top: .75rem;
+                right: .75rem;
+                padding: .6rem .85rem;
+                font-size: .85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="game-center-return" href="/index" aria-label="返回至游戏中心">返回至游戏中心</a>
+    <div class="container">
+        <header>
+            <h1>井字棋游戏</h1>
+            <p class="subtitle">经典的三连棋游戏，挑战你的策略思维</p>
+        </header>
+        
+        <div class="game-info">
+            <div class="info-box">
+                <div class="info-value" id="x-wins">0</div>
+                <div class="info-label">X 获胜</div>
+            </div>
+            <div class="info-box">
+                <div class="info-value" id="draws">0</div>
+                <div class="info-label">平局</div>
+            </div>
+            <div class="info-box">
+                <div class="info-value" id="o-wins">0</div>
+                <div class="info-label">O 获胜</div>
+            </div>
+        </div>
+        
+        <div class="current-player">
+            <span>当前玩家:</span>
+            <span class="player-symbol x" id="current-symbol">X</span>
+        </div>
+        
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-reset" id="reset-btn">重新开始</button>
+            <button class="btn" id="new-game-btn">新游戏</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>游戏规则</h3>
+            <p>两名玩家轮流在3x3的格子中放置"X"和"O"，先将三个相同标记连成一条直线（横、竖或斜线）的玩家获胜。</p>
+        </div>
+    </div>
+    
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <h2 id="result-title">游戏结束</h2>
+            <p id="result-message">玩家 X 获胜!</p>
+            <button class="btn btn-reset" id="modal-close-btn">继续游戏</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 游戏状态变量
+            let currentPlayer = 'X';
+            let gameBoard = ['', '', '', '', '', '', '', '', ''];
+            let gameActive = true;
+            let xWins = 0;
+            let oWins = 0;
+            let draws = 0;
+            
+            // 元素引用
+            const cells = document.querySelectorAll('.cell');
+            const currentPlayerSymbol = document.getElementById('current-symbol');
+            const xWinsElement = document.getElementById('x-wins');
+            const oWinsElement = document.getElementById('o-wins');
+            const drawsElement = document.getElementById('draws');
+            const resetBtn = document.getElementById('reset-btn');
+            const newGameBtn = document.getElementById('new-game-btn');
+            const resultModal = document.getElementById('result-modal');
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            
+            // 获胜条件数组
+            const winningConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横线
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // 竖线
+                [0, 4, 8], [2, 4, 6]             // 斜线
+            ];
+            
+            // 初始化游戏
+            function initGame() {
+                gameBoard = ['', '', '', '', '', '', '', '', ''];
+                gameActive = true;
+                currentPlayer = 'X';
+                updateCurrentPlayer();
+                
+                // 清空棋盘
+                cells.forEach(cell => {
+                    cell.textContent = '';
+                    cell.classList.remove('x', 'o', 'winning-cell');
+                });
+                
+                // 隐藏结果模态框
+                resultModal.classList.remove('show');
+            }
+            
+            // 更新当前玩家显示
+            function updateCurrentPlayer() {
+                currentPlayerSymbol.textContent = currentPlayer;
+                currentPlayerSymbol.className = `player-symbol ${currentPlayer.toLowerCase()}`;
+            }
+            
+            // 处理单元格点击
+            function handleCellClick(e) {
+                const cell = e.target;
+                const index = parseInt(cell.getAttribute('data-index'));
+                
+                // 检查单元格是否已被占用或游戏已结束
+                if (gameBoard[index] !== '' || !gameActive) return;
+                
+                // 更新游戏状态
+                gameBoard[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.classList.add(currentPlayer.toLowerCase());
+                
+                // 检查游戏结果
+                checkResult();
+            }
+            
+            // 检查游戏结果
+            function checkResult() {
+                let roundWon = false;
+                let winningCombo = [];
+                
+                // 检查获胜条件
+                for (let i = 0; i < winningConditions.length; i++) {
+                    const [a, b, c] = winningConditions[i];
+                    if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                        roundWon = true;
+                        winningCombo = winningConditions[i];
+                        break;
+                    }
+                }
+                
+                // 如果有玩家获胜
+                if (roundWon) {
+                    gameActive = false;
+                    
+                    // 高亮显示获胜的单元格
+                    winningCombo.forEach(index => {
+                        cells[index].classList.add('winning-cell');
+                    });
+                    
+                    // 更新获胜计数
+                    if (currentPlayer === 'X') {
+                        xWins++;
+                        xWinsElement.textContent = xWins;
+                    } else {
+                        oWins++;
+                        oWinsElement.textContent = oWins;
+                    }
+                    
+                    // 显示获胜消息
+                    showResult(`玩家 ${currentPlayer} 获胜!`, '恭喜!');
+                    return;
+                }
+                
+                // 检查平局
+                let roundDraw = !gameBoard.includes('');
+                if (roundDraw) {
+                    gameActive = false;
+                    draws++;
+                    drawsElement.textContent = draws;
+                    showResult('平局!', '游戏结束');
+                    return;
+                }
+                
+                // 切换玩家
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateCurrentPlayer();
+            }
+            
+            // 显示结果模态框
+            function showResult(message, title) {
+                resultTitle.textContent = title;
+                resultMessage.textContent = message;
+                resultModal.classList.add('show');
+            }
+            
+            // 事件监听
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleCellClick);
+            });
+            
+            resetBtn.addEventListener('click', initGame);
+            
+            newGameBtn.addEventListener('click', () => {
+                xWins = 0;
+                oWins = 0;
+                draws = 0;
+                xWinsElement.textContent = '0';
+                oWinsElement.textContent = '0';
+                drawsElement.textContent = '0';
+                initGame();
+            });
+            
+            modalCloseBtn.addEventListener('click', () => {
+                resultModal.classList.remove('show');
+            });
+            
+            // 初始化游戏
+            initGame();
+        });
+    </script>
+</body>
+</html>

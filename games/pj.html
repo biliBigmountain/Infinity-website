@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 跳跃冒险 - 平台跳跃游戏</title>
+    <style>
+        /* ===== 全局重置 & 基础样式 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+            background: #0b0e1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            position: relative;
+        }
+
+        /* ===== 返回游戏中心按钮 (固定在网页右上角) ===== */
+        #back-to-center {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        #back-to-center:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+        #back-to-center svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* ===== 游戏容器 ===== */
+        #app {
+            position: relative;
+            width: 820px;
+            height: 600px;
+            background: #141828;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+
+        /* ===== 通用面板 ===== */
+        .panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            background: radial-gradient(ellipse at 50% 80%, #1a2140, #0b0e1a 70%);
+            z-index: 10;
+        }
+        .panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.96);
+        }
+
+        /* ===== 主菜单 ===== */
+        #main-menu .logo {
+            font-size: 58px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f7d875, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+        #main-menu .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 40px;
+            letter-spacing: 6px;
+            font-weight: 300;
+        }
+        .menu-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 220px;
+        }
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f7d875, #f5a623);
+            color: #1a1a2e;
+            border-color: transparent;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #fae18a, #f7b83a);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.13);
+        }
+        .btn-danger {
+            background: rgba(255, 70, 70, 0.2);
+            border-color: rgba(255, 70, 70, 0.3);
+            color: #ff7a7a;
+        }
+        .btn-danger:hover {
+            background: rgba(255, 70, 70, 0.35);
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 12px;
+        }
+
+        /* ===== 选关界面 ===== */
+        #level-select .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 720px;
+            margin-bottom: 28px;
+        }
+        #level-select .header h2 {
+            color: #fff;
+            font-size: 26px;
+            font-weight: 600;
+        }
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            width: 100%;
+            max-width: 720px;
+        }
+        .level-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 18px;
+            padding: 22px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .level-card:hover:not(.locked) {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 100, 0.3);
+        }
+        .level-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+        }
+        .level-card .lv-num {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .level-card .lv-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+        .level-card .lv-status {
+            font-size: 22px;
+            margin-top: 6px;
+        }
+        .level-card .lv-stars {
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+        .level-card .lock-icon {
+            font-size: 26px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .level-card.current {
+            border-color: #f7d875;
+            box-shadow: 0 0 30px rgba(247, 216, 117, 0.15);
+        }
+        .level-card.completed {
+            border-color: rgba(100, 255, 150, 0.3);
+        }
+
+        /* ===== 游戏界面 ===== */
+        #game-container {
+            padding: 0;
+            background: #0f1322;
+        }
+        #game-container .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 12px 22px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+            z-index: 5;
+        }
+        .game-header .left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .game-header .left .level-badge {
+            background: rgba(247, 216, 117, 0.15);
+            color: #f7d875;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .game-header .left .star-badge {
+            color: #ffd93d;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .game-header .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .game-header .right .btn {
+            font-size: 13px;
+            padding: 7px 16px;
+            border-radius: 30px;
+        }
+        #game-canvas {
+            flex: 1;
+            width: 100%;
+            display: block;
+            background: #0f1322;
+            cursor: default;
+        }
+        #game-container .game-footer {
+            padding: 8px 22px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 存档弹窗 ===== */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-box {
+            background: #1c2340;
+            border-radius: 24px;
+            padding: 32px 36px;
+            max-width: 480px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            transform: scale(0.92);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+        .modal-box h3 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .modal-box .modal-message {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            line-height: 1.6;
+            text-align: center;
+            margin: 16px 0 24px;
+            white-space: pre-line;
+        }
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .modal-box .modal-actions .btn {
+            min-width: 100px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .modal-box .sub {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-box .code-display {
+            background: #0b0e1a;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            color: #f7d875;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 18px;
+            text-align: center;
+            letter-spacing: 1px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-box .code-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .modal-box .code-actions .btn {
+            flex: 1;
+            min-width: 80px;
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+        .modal-box .load-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .modal-box .load-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0b0e1a;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-box .load-input input:focus {
+            border-color: #f7d875;
+        }
+        .modal-box .load-input .btn {
+            padding: 10px 18px;
+            font-size: 14px;
+        }
+        .modal-box .close-modal {
+            margin-top: 16px;
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-box .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .modal-box .toast-msg {
+            color: #7aff8a;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 8px;
+            min-height: 22px;
+        }
+        .modal-box .toast-msg.error {
+            color: #ff7a7a;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 860px) {
+            #app {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .level-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            #main-menu .logo {
+                font-size: 40px;
+            }
+            .modal-box {
+                padding: 24px 20px;
+                max-width: 94%;
+            }
+            .game-header .left .level-badge {
+                font-size: 13px;
+                padding: 2px 12px;
+            }
+            .game-header .left .star-badge {
+                font-size: 13px;
+            }
+            .game-header .right .btn {
+                font-size: 11px;
+                padding: 5px 12px;
+            }
+            #back-to-center {
+                top: 12px;
+                right: 12px;
+                font-size: 12px;
+                padding: 5px 12px;
+            }
+        }
+        @media (max-width: 500px) {
+            .level-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .menu-btn-group {
+                width: 180px;
+            }
+            .btn {
+                font-size: 15px;
+                padding: 12px 18px;
+            }
+            #main-menu .logo {
+                font-size: 32px;
+            }
+            #main-menu .subtitle {
+                font-size: 14px;
+                letter-spacing: 4px;
+            }
+            #back-to-center {
+                top: 8px;
+                right: 8px;
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            .modal-box .modal-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .modal-box .modal-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 返回游戏中心 (固定在网页右上角) ===== -->
+    <button id="back-to-center" onclick="window.location.href='/index'">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        返回游戏中心
+    </button>
+
+    <div id="app">
+        <!-- ===== 主菜单 ===== -->
+        <div id="main-menu" class="panel">
+            <div class="logo">🎮 跳跃冒险</div>
+            <div class="subtitle">PLATFORM ADVENTURE</div>
+            <div class="menu-btn-group">
+                <button class="btn btn-primary" id="btn-start">🚀 开始游戏</button>
+                <button class="btn btn-secondary" id="btn-load-save">📂 读取存档</button>
+            </div>
+            <div style="margin-top:24px;color:rgba(255,255,255,0.15);font-size:12px;letter-spacing:2px;">
+                WASD / 方向键 · 空格跳跃
+            </div>
+        </div>
+
+        <!-- ===== 选关界面 ===== -->
+        <div id="level-select" class="panel hidden">
+            <div class="header">
+                <h2>🗺️ 选择关卡</h2>
+                <button class="btn btn-secondary btn-sm" id="btn-back-menu">← 返回</button>
+            </div>
+            <div class="level-grid" id="level-grid"></div>
+        </div>
+
+        <!-- ===== 游戏界面 ===== -->
+        <div id="game-container" class="panel hidden" style="padding:0;justify-content:flex-start;background:#0f1322;">
+            <div class="game-header">
+                <div class="left">
+                    <span class="level-badge" id="game-level-badge">第 1 关</span>
+                    <span class="star-badge" id="game-star-badge">⭐ 0 / 0</span>
+                </div>
+                <div class="right">
+                    <button class="btn btn-secondary btn-sm" id="btn-save-game">💾 存档</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-reset-level">↺ 重置</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-back-levels">✕ 返回</button>
+                </div>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div class="game-footer">← → 移动 · 空格 / ↑ 跳跃 · 到达旗帜过关</div>
+        </div>
+
+        <!-- ===== 存档弹窗 ===== -->
+        <div class="modal-overlay" id="save-modal">
+            <div class="modal-box">
+                <h3 id="modal-title">💾 存档码</h3>
+                <div class="sub" id="modal-sub">保存你的游戏进度</div>
+                <div class="code-display" id="code-display">—</div>
+                <div class="code-actions">
+                    <button class="btn btn-primary btn-sm" id="btn-download-txt">📥 下载 .txt</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-copy-code">📋 复制</button>
+                </div>
+                <div class="load-input">
+                    <input type="text" id="load-input" placeholder="粘贴存档码..." spellcheck="false">
+                    <button class="btn btn-primary btn-sm" id="btn-load-code">读取</button>
+                </div>
+                <div class="toast-msg" id="modal-toast"></div>
+                <button class="close-modal" id="btn-close-modal">关闭</button>
+            </div>
+        </div>
+
+        <!-- ===== 完成关卡弹窗 (自定义) ===== -->
+        <div class="modal-overlay" id="complete-modal">
+            <div class="modal-box">
+                <h3 id="complete-title">🎉 关卡完成！</h3>
+                <div class="modal-message" id="complete-message">消息</div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="complete-confirm-btn">继续</button>
+                    <button class="btn btn-secondary" id="complete-cancel-btn">返回选关</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  平台跳跃游戏 - 完整逻辑
+        // ================================================================
+
+        // ---------- 关卡数据 ----------
+        const LEVELS = [];
+
+        // 辅助：创建平台
+        function plat(x, y, w, h) { return { x, y, w, h }; }
+
+        // 关卡1 - 新手村
+        LEVELS.push({
+            name: '绿野初程',
+            bg: '#1a2e1a',
+            playerStart: { x: 60, y: 420 },
+            finish: { x: 740, y: 180 },
+            platforms: [
+                plat(0, 470, 820, 30),
+                plat(120, 390, 100, 16),
+                plat(300, 320, 100, 16),
+                plat(490, 250, 100, 16),
+                plat(680, 190, 80, 16),
+            ],
+            stars: [
+                { x: 350, y: 290, collected: false },
+                { x: 540, y: 220, collected: false },
+            ],
+            movingPlats: [],
+        });
+
+        // 关卡2 - 峡谷飞跃
+        LEVELS.push({
+            name: '峡谷飞跃',
+            bg: '#1a263a',
+            playerStart: { x: 50, y: 420 },
+            finish: { x: 750, y: 120 },
+            platforms: [
+                plat(0, 470, 280, 30),
+                plat(380, 470, 440, 30),
+                plat(100, 380, 80, 16),
+                plat(260, 310, 80, 16),
+                plat(440, 380, 80, 16),
+                plat(600, 310, 80, 16),
+                plat(720, 230, 80, 16),
+            ],
+            stars: [
+                { x: 140, y: 350, collected: false },
+                { x: 300, y: 280, collected: false },
+                { x: 480, y: 350, collected: false },
+            ],
+            movingPlats: [
+                { x: 200, y: 240, w: 80, h: 14, range: 60, speed: 1.2, axis: 'x' },
+            ],
+        });
+
+        // 关卡3 - 浮空遗迹
+        LEVELS.push({
+            name: '浮空遗迹',
+            bg: '#2a1a3a',
+            playerStart: { x: 40, y: 420 },
+            finish: { x: 760, y: 90 },
+            platforms: [
+                plat(0, 470, 820, 30),
+                plat(60, 380, 80, 14),
+                plat(220, 310, 80, 14),
+                plat(380, 240, 80, 14),
+                plat(540, 310, 80, 14),
+                plat(700, 240, 80, 14),
+            ],
+            stars: [
+                { x: 100, y: 350, collected: false },
+                { x: 260, y: 280, collected: false },
+                { x: 420, y: 210, collected: false },
+                { x: 580, y: 280, collected: false },
+            ],
+            movingPlats: [
+                { x: 100, y: 190, w: 80, h: 14, range: 70, speed: 0.9, axis: 'y' },
+                { x: 460, y: 190, w: 80, h: 14, range: 70, speed: 0.9, axis: 'y' },
+            ],
+        });
+
+        // 关卡4 - 熔岩之径
+        LEVELS.push({
+            name: '熔岩之径',
+            bg: '#2a1a1a',
+            playerStart: { x: 50, y: 420 },
+            finish: { x: 750, y: 100 },
+            platforms: [
+                plat(0, 470, 160, 30),
+                plat(260, 470, 160, 30),
+                plat(520, 470, 300, 30),
+                plat(80, 370, 70, 14),
+                plat(220, 290, 70, 14),
+                plat(380, 370, 70, 14),
+                plat(520, 290, 70, 14),
+                plat(660, 210, 70, 14),
+            ],
+            stars: [
+                { x: 120, y: 340, collected: false },
+                { x: 260, y: 260, collected: false },
+                { x: 420, y: 340, collected: false },
+                { x: 560, y: 260, collected: false },
+            ],
+            movingPlats: [
+                { x: 120, y: 200, w: 70, h: 14, range: 80, speed: 1.4, axis: 'x' },
+                { x: 400, y: 200, w: 70, h: 14, range: 80, speed: 1.4, axis: 'x' },
+            ],
+        });
+
+        // 关卡5 - 天空圣殿
+        LEVELS.push({
+            name: '天空圣殿',
+            bg: '#1a2a3a',
+            playerStart: { x: 40, y: 420 },
+            finish: { x: 760, y: 60 },
+            platforms: [
+                plat(0, 470, 820, 30),
+                plat(40, 380, 70, 14),
+                plat(180, 300, 70, 14),
+                plat(320, 220, 70, 14),
+                plat(460, 300, 70, 14),
+                plat(600, 220, 70, 14),
+                plat(740, 140, 70, 14),
+            ],
+            stars: [
+                { x: 80, y: 350, collected: false },
+                { x: 220, y: 270, collected: false },
+                { x: 360, y: 190, collected: false },
+                { x: 500, y: 270, collected: false },
+                { x: 640, y: 190, collected: false },
+            ],
+            movingPlats: [
+                { x: 100, y: 140, w: 70, h: 14, range: 70, speed: 1.0, axis: 'y' },
+                { x: 300, y: 140, w: 70, h: 14, range: 70, speed: 1.0, axis: 'y' },
+                { x: 500, y: 140, w: 70, h: 14, range: 70, speed: 1.0, axis: 'y' },
+            ],
+        });
+
+        // 关卡6 - 终极挑战
+        LEVELS.push({
+            name: '终极挑战',
+            bg: '#1a0a1a',
+            playerStart: { x: 40, y: 420 },
+            finish: { x: 760, y: 50 },
+            platforms: [
+                plat(0, 470, 140, 30),
+                plat(240, 470, 140, 30),
+                plat(480, 470, 140, 30),
+                plat(720, 470, 100, 30),
+                plat(60, 370, 60, 14),
+                plat(180, 290, 60, 14),
+                plat(320, 370, 60, 14),
+                plat(440, 290, 60, 14),
+                plat(580, 370, 60, 14),
+                plat(700, 290, 60, 14),
+            ],
+            stars: [
+                { x: 100, y: 340, collected: false },
+                { x: 220, y: 260, collected: false },
+                { x: 360, y: 340, collected: false },
+                { x: 480, y: 260, collected: false },
+                { x: 620, y: 340, collected: false },
+            ],
+            movingPlats: [
+                { x: 80, y: 190, w: 60, h: 14, range: 70, speed: 1.6, axis: 'x' },
+                { x: 280, y: 190, w: 60, h: 14, range: 70, speed: 1.6, axis: 'x' },
+                { x: 480, y: 190, w: 60, h: 14, range: 70, speed: 1.6, axis: 'x' },
+                { x: 680, y: 190, w: 60, h: 14, range: 70, speed: 1.6, axis: 'x' },
+            ],
+        });
+
+        // ---------- 游戏状态 ----------
+        const state = {
+            currentLevel: 0,
+            maxUnlocked: 0,
+            levelStars: [],
+            starCollected: [],
+            gameRunning: false,
+            gameOver: false,
+            levelComplete: false,
+            player: {
+                x: 0,
+                y: 0,
+                w: 28,
+                h: 36,
+                vx: 0,
+                vy: 0,
+                onGround: false,
+                facing: 1,
+            },
+            movingPlats: [],
+            finishReached: false,
+            lastTime: 0,
+            animFrame: null,
+        };
+
+        // ---------- DOM 引用 ----------
+        const $ = id => document.getElementById(id);
+        const mainMenu = $('main-menu');
+        const levelSelect = $('level-select');
+        const gameContainer = $('game-container');
+        const canvas = $('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const levelGrid = $('level-grid');
+        const gameLevelBadge = $('game-level-badge');
+        const gameStarBadge = $('game-star-badge');
+        const saveModal = $('save-modal');
+        const completeModal = $('complete-modal');
+        const codeDisplay = $('code-display');
+        const modalToast = $('modal-toast');
+        const loadInput = $('load-input');
+        let currentSaveCode = '';
+
+        // ---------- Canvas 尺寸自适应 ----------
+        function resizeCanvas() {
+            const rect = gameContainer.getBoundingClientRect();
+            const headerH = 56;
+            const footerH = 34;
+            const availH = gameContainer.clientHeight - headerH - footerH;
+            const availW = gameContainer.clientWidth;
+            canvas.width = Math.min(availW, 820);
+            canvas.height = Math.min(availH, 500);
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // ---------- 工具函数 ----------
+        function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+        function rectCollide(a, b) {
+            return a.x < b.x + b.w && a.x + a.w > b.x &&
+                a.y < b.y + b.h && a.y + a.h > b.y;
+        }
+
+        // ---------- 自定义模态框：完成关卡 ----------
+        function showCompleteModal(title, message, showCancel, onConfirm, onCancel) {
+            const modal = completeModal;
+            document.getElementById('complete-title').textContent = title;
+            document.getElementById('complete-message').textContent = message;
+            const confirmBtn = document.getElementById('complete-confirm-btn');
+            const cancelBtn = document.getElementById('complete-cancel-btn');
+
+            cancelBtn.style.display = showCancel ? 'inline-block' : 'none';
+
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+
+            confirmBtn.onclick = function() {
+                modal.classList.remove('active');
+                if (typeof onConfirm === 'function') onConfirm();
+            };
+            if (showCancel) {
+                cancelBtn.onclick = function() {
+                    modal.classList.remove('active');
+                    if (typeof onCancel === 'function') onCancel();
+                };
+            } else {
+                cancelBtn.onclick = null;
+            }
+
+            modal.classList.add('active');
+        }
+
+        // ---------- 存档系统 ----------
+        function getSaveData() {
+            const starsPerLevel = LEVELS.map((lv, idx) => {
+                if (state.levelStars[idx] !== undefined) {
+                    return state.levelStars[idx];
+                }
+                return 0;
+            });
+            return {
+                maxUnlocked: state.maxUnlocked,
+                starsPerLevel: starsPerLevel,
+                version: 1
+            };
+        }
+
+        function encodeSave(data) {
+            try {
+                const json = JSON.stringify(data);
+                return btoa(unescape(encodeURIComponent(json)));
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function decodeSave(code) {
+            try {
+                const json = decodeURIComponent(escape(atob(code)));
+                return JSON.parse(json);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // 【修复】存档函数 - 确保正确显示存档码，失败时显示错误信息
+        function saveGame() {
+            try {
+                const data = getSaveData();
+                const code = encodeSave(data);
+                if (code) {
+                    currentSaveCode = code;
+                    codeDisplay.textContent = currentSaveCode;
+                    modalToast.textContent = '✅ 存档已生成！';
+                    modalToast.className = 'toast-msg';
+                    $('modal-title').textContent = '💾 存档码';
+                    $('modal-sub').textContent = '保存你的游戏进度';
+                    saveModal.classList.add('active');
+                } else {
+                    // 如果编码失败，显示错误信息
+                    currentSaveCode = '';
+                    codeDisplay.textContent = '❌ 存档生成失败，请重试';
+                    modalToast.textContent = '❌ 存档生成失败';
+                    modalToast.className = 'toast-msg error';
+                    $('modal-title').textContent = '💾 存档失败';
+                    $('modal-sub').textContent = '请检查游戏状态';
+                    saveModal.classList.add('active');
+                }
+            } catch (e) {
+                // 异常处理
+                currentSaveCode = '';
+                codeDisplay.textContent = '❌ 发生错误，无法存档';
+                modalToast.textContent = '❌ 存档异常: ' + e.message;
+                modalToast.className = 'toast-msg error';
+                $('modal-title').textContent = '💾 存档异常';
+                $('modal-sub').textContent = '请重试或重启游戏';
+                saveModal.classList.add('active');
+            }
+        }
+
+        function loadSaveCode(code) {
+            const data = decodeSave(code);
+            if (!data) {
+                modalToast.textContent = '❌ 无效的存档码';
+                modalToast.className = 'toast-msg error';
+                return false;
+            }
+            if (data.maxUnlocked !== undefined) {
+                state.maxUnlocked = Math.min(data.maxUnlocked, LEVELS.length - 1);
+            }
+            if (data.starsPerLevel && data.starsPerLevel.length === LEVELS.length) {
+                state.levelStars = data.starsPerLevel.map(v => v || 0);
+            } else {
+                state.levelStars = LEVELS.map(() => 0);
+            }
+            if (state.currentLevel > state.maxUnlocked) {
+                state.currentLevel = state.maxUnlocked;
+            }
+            renderLevelGrid();
+            modalToast.textContent = '✅ 存档读取成功！';
+            modalToast.className = 'toast-msg';
+            if (!state.gameRunning) {
+                showPanel('level-select');
+            }
+            return true;
+        }
+
+        function downloadTxt() {
+            const code = currentSaveCode;
+            if (!code || code === '—' || code.startsWith('❌')) {
+                modalToast.textContent = '⚠️ 没有有效的存档码可下载';
+                modalToast.className = 'toast-msg error';
+                return;
+            }
+            const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `跳跃冒险_存档_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            modalToast.textContent = '✅ 下载成功！';
+            modalToast.className = 'toast-msg';
+        }
+
+        function copyCode() {
+            const code = currentSaveCode;
+            if (!code || code === '—' || code.startsWith('❌')) {
+                modalToast.textContent = '⚠️ 没有有效的存档码可复制';
+                modalToast.className = 'toast-msg error';
+                return;
+            }
+            navigator.clipboard.writeText(code).then(() => {
+                modalToast.textContent = '✅ 已复制到剪贴板！';
+                modalToast.className = 'toast-msg';
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = code;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                modalToast.textContent = '✅ 已复制！';
+                modalToast.className = 'toast-msg';
+            });
+        }
+
+        // ---------- 面板切换 ----------
+        function showPanel(id) {
+            [mainMenu, levelSelect, gameContainer].forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(id);
+            if (target) target.classList.remove('hidden');
+        }
+
+        // ---------- 渲染选关网格 ----------
+        function renderLevelGrid() {
+            levelGrid.innerHTML = '';
+            for (let i = 0; i < LEVELS.length; i++) {
+                const lv = LEVELS[i];
+                const unlocked = i <= state.maxUnlocked;
+                const completed = state.levelStars[i] !== undefined && state.levelStars[i] > 0;
+                const card = document.createElement('div');
+                card.className = 'level-card';
+                if (!unlocked) card.classList.add('locked');
+                if (completed) card.classList.add('completed');
+                if (i === state.currentLevel && state.gameRunning) card.classList.add('current');
+
+                const numSpan = document.createElement('div');
+                numSpan.className = 'lv-num';
+                numSpan.textContent = i + 1;
+
+                const labelSpan = document.createElement('div');
+                labelSpan.className = 'lv-label';
+                labelSpan.textContent = lv.name || `第${i+1}关`;
+
+                const statusSpan = document.createElement('div');
+                statusSpan.className = 'lv-status';
+                if (!unlocked) {
+                    statusSpan.textContent = '🔒';
+                } else if (completed) {
+                    const stars = state.levelStars[i] || 0;
+                    const total = lv.stars ? lv.stars.length : 0;
+                    statusSpan.textContent = '⭐'.repeat(Math.min(stars, 3)) + '☆'.repeat(Math.max(0, 3 - Math.min(stars, 3)));
+                    if (stars >= total && total > 0) statusSpan.textContent = '🌟' + '⭐'.repeat(Math.min(stars - 1, 2));
+                } else {
+                    statusSpan.textContent = '▶️';
+                }
+
+                card.appendChild(numSpan);
+                card.appendChild(labelSpan);
+                card.appendChild(statusSpan);
+
+                if (unlocked) {
+                    card.addEventListener('click', () => {
+                        startLevel(i);
+                    });
+                }
+                levelGrid.appendChild(card);
+            }
+        }
+
+        // ---------- 游戏物理 & 逻辑 ----------
+        function startLevel(idx) {
+            if (idx > state.maxUnlocked) return;
+            state.currentLevel = idx;
+            state.gameRunning = true;
+            state.levelComplete = false;
+            state.finishReached = false;
+
+            const lv = LEVELS[idx];
+            const p = state.player;
+            p.x = lv.playerStart.x;
+            p.y = lv.playerStart.y;
+            p.vx = 0;
+            p.vy = 0;
+            p.onGround = false;
+            p.facing = 1;
+
+            if (lv.stars) {
+                state.starCollected = lv.stars.map(s => s.collected || false);
+            } else {
+                state.starCollected = [];
+            }
+
+            state.movingPlats = lv.movingPlats.map(mp => ({
+                ...mp,
+                origX: mp.x,
+                origY: mp.y,
+                phase: Math.random() * Math.PI * 2,
+            }));
+
+            gameLevelBadge.textContent = `第 ${idx+1} 关 · ${lv.name}`;
+            updateStarBadge();
+
+            showPanel('game-container');
+            resizeCanvas();
+
+            if (state.animFrame) cancelAnimationFrame(state.animFrame);
+            state.lastTime = performance.now();
+            gameLoop(state.lastTime);
+        }
+
+        function updateStarBadge() {
+            const lv = LEVELS[state.currentLevel];
+            const total = lv.stars ? lv.stars.length : 0;
+            const collected = state.starCollected.filter(v => v).length;
+            gameStarBadge.textContent = `⭐ ${collected} / ${total}`;
+        }
+
+        // ---------- 游戏循环 ----------
+        function gameLoop(timestamp) {
+            const dt = Math.min((timestamp - state.lastTime) / 16.667, 3);
+            state.lastTime = timestamp;
+
+            if (state.gameRunning && !state.levelComplete) {
+                update(dt);
+            }
+            render();
+
+            state.animFrame = requestAnimationFrame(gameLoop);
+        }
+
+        // ---------- 更新 ----------
+        function update(dt) {
+            const lv = LEVELS[state.currentLevel];
+            const p = state.player;
+            const GRAVITY = 0.55;
+            const JUMP_SPEED = -20.0;
+            const MOVE_SPEED = 4.8;
+            const FRICTION = 0.82;
+            const MAX_FALL = 11;
+
+            let moveX = 0;
+            if (keys['ArrowLeft'] || keys['KeyA']) moveX = -1;
+            if (keys['ArrowRight'] || keys['KeyD']) moveX = 1;
+            if (moveX !== 0) p.facing = moveX;
+
+            p.vx += moveX * MOVE_SPEED * 0.3;
+            p.vx *= FRICTION;
+            if (Math.abs(p.vx) > MOVE_SPEED) p.vx = MOVE_SPEED * Math.sign(p.vx);
+            if (Math.abs(p.vx) < 0.05) p.vx = 0;
+
+            const jumpKey = keys['Space'] || keys['ArrowUp'] || keys['KeyW'];
+            if (jumpKey && p.onGround) {
+                p.vy = JUMP_SPEED;
+                p.onGround = false;
+            }
+            if (!jumpKey && p.vy < -2) {
+                p.vy *= 0.92;
+            }
+
+            p.vy += GRAVITY;
+            if (p.vy > MAX_FALL) p.vy = MAX_FALL;
+
+            for (const mp of state.movingPlats) {
+                mp.phase += dt * mp.speed * 0.06;
+                const offset = Math.sin(mp.phase) * mp.range;
+                if (mp.axis === 'x') {
+                    mp.x = mp.origX + offset;
+                } else {
+                    mp.y = mp.origY + offset;
+                }
+            }
+
+            p.x += p.vx * dt;
+            const allPlats = [...lv.platforms, ...state.movingPlats];
+            for (const plat of allPlats) {
+                if (rectCollide(p, plat)) {
+                    if (p.vx > 0) {
+                        p.x = plat.x - p.w;
+                    } else if (p.vx < 0) {
+                        p.x = plat.x + plat.w;
+                    }
+                    p.vx = 0;
+                }
+            }
+
+            p.y += p.vy * dt;
+            p.onGround = false;
+            for (const plat of allPlats) {
+                if (rectCollide(p, plat)) {
+                    if (p.vy > 0) {
+                        p.y = plat.y - p.h;
+                        p.vy = 0;
+                        p.onGround = true;
+                    } else if (p.vy < 0) {
+                        p.y = plat.y + plat.h;
+                        p.vy = 0;
+                    }
+                }
+            }
+
+            if (p.x < -10) p.x = -10;
+            if (p.x + p.w > canvas.width + 10) p.x = canvas.width + 10 - p.w;
+            if (p.y > canvas.height + 60) {
+                p.x = lv.playerStart.x;
+                p.y = lv.playerStart.y;
+                p.vx = 0;
+                p.vy = 0;
+                p.onGround = false;
+                if (lv.stars) {
+                    state.starCollected = lv.stars.map(s => false);
+                }
+                updateStarBadge();
+                return;
+            }
+
+            if (lv.stars) {
+                for (let i = 0; i < lv.stars.length; i++) {
+                    if (state.starCollected[i]) continue;
+                    const star = lv.stars[i];
+                    const starBox = { x: star.x - 10, y: star.y - 10, w: 20, h: 20 };
+                    if (rectCollide(p, starBox)) {
+                        state.starCollected[i] = true;
+                        updateStarBadge();
+                    }
+                }
+            }
+
+            const finish = lv.finish;
+            const finishBox = { x: finish.x - 16, y: finish.y - 16, w: 32, h: 32 };
+            if (rectCollide(p, finishBox) && !state.finishReached) {
+                state.finishReached = true;
+                state.levelComplete = true;
+
+                const collectedCount = state.starCollected.filter(v => v).length;
+                const prevStars = state.levelStars[state.currentLevel] || 0;
+                if (collectedCount > prevStars) {
+                    state.levelStars[state.currentLevel] = collectedCount;
+                } else if (state.levelStars[state.currentLevel] === undefined) {
+                    state.levelStars[state.currentLevel] = collectedCount;
+                }
+                if (state.currentLevel + 1 < LEVELS.length) {
+                    state.maxUnlocked = Math.max(state.maxUnlocked, state.currentLevel + 1);
+                }
+                saveGameSilent();
+                renderLevelGrid();
+
+                setTimeout(() => {
+                    const nextLevelExists = state.currentLevel + 1 < LEVELS.length;
+                    if (nextLevelExists) {
+                        showCompleteModal(
+                            `🎉 第 ${state.currentLevel+1} 关完成！`,
+                            `收集了 ${collectedCount} / ${lv.stars.length} 颗星星\n\n是否前往下一关？`,
+                            true,
+                            () => { startLevel(state.currentLevel + 1); },
+                            () => { showPanel('level-select'); state.gameRunning = false; }
+                        );
+                    } else {
+                        showCompleteModal(
+                            `🏆 恭喜通关全部 ${LEVELS.length} 关！`,
+                            `你收集了 ${collectedCount} / ${lv.stars.length} 颗星星！\n太棒了！`,
+                            false,
+                            () => { showPanel('level-select'); state.gameRunning = false; },
+                            null
+                        );
+                    }
+                }, 350);
+            }
+        }
+
+        // ---------- 静默存档（自动保存） ----------
+        function saveGameSilent() {
+            const data = getSaveData();
+            const code = encodeSave(data);
+            if (code) {
+                try { localStorage.setItem('jumpAdventure_save', code); } catch (e) {}
+            }
+        }
+
+        // ---------- 读取自动存档 ----------
+        function loadAutoSave() {
+            try {
+                const code = localStorage.getItem('jumpAdventure_save');
+                if (code) {
+                    return loadSaveCode(code);
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        // ---------- 渲染 ----------
+        function render() {
+            const W = canvas.width,
+                H = canvas.height;
+            const lv = LEVELS[state.currentLevel];
+            if (!lv) return;
+
+            ctx.clearRect(0, 0, W, H);
+
+            const grad = ctx.createLinearGradient(0, 0, 0, H);
+            grad.addColorStop(0, lv.bg || '#0f1322');
+            grad.addColorStop(0.7, '#0a0d18');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.02)';
+            for (let i = 0; i < 8; i++) {
+                ctx.beginPath();
+                ctx.arc(60 + i * 100, 30 + i * 20, 20 + i * 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const allPlats = [...lv.platforms, ...state.movingPlats];
+            for (const plat of allPlats) {
+                const isMoving = state.movingPlats.includes(plat);
+                ctx.shadowColor = isMoving ? 'rgba(100,200,255,0.2)' : 'rgba(255,255,255,0.05)';
+                ctx.shadowBlur = isMoving ? 18 : 8;
+                const grad2 = ctx.createLinearGradient(plat.x, plat.y, plat.x, plat.y + plat.h);
+                if (isMoving) {
+                    grad2.addColorStop(0, '#4ecdc4');
+                    grad2.addColorStop(1, '#2a9d8f');
+                } else {
+                    grad2.addColorStop(0, '#6b7a8f');
+                    grad2.addColorStop(1, '#4a5568');
+                }
+                ctx.fillStyle = grad2;
+                ctx.beginPath();
+                const r = 4;
+                ctx.roundRect(plat.x, plat.y, plat.w, plat.h, r);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                ctx.beginPath();
+                ctx.roundRect(plat.x + 4, plat.y + 2, plat.w - 8, 4, 2);
+                ctx.fill();
+            }
+
+            if (lv.stars) {
+                for (let i = 0; i < lv.stars.length; i++) {
+                    const star = lv.stars[i];
+                    const collected = state.starCollected[i] || false;
+                    const x = star.x,
+                        y = star.y + Math.sin(Date.now() / 400 + i * 1.5) * 3;
+                    if (!collected) {
+                        ctx.shadowColor = 'rgba(255,215,0,0.4)';
+                        ctx.shadowBlur = 20;
+                        drawStar(ctx, x, y, 5, 12, 6);
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                        ctx.fillStyle = 'rgba(255,215,0,0.15)';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 18, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        ctx.fillStyle = 'rgba(255,215,0,0.1)';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 10, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = 'rgba(255,215,0,0.2)';
+                        ctx.font = '12px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('✓', x, y + 1);
+                    }
+                }
+            }
+
+            const fin = lv.finish;
+            const flagWave = Math.sin(Date.now() / 300) * 4;
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#8a9ba8';
+            ctx.fillRect(fin.x - 2, fin.y - 30, 4, 40);
+            ctx.fillStyle = state.finishReached ? '#7aff8a' : '#ff6b6b';
+            ctx.shadowColor = state.finishReached ? 'rgba(100,255,150,0.3)' : 'rgba(255,100,100,0.3)';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.moveTo(fin.x + 4, fin.y - 28);
+            ctx.lineTo(fin.x + 34 + flagWave * 0.5, fin.y - 18);
+            ctx.lineTo(fin.x + 4, fin.y - 8);
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#6b7a8f';
+            ctx.fillRect(fin.x - 10, fin.y + 8, 20, 6);
+
+            const p = state.player;
+            ctx.shadowColor = 'rgba(255,215,100,0.2)';
+            ctx.shadowBlur = 18;
+            const gradP = ctx.createLinearGradient(p.x, p.y, p.x + p.w, p.y + p.h);
+            gradP.addColorStop(0, '#f7d875');
+            gradP.addColorStop(0.5, '#f5a623');
+            gradP.addColorStop(1, '#e08f1a');
+            ctx.fillStyle = gradP;
+            ctx.beginPath();
+            ctx.roundRect(p.x, p.y, p.w, p.h, 8);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#1a1a2e';
+            const eyeOff = p.facing > 0 ? 6 : -6;
+            ctx.fillRect(p.x + p.w / 2 - 2 + eyeOff, p.y + 8, 4, 5);
+            ctx.fillRect(p.x + p.w / 2 - 2 - eyeOff, p.y + 8, 4, 5);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(p.x + p.w / 2 + eyeOff, p.y + 7, 2, 3);
+            ctx.fillRect(p.x + p.w / 2 - 2 - eyeOff + 2, p.y + 7, 2, 3);
+            if (p.vy < -2) {
+                ctx.strokeStyle = '#1a1a2e';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(p.x + p.w / 2, p.y + 20, 5, 0, Math.PI);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fillRect(p.x + p.w / 2 - 3, p.y + 20, 6, 3);
+            }
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#c07d1a';
+            const legOff = p.onGround ? Math.sin(Date.now() / 120) * 3 * Math.abs(p.vx) * 0.2 : 2;
+            ctx.fillRect(p.x + 4, p.y + p.h - 2, 6, 4 + legOff);
+            ctx.fillRect(p.x + p.w - 10, p.y + p.h - 2, 6, 4 - legOff);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(255,255,255,0.04)';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(`Lv.${state.currentLevel+1}`, W - 12, H - 8);
+
+            if (state.finishReached) {
+                ctx.fillStyle = 'rgba(100,255,150,0.15)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#7aff8a';
+                ctx.font = 'bold 28px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(100,255,150,0.3)';
+                ctx.shadowBlur = 40;
+                ctx.fillText('✨ 关卡完成！', W / 2, H / 2 - 20);
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.font = '14px sans-serif';
+                ctx.fillText('即将显示结果...', W / 2, H / 2 + 30);
+            }
+        }
+
+        // 辅助：画星星
+        function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+            let rot = -Math.PI / 2;
+            const step = Math.PI / spikes;
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const x = cx + Math.cos(rot) * r;
+                const y = cy + Math.sin(rot) * r;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.closePath();
+        }
+
+        // roundRect polyfill
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
+                const r = typeof radii === 'number' ? radii : (radii || 0);
+                this.moveTo(x + r, y);
+                this.lineTo(x + w - r, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + r);
+                this.lineTo(x + w, y + h - r);
+                this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                this.lineTo(x + r, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - r);
+                this.lineTo(x, y + r);
+                this.quadraticCurveTo(x, y, x + r, y);
+                return this;
+            };
+        }
+
+        // ---------- 键盘输入 ----------
+        const keys = {};
+        document.addEventListener('keydown', e => {
+            keys[e.code] = true;
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') e.preventDefault();
+        });
+        document.addEventListener('keyup', e => {
+            keys[e.code] = false;
+        });
+
+        // ---------- 事件绑定 ----------
+        $('btn-start').addEventListener('click', () => {
+            if (!loadAutoSave()) {
+                state.maxUnlocked = 0;
+                state.levelStars = LEVELS.map(() => 0);
+            }
+            renderLevelGrid();
+            showPanel('level-select');
+        });
+
+        $('btn-load-save').addEventListener('click', () => {
+            currentSaveCode = '';
+            codeDisplay.textContent = '—';
+            $('modal-title').textContent = '📂 读取存档';
+            $('modal-sub').textContent = '粘贴存档码以恢复进度';
+            modalToast.textContent = '';
+            modalToast.className = 'toast-msg';
+            loadInput.value = '';
+            saveModal.classList.add('active');
+        });
+
+        $('btn-back-menu').addEventListener('click', () => {
+            showPanel('main-menu');
+        });
+
+        $('btn-back-levels').addEventListener('click', () => {
+            if (state.gameRunning) {
+                if (!confirm('确定要退出当前关卡吗？进度将保存。')) return;
+            }
+            state.gameRunning = false;
+            if (state.animFrame) cancelAnimationFrame(state.animFrame);
+            renderLevelGrid();
+            showPanel('level-select');
+        });
+
+        $('btn-reset-level').addEventListener('click', () => {
+            if (!state.gameRunning) return;
+            const lv = LEVELS[state.currentLevel];
+            const p = state.player;
+            p.x = lv.playerStart.x;
+            p.y = lv.playerStart.y;
+            p.vx = 0;
+            p.vy = 0;
+            p.onGround = false;
+            if (lv.stars) {
+                state.starCollected = lv.stars.map(s => false);
+            }
+            state.finishReached = false;
+            state.levelComplete = false;
+            updateStarBadge();
+        });
+
+        $('btn-save-game').addEventListener('click', saveGame);
+
+        // 存档弹窗
+        $('btn-close-modal').addEventListener('click', () => {
+            saveModal.classList.remove('active');
+            modalToast.textContent = '';
+        });
+        saveModal.addEventListener('click', (e) => {
+            if (e.target === saveModal) saveModal.classList.remove('active');
+        });
+
+        $('btn-download-txt').addEventListener('click', downloadTxt);
+        $('btn-copy-code').addEventListener('click', copyCode);
+
+        $('btn-load-code').addEventListener('click', () => {
+            const code = loadInput.value.trim();
+            if (!code) {
+                modalToast.textContent = '⚠️ 请粘贴存档码';
+                modalToast.className = 'toast-msg error';
+                return;
+            }
+            if (loadSaveCode(code)) {
+                loadInput.value = '';
+                setTimeout(() => {
+                    saveModal.classList.remove('active');
+                }, 600);
+            }
+        });
+
+        loadInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') $('btn-load-code').click();
+        });
+
+        // 点击弹窗外关闭（存档弹窗）
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.modal-overlay') && !e.target.closest('.modal-box')) {
+                saveModal.classList.remove('active');
+            }
+        });
+
+        // ---------- 初始化 ----------
+        function init() {
+            const saved = localStorage.getItem('jumpAdventure_save');
+            if (saved) {
+                try {
+                    const data = decodeSave(saved);
+                    if (data) {
+                        state.maxUnlocked = Math.min(data.maxUnlocked || 0, LEVELS.length - 1);
+                        if (data.starsPerLevel && data.starsPerLevel.length === LEVELS.length) {
+                            state.levelStars = data.starsPerLevel.map(v => v || 0);
+                        } else {
+                            state.levelStars = LEVELS.map(() => 0);
+                        }
+                    }
+                } catch (e) {}
+            } else {
+                state.maxUnlocked = 0;
+                state.levelStars = LEVELS.map(() => 0);
+            }
+            if (state.maxUnlocked < 0) state.maxUnlocked = 0;
+            renderLevelGrid();
+            showPanel('main-menu');
+            resizeCanvas();
+        }
+
+        resizeCanvas();
+        init();
+
+        window.addEventListener('resize', () => {
+            if (state.gameRunning) resizeCanvas();
+        });
+
+        const ro = new ResizeObserver(() => {
+            if (state.gameRunning) resizeCanvas();
+        });
+        ro.observe(gameContainer);
+
+        console.log('🎮 跳跃冒险已启动！');
+        console.log(`📊 共 ${LEVELS.length} 个关卡，当前解锁至第 ${state.maxUnlocked+1} 关`);
+
+        window.__game = { state, LEVELS, startLevel, saveGame, loadSaveCode };
+    </script>
+</body>
+</html>

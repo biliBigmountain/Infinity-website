@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星贝速写簿 - Star Beret Sketchbook</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+body {
+  background: #1a1410;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Noto Sans SC', sans-serif;
+  overflow: hidden;
+}
+
+#game-container {
+  width: 100vw;
+  height: 100vh;
+  max-width: 1400px;
+  max-height: 900px;
+  position: relative;
+  overflow: hidden;
+  background: #f5efe8;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Title Screen */
+#title-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5efe8 0%, #e8d5c4 30%, #c9d9e8 70%, #d4c5b0 100%);
+  z-index: 100;
+  transition: opacity 1s;
+}
+#title-screen.hidden { opacity: 0; pointer-events: none; }
+
+.title-watercolor {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.title-watercolor::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(180,200,220,0.3) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  border-radius: 50%;
+}
+.title-watercolor::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(220,180,150,0.25) 0%, transparent 70%);
+  bottom: -80px; left: -80px;
+  border-radius: 50%;
+}
+
+.title-text {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+.title-main {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 4.5em;
+  color: #4a3728;
+  letter-spacing: 0.3em;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  animation: titleFloat 3s ease-in-out infinite;
+}
+.title-sub {
+  font-size: 1.5em;
+  color: #7a6b5a;
+  letter-spacing: 0.5em;
+  margin-bottom: 60px;
+  font-weight: 300;
+}
+.title-en {
+  font-size: 0.9em;
+  color: #9a8b7a;
+  letter-spacing: 0.2em;
+  font-weight: 300;
+  margin-top: 5px;
+}
+
+@keyframes titleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.btn-start, .btn-restart {
+  padding: 18px 60px;
+  font-size: 1.3em;
+  background: linear-gradient(135deg, #c9a98a, #b8957a);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  letter-spacing: 0.2em;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 2;
+}
+.btn-start:hover, .btn-restart:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #d4b89a, #c4a085);
+}
+.btn-start:active, .btn-restart:active { transform: translateY(-1px); }
+
+/* Game Screen */
+#game-screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 1;
+}
+#game-screen.active { display: block; }
+
+/* Background Layer */
+#bg-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.5s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Background definitions using CSS gradients */
+.bg-alley {
+  background: linear-gradient(135deg, #d4c9b8 0%, #e8ddd0 30%, #b8a898 60%, #d0c0a8 100%);
+  position: relative;
+}
+.bg-alley::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, transparent 30%, rgba(160,140,120,0.3) 32%, transparent 34%),
+    linear-gradient(0deg, transparent 60%, rgba(120,180,120,0.15) 62%, transparent 64%);
+  background-size: 200px 100%, 100% 200px;
+  pointer-events: none;
+}
+.bg-alley::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 80%, rgba(200,180,150,0.4) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-shop {
+  background: linear-gradient(135deg, #d4b898 0%, #c4a888 30%, #e0c8a8 60%, #c8b098 100%);
+  position: relative;
+}
+.bg-shop::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(180,140,100,0.1) 40px, rgba(180,140,100,0.1) 42px);
+  pointer-events: none;
+}
+
+.bg-beach {
+  background: linear-gradient(135deg, #e8dcc8 0%, #c8d8e0 30%, #a8c8d8 60%, #d0c8b0 100%);
+  position: relative;
+}
+.bg-beach::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(200,190,160,0.5) 0%, transparent 60%);
+  pointer-events: none;
+}
+.bg-beach::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(180,200,215,0.2) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+.bg-shrine {
+  background: linear-gradient(135deg, #c8d0c0 0%, #d8e0d0 30%, #a8b898 60%, #c0c8a8 100%);
+  position: relative;
+}
+.bg-shrine::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(0deg, transparent 50%, rgba(100,120,80,0.15) 52%, transparent 54%),
+    radial-gradient(ellipse at 50% 20%, rgba(200,180,140,0.3) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.bg-slope {
+  background: linear-gradient(135deg, #d8d0b8 0%, #c8c098 30%, #b8b088 60%, #d0c8a8 100%);
+  position: relative;
+}
+.bg-slope::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(80deg, transparent, transparent 30px, rgba(160,150,120,0.1) 30px, rgba(160,150,120,0.1) 32px);
+  pointer-events: none;
+}
+
+.bg-studio {
+  background: linear-gradient(135deg, #e0d0b8 0%, #d0c0a8 30%, #c8b898 60%, #d8c8b0 100%);
+  position: relative;
+}
+.bg-studio::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(180,160,200,0.15) 0%, transparent 30%),
+    radial-gradient(circle at 80% 60%, rgba(200,180,150,0.2) 0%, transparent 25%);
+  pointer-events: none;
+}
+
+.bg-civic {
+  background: linear-gradient(135deg, #d0c8b8 0%, #c8c0b0 30%, #b8b0a0 60%, #d0c8b8 100%);
+  position: relative;
+}
+.bg-civic::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(200,190,170,0.3) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.bg-rain {
+  background: linear-gradient(135deg, #888898 0%, #9898a8 30%, #787888 60%, #8888a0 100%) !important;
+}
+
+.bg-sunset {
+  background: linear-gradient(135deg, #e8c898 0%, #d4a878 30%, #c88868 60%, #b07058 100%) !important;
+}
+
+/* Character Layer */
+#character-layer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 85%;
+  z-index: 2;
+  transition: all 0.8s ease;
+}
+#character-layer img {
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(0,0,0,0.15));
+  transition: all 0.5s ease;
+}
+
+#emotion-bubble {
+  position: absolute;
+  top: 4%;
+  right: -42px;
+  z-index: 4;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.88);
+  color: #6a5a4a;
+  font-size: 1.6em;
+  box-shadow: 0 4px 14px rgba(74,55,40,0.16);
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: none;
+}
+#emotion-bubble.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+#riko-settings-btn { border-color: #c9a98a; }
+#riko-settings-btn:hover { background: #c9a98a; color: #fff; }
+#riko-settings {
+  position: absolute;
+  top: 58px;
+  right: 20px;
+  z-index: 30;
+  width: min(300px, calc(100vw - 40px));
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 8px 24px rgba(74,55,40,0.2);
+  color: #4a3728;
+  display: none;
+}
+#riko-settings.active { display: block; }
+.riko-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.riko-setting-row input[type="range"] { width: 130px; accent-color: #b8957a; }
+.riko-setting-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #b8957a; }
+.riko-setting-value { min-width: 42px; text-align: right; font-size: .9em; color: #8a7a6a; }
+@media (max-width: 768px) {
+  #emotion-bubble { right: -8px; top: 2%; font-size: 1.3em; }
+  #top-menu { top: 12px; right: 12px; gap: 6px; }
+  #riko-settings { top: 52px; right: 12px; }
+}
+
+.expression-happy { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(1.08); }
+.expression-sad { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(0.92) saturate(0.8); }
+.expression-surprise { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(1.05); transform: scale(1.02); }
+.expression-serious { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(0.95) saturate(0.9) contrast(1.05); }
+.expression-shy { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(1.03); opacity: 0.92; }
+.expression-smile { filter: drop-shadow(0 0 20px rgba(0,0,0,0.15)) brightness(1.05); }
+
+/* Text Box */
+#text-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 180px;
+  background: linear-gradient(0deg, rgba(245,239,232,0.97) 0%, rgba(245,239,232,0.92) 80%, transparent 100%);
+  padding: 30px 50px 25px;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  border-top: 1px solid rgba(180,160,140,0.3);
+}
+
+#speaker-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.1em;
+  color: #8a7a6a;
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+#speaker-name .name-highlight {
+  color: #c4957a;
+  font-weight: 700;
+}
+
+#dialogue-text {
+  font-size: 1.15em;
+  line-height: 1.9;
+  color: #3a2a1a;
+  min-height: 3.8em;
+  cursor: pointer;
+  user-select: none;
+}
+#dialogue-text .cursor-blink {
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.click-hint {
+  position: absolute;
+  bottom: 12px;
+  right: 30px;
+  font-size: 0.75em;
+  color: #b0a090;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Choice Box */
+#choice-box {
+  position: absolute;
+  bottom: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 70%;
+  max-width: 600px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+#choice-box.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.choice-btn {
+  padding: 16px 30px;
+  font-size: 1em;
+  background: rgba(245,239,232,0.95);
+  border: 2px solid #c9a98a;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  color: #4a3728;
+  transition: all 0.3s;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+.choice-btn:hover {
+  background: #c9a98a;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Top Menu */
+#top-menu {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  z-index: 25;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.menu-btn {
+  padding: 8px 18px;
+  font-size: 0.85em;
+  background: rgba(245,239,232,0.8);
+  border: 1px solid #c9a98a;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  color: #6a5a4a;
+  transition: all 0.3s;
+  backdrop-filter: blur(3px);
+}
+.menu-btn:hover {
+  background: #c9a98a;
+  color: #fff;
+}
+
+/* Gallery Screen */
+#gallery-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(245,239,232,0.98);
+  display: none;
+  padding: 30px;
+  overflow-y: auto;
+}
+#gallery-screen.active { display: block; }
+
+.gallery-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+.gallery-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 2em;
+  color: #4a3728;
+  letter-spacing: 0.2em;
+}
+.gallery-close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px 25px;
+  background: #c9a98a;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.9em;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 10px;
+}
+.gallery-item {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  cursor: pointer;
+  aspect-ratio: 4/3;
+  position: relative;
+}
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.gallery-item.locked {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
+.gallery-item.locked::after {
+  content: '🔒';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+}
+.gallery-item-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f0e8, #f0e8e0);
+}
+.gallery-item.unlocked .gallery-item-inner {
+  background: linear-gradient(135deg, #f8f0e8, #f0e8e0);
+}
+.gallery-cg {
+  width: 100%;
+  height: 70%;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;
+  opacity: 0.8;
+}
+.gallery-cg-label {
+  font-size: 0.85em;
+  color: #6a5a4a;
+  margin-top: 8px;
+  text-align: center;
+}
+.gallery-cg-note {
+  font-size: 0.75em;
+  color: #a09080;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Explore Screen */
+#explore-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgba(245,239,232,0.97);
+  display: none;
+  padding: 40px;
+}
+#explore-screen.active { display: block; }
+
+.explore-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.explore-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.8em;
+  color: #4a3728;
+  letter-spacing: 0.15em;
+}
+.explore-sub {
+  font-size: 0.95em;
+  color: #8a7a6a;
+  margin-top: 8px;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.explore-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+.explore-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border-color: #c9a98a;
+}
+.explore-icon {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+.explore-location {
+  font-size: 1.1em;
+  color: #4a3728;
+  font-weight: 500;
+}
+.explore-desc {
+  font-size: 0.8em;
+  color: #8a7a6a;
+  margin-top: 5px;
+}
+
+/* Coloring Screen */
+#coloring-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(245,239,232,0.98);
+  display: none;
+  padding: 20px;
+}
+#coloring-screen.active { display: block; }
+
+.coloring-header {
+  text-align: center;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+.coloring-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.3em;
+  color: #4a3728;
+}
+.coloring-close {
+  padding: 8px 20px;
+  background: #c9a98a;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.coloring-area {
+  display: flex;
+  gap: 20px;
+  height: calc(100% - 80px);
+  justify-content: center;
+  align-items: center;
+}
+#coloring-canvas {
+  border: 2px solid #d0c0a8;
+  border-radius: 12px;
+  background: #fff;
+  cursor: crosshair;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.color-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.2s;
+}
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.active { border-color: #4a3728; transform: scale(1.1); }
+
+/* Ending Screen */
+#ending-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+}
+#ending-screen.active { display: flex; }
+
+.ending-type {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.2em;
+  color: #c9a98a;
+  letter-spacing: 0.3em;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+.ending-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 3em;
+  color: #4a3728;
+  letter-spacing: 0.2em;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
+}
+.ending-text {
+  font-size: 1.1em;
+  color: #6a5a4a;
+  line-height: 2;
+  max-width: 600px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+.ending-btn {
+  padding: 15px 40px;
+  font-size: 1.1em;
+  background: #c9a98a;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  letter-spacing: 0.15em;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 2;
+}
+.ending-btn:hover {
+  background: #b8957a;
+  transform: translateY(-3px);
+}
+
+/* Ending backgrounds */
+.ending-good {
+  background: linear-gradient(135deg, #f5efe8 0%, #e8d5c4 30%, #d4e0e8 60%, #e0d0b8 100%);
+}
+.ending-normal {
+  background: linear-gradient(135deg, #e8e0d8 0%, #d8d0c8 30%, #c8c0b8 60%, #d8d0c0 100%);
+}
+.ending-hidden {
+  background: linear-gradient(135deg, #f0e8d8 0%, #e0d0b0 30%, #d0c8d0 60%, #e8d8c0 100%);
+}
+
+/* Affection display */
+#affection-bar {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,239,232,0.8);
+  padding: 6px 15px;
+  border-radius: 20px;
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(200,180,160,0.3);
+}
+#affection-bar .label {
+  font-size: 0.8em;
+  color: #8a7a6a;
+}
+#affection-bar .hearts {
+  font-size: 1.1em;
+  color: #e8a090;
+  letter-spacing: 2px;
+}
+
+/* Watercolor transition overlay */
+#transition-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(200,180,160,0.4) 100%);
+}
+#transition-overlay.active {
+  opacity: 1;
+}
+
+/* Notification toast */
+#toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background: rgba(74,55,40,0.9);
+  color: #fff;
+  padding: 20px 40px;
+  border-radius: 16px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 1.1em;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+#toast.active {
+  opacity: 1;
+}
+
+/* Scene name overlay */
+#scene-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 2.5em;
+  color: rgba(74,55,40,0.15);
+  letter-spacing: 0.3em;
+  pointer-events: none;
+  text-align: center;
+}
+
+/* Watercolor particles */
+.watercolor-particle {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 0;
+}
+
+/* Game chapter title */
+#chapter-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.5s;
+}
+#chapter-title.active { opacity: 1; }
+#chapter-title .ch-num {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.2em;
+  color: #c9a98a;
+  letter-spacing: 0.4em;
+  margin-bottom: 10px;
+}
+#chapter-title .ch-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 2.8em;
+  color: #4a3728;
+  letter-spacing: 0.3em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .title-main { font-size: 2.5em; }
+  .title-sub { font-size: 1em; }
+  #text-box { padding: 20px 25px 15px; min-height: 150px; }
+  #dialogue-text { font-size: 1em; }
+  #choice-box { width: 85%; bottom: 170px; }
+  .choice-btn { padding: 12px 20px; font-size: 0.9em; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .explore-grid { grid-template-columns: repeat(2, 1fr); }
+  #character-layer { height: 65%; }
+  #speaker-name { font-size: 0.95em; }
+}
+</style>
+</head>
+<body>
+
+<div id="game-container">
+
+<!-- Title Screen -->
+<div id="title-screen">
+  <div class="title-watercolor"></div>
+  <div class="title-text">
+    <div class="title-main">星贝速写簿</div>
+    <div class="title-sub">— Star Beret Sketchbook —</div>
+    <div class="title-en">水彩治愈系夏日物语</div>
+  </div>
+  <button class="btn-start" onclick="startGame()">开始故事</button>
+</div>
+
+<!-- Chapter Title Overlay -->
+<div id="chapter-title">
+  <div class="ch-num"></div>
+  <div class="ch-name"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Transition Overlay -->
+<div id="transition-overlay"></div>
+
+<!-- Game Screen -->
+<div id="game-screen">
+  <div id="bg-layer" class="bg-alley"></div>
+  <div id="scene-name">桐砂町</div>
+  <div id="character-layer"><div id="emotion-bubble" aria-live="polite"></div></div>
+
+  <div id="riko-settings" role="dialog" aria-label="游戏设置">
+    <strong>游戏设置</strong>
+    <label class="riko-setting-row" for="bgm-volume">
+      <span>背景音乐音量</span>
+      <input id="bgm-volume" type="range" min="0" max="100" value="50">
+      <span id="bgm-volume-value" class="riko-setting-value">50%</span>
+    </label>
+    <label class="riko-setting-row" for="emotion-toggle">
+      <span>显示角色情绪</span>
+      <input id="emotion-toggle" type="checkbox" checked>
+    </label>
+  </div>
+
+  <!-- Affection -->
+  <div id="affection-bar">
+    <span class="label">羁绊</span>
+    <span class="hearts" id="hearts-display">☆☆☆☆☆</span>
+  </div>
+
+  <!-- Top Menu -->
+  <div id="top-menu">
+    <button id="riko-settings-btn" class="menu-btn" type="button" aria-label="打开游戏设置">⚙️ 设置</button>
+    <button class="menu-btn" onclick="openGallery()">📖 画册</button>
+    <button class="menu-btn" onclick="openExplore()">🗺️ 探索</button>
+  </div>
+
+  <!-- Text Box -->
+  <div id="text-box" onclick="advanceText()">
+    <div id="speaker-name"></div>
+    <div id="dialogue-text"></div>
+    <div class="click-hint">▼ 点击继续</div>
+  </div>
+
+  <!-- Choice Box -->
+  <div id="choice-box"></div>
+</div>
+
+<!-- Explore Screen -->
+<div id="explore-screen">
+  <div class="explore-header">
+    <div class="explore-title">🗺️ 桐砂町探索</div>
+    <div class="explore-sub">选择今天想去的地方吧</div>
+  </div>
+  <div class="explore-grid" id="explore-grid"></div>
+</div>
+
+<!-- Gallery Screen -->
+<div id="gallery-screen">
+  <div class="gallery-header">
+    <div class="gallery-title">📖 络可的画册</div>
+    <button class="gallery-close" onclick="closeGallery()">返回</button>
+  </div>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<!-- Coloring Screen -->
+<div id="coloring-screen">
+  <div class="coloring-header">
+    <div class="coloring-title">🎨 一起上色吧</div>
+    <button class="coloring-close" onclick="closeColoring()">完成</button>
+  </div>
+  <div class="coloring-area">
+    <canvas id="coloring-canvas" width="500" height="400"></canvas>
+    <div class="color-palette" id="color-palette"></div>
+  </div>
+</div>
+
+<!-- Ending Screen -->
+<div id="ending-screen">
+  <div class="ending-type"></div>
+  <div class="ending-title"></div>
+  <div class="ending-text"></div>
+  <button class="ending-btn" onclick="backToTitle()">回到标题</button>
+</div>
+
+</div>
+
+<!-- Audio -->
+<audio id="bgm" loop preload="auto">
+  <source src="https://m.xiguacity.cn/user_projects_assets/17b53da422ba8b9981a152b01cd218eb.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ==================== GAME DATA ====================
+
+const CONFIG = {
+  characterImage: 'https://img.bloret.net/img/1783092048242/153bae04ff405ad89c851f92602efb01',
+  bgmUrl: 'https://m.xiguacity.cn/user_projects_assets/17b53da422ba8b9981a152b01cd218eb.mp3'
+};
+
+const GALLERY_CGS = [
+  { id: 'cg_prologue', name: '巷口初遇', note: '「那个转角，颜料的气味混着海风。」', chapter: 'prologue' },
+  { id: 'cg_shop', name: '点心店的午后', note: '「奶奶说我的画比蜜饯还甜。」', chapter: 'chapter1' },
+  { id: 'cg_beach', name: '海边写生', note: '「这里的猫下午三点一定会来晒太阳。」', chapter: 'chapter1' },
+  { id: 'cg_shrine', name: '神社石阶', note: '「台阶上的青苔有七种绿色。」', chapter: 'chapter1' },
+  { id: 'cg_rain', name: '屋檐躲雨', note: '「雨天的巷子，有另一种温柔。」', chapter: 'chapter2' },
+  { id: 'cg_exhibition', name: '画展全景', note: '「大家真的来看我的画了……」', chapter: 'chapter3_good' },
+  { id: 'cg_postcard', name: '夏日的明信片', note: '「今天又发现了好看的角落。」', chapter: 'chapter3_normal' },
+  { id: 'cg_studio', name: '永远的画室', note: '「这里以后就是我们的秘密画室啦。」', chapter: 'chapter3_hidden' }
+];
+
+const EXPLORE_LOCATIONS = [
+  { id: 'alley', name: '老巷', icon: '🏘️', desc: '爬满梧桐的旧巷，有颜料的味道' },
+  { id: 'shop', name: '粗点心店', icon: '🍬', desc: '络可奶奶开的店，暖洋洋的' },
+  { id: 'beach', name: '海边', icon: '🌊', desc: '海浪拍岸，海风里有夏天的味道' },
+  { id: 'shrine', name: '神社', icon: '⛩️', desc: '石阶上的青苔静静地生长' }
+];
+
+const COLORS = ['#E8A090', '#90C8E8', '#A0D0A0', '#F0D080', '#C8A0D0', '#F0B060'];
+
+// ==================== GAME STATE ====================
+
+const state = {
+  currentChapter: null,
+  currentNode: null,
+  currentIndex: 0,
+  affection: 0,
+  maxAffection: 5,
+  unlockedCGs: [],
+  flags: {},
+  exploreVisited: {},
+  inChoice: false,
+  typing: false,
+  completedChapters: [],
+  textSpeed: 35,
+  currentLocations: []
+};
+
+// ==================== STORY DATA ====================
+
+const story = {
+  prologue: {
+    title: '巷口水彩',
+    number: '序章',
+    bgm: true,
+    start: 'prologue_0'
+  },
+  chapter1: {
+    title: '速写本的秘密',
+    number: '第一章',
+    bgm: true,
+    start: 'c1_0'
+  },
+  chapter2: {
+    title: '褪色的老巷',
+    number: '第二章',
+    bgm: true,
+    start: 'c2_0'
+  },
+  chapter3_good: {
+    title: '画册的署名',
+    number: '圆满结局',
+    bgm: true,
+    start: 'c3g_0'
+  },
+  chapter3_normal: {
+    title: '夏日的明信片',
+    number: '普通结局',
+    bgm: true,
+    start: 'c3n_0'
+  },
+  chapter3_hidden: {
+    title: '永远的画室',
+    number: '隐藏结局',
+    bgm: true,
+    start: 'c3h_0'
+  }
+};
+
+// ==================== STORY NODES ====================
+
+const nodes = {};
+
+// ---- PROLOGUE ----
+nodes.prologue_0 = {
+  bg: 'alley',
+  text: '七月的桐砂町，空气里混着海潮的咸湿和粗点心店的砂糖味。\n蝉鸣声在老巷里拉得很长很长，像是永远不会结束的夏日。',
+  next: 'prologue_1'
+};
+nodes.prologue_1 = {
+  bg: 'alley',
+  text: '我拎着行李，在迷宫般的老巷里迷了路。\n巷口爬满梧桐，斑驳的树影落在青石板路上，像一幅未干的水彩。',
+  next: 'prologue_2'
+};
+nodes.prologue_2 = {
+  bg: 'alley',
+  text: '转角处忽然传来什么东西落地的声响——\n然后是女孩轻轻"啊"的一声。',
+  next: 'prologue_3'
+};
+nodes.prologue_3 = {
+  speaker: '...',
+  text: '画笔脱手落地，速写本散了一地。',
+  next: 'prologue_4'
+};
+nodes.prologue_4 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'surprise',
+  speaker: '络可',
+  text: '「啊……对、对不起！我没注意转角有人……」',
+  next: 'prologue_5'
+};
+nodes.prologue_5 = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '她慌忙蹲下身去捡散落的画纸，卡其色贝雷帽下浅棕色的短发轻轻晃动。',
+  next: 'prologue_6'
+};
+nodes.prologue_6 = {
+  showCharacter: true,
+  expression: 'surprise',
+  speaker: '络可',
+  text: '我也蹲下帮忙。捡起一张画纸时，我愣住了——\n纸上是用淡彩勾勒的巷口光影，细腻得让人移不开眼。',
+  next: 'prologue_7'
+};
+nodes.prologue_7 = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '「你、你看过了？」\n她小声问，脸颊浮起浅浅的红晕。',
+  next: 'prologue_8'
+};
+nodes.prologue_8 = {
+  speaker: '我',
+  text: '「嗯……画得真好。这是这条巷子吗？」',
+  next: 'prologue_9'
+};
+nodes.prologue_9 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '她眼睛亮了亮，又有些不好意思地低下头，\n「是、是的……我每天都会来这里画一会儿。」',
+  next: 'prologue_10'
+};
+nodes.prologue_10 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '她把画纸拢好抱在胸前，犹豫了一下，小声说：\n「你……你是新搬来的吧？要去哪里？我……我给你指路。」',
+  next: 'prologue_11'
+};
+nodes.prologue_11 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '她结结巴巴地给我指了路，然后抱着速写本匆匆跑掉了。\n空气中只留下淡淡的颜料香气，和夏天午后特有的光影。',
+  next: 'prologue_12'
+};
+nodes.prologue_12 = {
+  bg: 'alley',
+  text: '我看着她的背影消失在巷口，那顶贝雷帽上的星星贴纸在阳光下闪了一下。\n不知为何，我总觉得还会再见到她。',
+  chapterTitle: '第一章\n速写本的秘密',
+  next: 'c1_0'
+};
+
+// ---- CHAPTER 1 ----
+nodes.c1_0 = {
+  bg: 'shop',
+  text: '两天后，我在一家粗点心店门口停下了脚步。\n暖帘上印着"藤田屋"三个字，店里传来老奶奶爽朗的笑声。',
+  next: 'c1_1'
+};
+nodes.c1_1 = {
+  bg: 'shop',
+  text: '掀开暖帘走进去，我一眼就看到了趴在柜台上的熟悉身影——\n卡其色贝雷帽，棕红格纹背带裙，正握着笔在速写本上画着什么。',
+  next: 'c1_2'
+};
+nodes.c1_2 = {
+  showCharacter: true,
+  expression: 'surprise',
+  speaker: '络可',
+  text: '「诶——是你？」\n她抬起头，画笔差点又脱手。',
+  next: 'c1_3'
+};
+nodes.c1_3 = {
+  speaker: '藤田奶奶',
+  text: '「哎呀，是络可的朋友吗？来来来，奶奶请你吃糖！」\n柜台后的老奶奶笑得眼睛弯成月牙，不由分说往我手里塞了颗金平糖。',
+  next: 'c1_4'
+};
+nodes.c1_4 = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '「奶奶！人家才第一次来……」\n络可小声抗议，但嘴角藏着一丝笑意。',
+  next: 'c1_5'
+};
+nodes.c1_5 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「那个……你在画什么？」我指了指她的速写本。',
+  next: 'c1_6'
+};
+nodes.c1_6 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「是、是给店里画的新招牌！」\n她把本子转过来，上面画着可爱的点心图案，色彩暖暖的。',
+  next: 'c1_7'
+};
+nodes.c1_7 = {
+  bg: 'shop',
+  text: '藤田奶奶在柜台后笑眯眯地看着我们。\n「络可的画可是我们店的宝贝——你看那边墙上，全是她画的。」',
+  next: 'c1_8'
+};
+nodes.c1_8 = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '「奶奶——别说了啦……」\n络可的脸更红了，但眼睛里有一点小小的骄傲。',
+  next: 'c1_9'
+};
+nodes.c1_9 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「那个……如、如果你没事的话……要不要一起去写生？」\n她说得很小声，像是怕被拒绝。',
+  next: 'c1_10'
+};
+nodes.c1_10 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「我知道几个特别好看的角落！」\n说到这个，她的语速不自觉地快了起来。',
+  next: 'c1_select'
+};
+nodes.c1_select = {
+  speaker: '我',
+  text: '「好啊，我很想去看看。」',
+  choice: [
+    { text: '「你为什么只画桐砂町的风景？」', node: 'c1_q1_a' },
+    { text: '「你画得真的很好看。」', node: 'c1_q1_b' }
+  ]
+};
+nodes.c1_q1_a = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '她歪了歪头，帽檐上的星星贴纸轻轻晃动。\n「因为……这些风景如果不画下来的话，总感觉它们会慢慢消失。」',
+  next: 'c1_11',
+  affection: 1
+};
+nodes.c1_q1_b = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '她的脸一下子红了，低下头小声说：\n「谢、谢谢你……你是第一个这么认真夸我画的人。」',
+  next: 'c1_11',
+  affection: 2
+};
+nodes.c1_11 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「走吧——我先带你去看我最喜欢的地方！」\n她把速写本抱在胸前，率先跑了出去，回头朝我招了招手。',
+  next: 'c1_explore'
+};
+nodes.c1_explore = {
+  type: 'explore',
+  locations: ['beach', 'shrine', 'alley'],
+  text: '「想去哪里看看呢？」络可抱着速写本，歪着头等我回答。',
+  results: {
+    beach: 'c1_beach',
+    shrine: 'c1_shrine',
+    alley: 'c1_alley'
+  }
+};
+nodes.c1_beach = {
+  bg: 'beach',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「这里！我最喜欢傍晚的时候来——\n阳光会在海面上铺成一条金色的路。」',
+  next: 'c1_beach_2'
+};
+nodes.c1_beach_2 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '她打开速写本，熟练地勾勒着海岸线。\n「你看那边——那几只猫，每天下午三点一定会来这里晒太阳。」',
+  next: 'c1_beach_3'
+};
+nodes.c1_beach_3 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「它们可准时了，比钟表还准呢。」\n她轻声笑起来，画笔在纸上游走。',
+  unlockCG: 'cg_beach',
+  next: 'c1_shared'
+};
+nodes.c1_shrine = {
+  bg: 'shrine',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「神社的石阶总共有九十七级——我数过的。」\n她认真地说，踏上了第一级台阶。',
+  next: 'c1_shrine_2'
+};
+nodes.c1_shrine_2 = {
+  bg: 'shrine',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「你看石缝里的青苔——有七种不同的绿色呢。」\n她蹲下身，用指尖轻轻碰了碰青苔。',
+  next: 'c1_shrine_3'
+};
+nodes.c1_shrine_3 = {
+  bg: 'shrine',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「不仔细看的话就会错过，好可惜的。」\n她抬头看我，眼睛里有细碎的光。',
+  unlockCG: 'cg_shrine',
+  next: 'c1_shared'
+};
+nodes.c1_alley = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「回到这里了呢。」\n她轻轻摸了摸老墙的墙面，像是在和一位老朋友打招呼。',
+  next: 'c1_alley_2'
+};
+nodes.c1_alley_2 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「这个墙角的藤蔓——我画了它一个夏天。\n它每天都会多长一点点，真的很努力呢。」',
+  next: 'c1_alley_3'
+};
+nodes.c1_alley_3 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「我觉得它们都像我的朋友一样。」\n她低头在速写本上添了几笔，嘴角带着温柔的笑意。',
+  unlockCG: 'cg_prologue',
+  next: 'c1_shared'
+};
+nodes.c1_shared = {
+  bg: 'slope',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '我们沿着梧桐坡道慢慢走着，她给我讲每一处风景的小故事。\n不知不觉，太阳已经西斜了。',
+  next: 'c1_shared_2'
+};
+nodes.c1_shared_2 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「今天……真的很开心。」\n她抱紧速写本，声音轻轻的，「下次……还能一起画画吗？」',
+  next: 'c1_shared_3'
+};
+nodes.c1_shared_3 = {
+  bg: 'slope',
+  text: '夏季的风吹过梧桐树梢，发出沙沙的声响。\n我点了点头，她的笑容在夕阳里格外明亮。',
+  chapterTitle: '第二章\n褪色的老巷',
+  next: 'c2_0'
+};
+
+// ---- CHAPTER 2 ----
+nodes.c2_0 = {
+  bg: 'alley',
+  text: '一周后的早晨，小镇公告栏上贴出了一张通知。\n旧巷翻新工程即将启动——这意味着很多老建筑即将被拆除。',
+  next: 'c2_1'
+};
+nodes.c2_1 = {
+  bg: 'alley',
+  text: '我去藤田屋找络可，奶奶说她一大早就带着画具出门了。\n「那孩子最近天天往老巷跑，天不亮就走啦。」',
+  next: 'c2_2'
+};
+nodes.c2_2 = {
+  bg: 'alley',
+  text: '我在老巷深处找到了她。\n她蹲在一面爬满青苔的老墙前，一声不响地画着，画笔在纸上沙沙作响。',
+  next: 'c2_3'
+};
+nodes.c2_3 = {
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「……你来啦。」\n她没回头，声音比平时轻了很多。',
+  next: 'c2_4'
+};
+nodes.c2_4 = {
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「我想在它们消失之前，全部画下来。」\n她停下笔，指尖轻轻抚过墙面。',
+  next: 'c2_5'
+};
+nodes.c2_5 = {
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「这面墙——我小时候经常在这里画画。\n奶奶说，我画的第一朵小花就是画在这面墙上的。」',
+  next: 'c2_6'
+};
+nodes.c2_6 = {
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「以后……就看不到了。」\n她的声音微微颤抖了一下。',
+  next: 'c2_7'
+};
+nodes.c2_7 = {
+  speaker: '我',
+  text: '「那我陪你一起画。」',
+  next: 'c2_8'
+};
+nodes.c2_8 = {
+  showCharacter: true,
+  expression: 'surprise',
+  speaker: '络可',
+  text: '她终于转过头来看我，眼睛里有些湿润。\n「……真的吗？」',
+  next: 'c2_9'
+};
+nodes.c2_9 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「嗯！」她用力点了点头，露出这些天来第一个笑容。',
+  next: 'c2_10'
+};
+nodes.c2_10 = {
+  bg: 'alley',
+  text: '接下来的几天，我们每天天不亮就出门，走遍小镇的每一条老巷。\n她画建筑，我帮她拿颜料盒；她调色的时候，我就安静地站在旁边看。',
+  next: 'c2_11'
+};
+nodes.c2_11 = {
+  bg: 'alley',
+  text: '有一次我问她为什么这么执着于画这些老房子。\n她说：「因为每一道裂缝里都住着故事啊。」',
+  next: 'c2_12'
+};
+nodes.c2_12 = {
+  bg: 'rain',
+  text: '那天傍晚，我们正在画一条特别老的巷子，天空突然下起阵雨。\n雨来得又急又猛，我们赶紧抱着画具躲到一处窄窄的屋檐下。',
+  next: 'c2_13'
+};
+nodes.c2_13 = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「画纸……还好没湿透。」\n她小心翼翼地检查着画纸，松了一口气。',
+  next: 'c2_14'
+};
+nodes.c2_14 = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '雨声淅淅沥沥的，她忽然开口：\n「其实……我有一个梦想。」',
+  next: 'c2_15'
+};
+nodes.c2_15 = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「我想画一本完整的《桐砂町画册》。\n把所有即将消失的老风景都留在纸上。」',
+  next: 'c2_16'
+};
+nodes.c2_16 = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「可是……好像来不及了。」\n她低下头，声音被雨声盖过了大半。',
+  next: 'c2_select'
+};
+nodes.c2_select = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '我',
+  text: '「……」',
+  choice: [
+    { text: '「我们办一个小型画展吧，让大家都看到这些画。」', node: 'c2_q1_a' },
+    { text: '不说话，默默帮她整理被雨打湿的画纸。', node: 'c2_q1_b' }
+  ]
+};
+nodes.c2_q1_a = {
+  speaker: '络可',
+  text: '她抬起头，惊讶地看着我。\n「画……画展？可是——我的画……真的可以吗？」',
+  next: 'c2_q1_a2',
+  affection: 4
+};
+nodes.c2_q1_a2 = {
+  speaker: '我',
+  text: '「当然可以。这些画值得被所有人看到。」',
+  next: 'c2_q1_a3'
+};
+nodes.c2_q1_a3 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '她的眼眶红了，但这次她在笑。\n「嗯……谢谢你。」',
+  next: 'c2_19'
+};
+nodes.c2_q1_b = {
+  bg: 'rain',
+  text: '我默默地蹲下身，和她一起整理被雨水打湿的画纸。\n我们的手碰到了一起，她微微一愣，却没有缩回去。',
+  next: 'c2_q1_b2',
+  affection: 0
+};
+nodes.c2_q1_b2 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「……谢谢你。」\n她轻声说，声音比雨声更轻，却格外清晰。',
+  next: 'c2_19'
+};
+nodes.c2_19 = {
+  bg: 'rain',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '雨渐渐小了，天边露出一角橙色的光。\n她抬头看着那道光，眼睛里也映着暖暖的颜色。',
+  unlockCG: 'cg_rain',
+  next: 'c2_20'
+};
+nodes.c2_20 = {
+  bg: 'slope',
+  text: '第二天，我发现络可的画速又变快了。\n她说：「我想多画一些……能画多少是多少。」',
+  next: 'c2_21'
+};
+nodes.c2_21 = {
+  bg: 'slope',
+  text: '藤田奶奶知道我们的计划后，主动提出帮忙联系公民馆。\n「公民馆的老画室空着哩，可以借给你们办画展！」',
+  next: 'c2_22'
+};
+nodes.c2_22 = {
+  bg: 'slope',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '听到这个消息，络可的脸上终于重新有了光彩。\n她每天更加拼命地画画，我帮她裱画框、写标签、布置场地。',
+  next: 'c2_23'
+};
+nodes.c2_23 = {
+  speaker: '络可',
+  text: '「我现在画的每一笔，都是桐砂町的回忆。」\n她说着，在画的右下角小心翼翼地签上自己的名字。',
+  next: 'c2_24'
+};
+nodes.c2_24 = {
+  bg: 'slope',
+  text: '暑假在画笔的沙沙声中一天天流过。\n画展的日子越来越近了，而分离的日子，也越来越近了……',
+  chapterTitle: '第三章\n星贝的约定',
+  next: 'chapter3_check'
+};
+
+// ---- CHAPTER 3 CHECK ----
+nodes.chapter3_check = {
+  type: 'condition',
+  conditions: [
+    { minAffection: 5, node: 'chapter3_hidden_0' },
+    { minAffection: 2, node: 'c3g_0' },
+    { default: 'chapter3_normal_0' }
+  ]
+};
+
+// ---- GOOD ENDING ----
+nodes.c3g_0 = {
+  bg: 'civic',
+  text: '画展的日子到了。\n公民馆的老画室里，络可的画挂满了四面墙壁。',
+  next: 'c3g_1'
+};
+nodes.c3g_1 = {
+  bg: 'civic',
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '「好多人啊……」\n她紧张地站在门口，手紧紧攥着裙摆。',
+  next: 'c3g_2'
+};
+nodes.c3g_2 = {
+  bg: 'civic',
+  text: '小镇的居民们纷纷赶来。\n老人们站在画前，辨认着自己住了几十年的街道——\n「啊，这是我家的屋顶！」「这不是老李家的点心铺子吗！」',
+  next: 'c3g_3'
+};
+nodes.c3g_3 = {
+  bg: 'civic',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '络可站在人群中，看着大家在她的画里找到自己的回忆。\n她的眼眶又红了，但这次是开心的泪水。',
+  next: 'c3g_4'
+};
+nodes.c3g_4 = {
+  bg: 'civic',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「你看——那位老爷爷在画前面站了好久了。」\n她小声对我说，语气里有藏不住的开心。',
+  next: 'c3g_5'
+};
+nodes.c3g_5 = {
+  bg: 'civic',
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「原来……我的画真的能让人开心啊。」\n她仰起头看我，眼里的光比夏夜的星星还亮。',
+  unlockCG: 'cg_exhibition',
+  next: 'c3g_6'
+};
+nodes.c3g_6 = {
+  bg: 'civic',
+  text: '画展结束时，络可叫住了我。',
+  next: 'c3g_7'
+};
+nodes.c3g_7 = {
+  showCharacter: true,
+  expression: 'shy',
+  speaker: '络可',
+  text: '「这个……送给你。」\n她从背后拿出一张速写画纸，递到我面前。',
+  next: 'c3g_8'
+};
+nodes.c3g_8 = {
+  bg: 'civic',
+  text: '画的是我们第一次相遇的那个巷口。\n阳光透过梧桐树洒下来，角落里画着一颗小小的星星。\n下面签着她的名字——还有一行小字。',
+  next: 'c3g_9'
+};
+nodes.c3g_9 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「写着『给第一个看我画的人』……」\n她的声音越来越小，「因为……如果没有你，我可能永远不敢办画展。」',
+  next: 'c3g_10'
+};
+nodes.c3g_10 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「明年夏天……你还会回来吗？」\n她抬起头看着我，帽檐上的星星贴纸和画上的那颗一模一样。',
+  next: 'c3g_11'
+};
+nodes.c3g_11 = {
+  bg: 'civic',
+  text: '我点了点头。\n她的笑容在夏日午后的阳光里，比任何一幅画都要耀眼。',
+  next: 'c3g_12'
+};
+nodes.c3g_12 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「说好了哦——还有很多地方没画完呢。\n后山的枫树林、海湾的日落……我们一起去画吧。」',
+  next: 'c3g_end'
+};
+nodes.c3g_end = {
+  type: 'ending',
+  ending: 'good',
+  endingTitle: '画册的署名',
+  endingType: '圆满结局',
+  endingText: '暑假结束了，但络可的速写本上多了一个署名的人。\n约定了明年夏天再见后，我踏上了归途。\n\n列车驶出桐砂町时，我打开那张速写。\n画里的巷口阳光正好，星星在角落安静地发光。\n我想，有些画是一辈子也画不完的——\n因为最美好的一幅，才刚刚开始着笔。',
+  unlockCG: 'cg_exhibition',
+  credits: true
+};
+
+// ---- NORMAL ENDING ----
+nodes.c3n_0 = {
+  bg: 'alley',
+  text: '施工的日期还是来了。\n络可没画完所有的地方，但她的速写本已经厚了很多。',
+  next: 'c3n_1'
+};
+nodes.c3n_1 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'sad',
+  speaker: '络可',
+  text: '「还是……差了好多呢。」\n她站在即将施工的老巷前，轻轻叹了口气。',
+  next: 'c3n_2'
+};
+nodes.c3n_2 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「但是没关系——我会继续画的。\n用我的方式，把桐砂町留下来。」',
+  next: 'c3n_3'
+};
+nodes.c3n_3 = {
+  bg: 'alley',
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '她翻开速写本，给我看最新的一页——\n画的是我们上次躲雨的屋檐，雨滴被画成了星星的形状。',
+  next: 'c3n_4'
+};
+nodes.c3n_4 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「以后我画完了新的，就寄给你看。」\n她说得轻松，但眼眶有点红红的。',
+  next: 'c3n_5'
+};
+nodes.c3n_5 = {
+  bg: 'alley',
+  text: '离开那天，络可来车站送我。\n她递给我一张手绘明信片——上面是海边的落日，波光粼粼。',
+  next: 'c3n_6'
+};
+nodes.c3n_6 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「这是我画过的最好看的落日。\n送给你——这样你到了那边也能看到桐砂町的傍晚。」',
+  unlockCG: 'cg_postcard',
+  next: 'c3n_7'
+};
+nodes.c3n_7 = {
+  text: '列车开动后，我把明信片翻过来。\n背面用铅笔写着几行小小的字：',
+  next: 'c3n_8'
+};
+nodes.c3n_8 = {
+  text: '「今天又发现了好看的角落。\n下次你来的时候，我带你去画吧。\n——络可」',
+  next: 'c3n_9'
+};
+nodes.c3n_9 = {
+  text: '之后的每个月，我都会收到一张来自桐砂町的手绘明信片。\n春天画樱花，夏天画蝉鸣，秋天画红叶，冬天画暖炉。\n每张的背面都写着同一句话：',
+  next: 'c3n_10'
+};
+nodes.c3n_10 = {
+  text: '「今天又发现了好看的角落。」\n\n夏日的那场相遇，变成了绵长的、温柔的联络。\n像她画笔下的海平面——看似平静，却一直在那里，从不停歇。',
+  next: 'c3n_end'
+};
+nodes.c3n_end = {
+  type: 'ending',
+  ending: 'normal',
+  endingTitle: '夏日的明信片',
+  endingType: '普通结局',
+  endingText: '后来我收集了十二张明信片，装进了一个信封里。\n每一张都是她眼中的桐砂町——是她想让我看到的美好。\n\n虽然老巷已经不在了，但她的画让它们活了下来。\n在每一张明信片里，在每一笔水彩里。\n\n桐砂町的夏天，从未结束。',
+  unlockCG: 'cg_postcard'
+};
+
+// ---- HIDDEN ENDING ----
+nodes.c3h_0 = {
+  bg: 'alley',
+  text: '施工队进驻的前一天，络可带我来到即将拆除的老画室前。\n「我有一个想法……」她说，眼睛亮晶晶的。',
+  next: 'c3h_1'
+};
+nodes.c3h_1 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「我想在这面墙上画画——画满整个桐砂町。」\n她张开双臂，比划着整面墙。',
+  next: 'c3h_2'
+};
+nodes.c3h_2 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「我们一起画吧。」',
+  next: 'c3h_3'
+};
+nodes.c3h_3 = {
+  bg: 'alley',
+  text: '我们去找施工队商量。\n络可拿出了她所有的速写，一张一张翻给他们看。\n最后施工队的队长沉默了很久，点了点头。',
+  next: 'c3h_4'
+};
+nodes.c3h_4 = {
+  text: '整个小镇都轰动了。\n大家送来颜料和画笔，有人搬来梯子，有人自告奋勇要帮忙。',
+  next: 'c3h_5'
+};
+nodes.c3h_5 = {
+  bg: 'alley',
+  text: '络可站在脚手架上，认真地勾勒着第一笔。\n我在下面帮她递颜料，阳光照在她脸上，闪闪发光。',
+  next: 'c3h_6'
+};
+nodes.c3h_6 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '我们画了很久——画了老巷的梧桐、画了海边的落日、\n画了神社的青苔、画了藤田屋的暖帘……画了整个桐砂町。',
+  next: 'c3h_7'
+};
+nodes.c3h_7 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「还差最后一点——」\n她跳下脚手架，跑到墙角，画了两颗小小的星星。\n「这颗是你，这颗是我。」',
+  next: 'c3h_8'
+};
+nodes.c3h_8 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '墙绘完成的那天，络可拉着我的手退远几步看。\n整面墙上，桐砂町在夏日的阳光下静静流淌。',
+  next: 'c3h_9'
+};
+nodes.c3h_9 = {
+  bg: 'alley',
+  text: '施工队最终决定保留这面墙。\n老建筑翻新后，这面墙成了小镇最受欢迎的打卡点。\n孩子们在墙前画画，老人们在这里寻找回忆。',
+  next: 'c3h_10'
+};
+nodes.c3h_10 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '络可站在墙前，帽檐上的星星和墙上的星星遥遥相对。\n她轻声说：',
+  next: 'c3h_11'
+};
+nodes.c3h_11 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '「这里以后就是——\n我们两个人的秘密画室啦。」',
+  unlockCG: 'cg_studio',
+  next: 'c3h_12'
+};
+nodes.c3h_12 = {
+  showCharacter: true,
+  expression: 'smile',
+  speaker: '络可',
+  text: '「想画画的时候，随时都可以来。\n颜料我来准备，你来负责看就好——」',
+  next: 'c3h_13'
+};
+nodes.c3h_13 = {
+  showCharacter: true,
+  expression: 'happy',
+  speaker: '络可',
+  text: '她笑起来的时候，夏天的蝉鸣声忽然变得很动听。\n像是整个桐砂町都在为我们鼓掌。',
+  next: 'c3h_end'
+};
+nodes.c3h_end = {
+  type: 'ending',
+  ending: 'hidden',
+  endingTitle: '永远的画室',
+  endingType: '隐藏结局',
+  endingText: '后来我每次回桐砂町，都会去那面墙前看看。\n络可总在那里画画——有时候是一个人，有时候身边围着几个小镇的孩子。\n\n墙上的水彩已经成了小镇的一部分，和那些老建筑一起，再也没有人说要拆掉。\n络可的速写本换了一本又一本，但那面墙一直在那里。\n\n像是一个约定——关于夏天、关于画笔、关于陪伴的约定。\n永远留在桐砂町的午后阳光里。',
+  unlockCG: 'cg_studio',
+  credits: true
+};
+
+// ---- HIDDEN ENDING ENTRY ----
+nodes.chapter3_hidden_0 = {
+  bg: 'alley',
+  text: '经过整个夏天的相伴，络可和我之间已经有了无需言语的默契。\n当施工的消息传来时，我们想的却是同一件事——',
+  next: 'c3h_0'
+};
+
+// ==================== GAME ENGINE ====================
+
+let bgmStarted = false;
+
+function getBgmVolume() {
+  const saved = Number(localStorage.getItem('riko-bgm-volume'));
+  return Number.isFinite(saved) ? Math.min(100, Math.max(0, saved)) / 100 : 0.5;
+}
+
+function applyBgmVolume(multiplier = 1) {
+  const bgm = document.getElementById('bgm');
+  if (bgm) bgm.volume = Math.max(0, Math.min(1, getBgmVolume() * multiplier));
+}
+
+let typingTimer = null;
+let currentText = '';
+let currentCharIndex = 0;
+let currentNodeId = null;
+let isTransitioning = false;
+let exploreCallback = null;
+
+function getNode(id) {
+  return nodes[id] || null;
+}
+
+function showToast(text, duration = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('active');
+  setTimeout(() => t.classList.remove('active'), duration);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getAffectionHearts() {
+  const full = Math.floor(state.affection / 2);
+  const half = state.affection % 2;
+  let s = '';
+  for (let i = 0; i < 5; i++) {
+    if (i < full) s += '♥';
+    else s += '☆';
+  }
+  return s;
+}
+
+function updateAffectionBar() {
+  document.getElementById('hearts-display').textContent = getAffectionHearts();
+}
+
+function addAffection(amount) {
+  state.affection += amount;
+  if (state.affection > state.maxAffection * 2) state.affection = state.maxAffection * 2;
+  updateAffectionBar();
+}
+
+function setBG(bgClass) {
+  const layer = document.getElementById('bg-layer');
+  layer.className = bgClass.startsWith('bg-') ? bgClass : 'bg-' + bgClass;
+}
+
+const EMOTION_EMOJIS = {
+  happy: '😊 开心',
+  sad: '😢 难过',
+  surprise: '😮 惊讶',
+  serious: '😐 认真',
+  shy: '😳 害羞',
+  smile: '🙂 微笑'
+};
+
+function showCharacter(show, expr) {
+  const layer = document.getElementById('character-layer');
+  if (!show) {
+    layer.querySelectorAll('img').forEach(img => img.remove());
+    updateEmotionBubble(null);
+    return;
+  }
+  if (!layer.querySelector('img')) {
+    const img = document.createElement('img');
+    img.src = CONFIG.characterImage;
+    img.alt = '络可';
+    img.draggable = false;
+    layer.appendChild(img);
+  }
+  const expression = expr || 'smile';
+  const img = layer.querySelector('img');
+  img.className = 'expression-' + expression;
+  updateEmotionBubble(expression);
+}
+
+function updateEmotionBubble(expression) {
+  const bubble = document.getElementById('emotion-bubble');
+  if (!bubble) return;
+  const enabled = localStorage.getItem('riko-emotion-enabled') !== 'false';
+  const label = EMOTION_EMOJIS[expression];
+  bubble.textContent = label || '';
+  bubble.classList.toggle('visible', enabled && Boolean(label));
+}
+
+function showChapterTitle(chapterNum, chapterName) {
+  return new Promise(resolve => {
+    const el = document.getElementById('chapter-title');
+    if (!el) { resolve(); return; }
+    const chNum = el.querySelector('.ch-num');
+    const chName = el.querySelector('.ch-name');
+    if (chNum) chNum.textContent = chapterNum;
+    if (chName) chName.textContent = chapterName;
+    el.classList.add('active');
+    setTimeout(() => {
+      el.classList.remove('active');
+      setTimeout(resolve, 1000);
+    }, 2500);
+  });
+}
+
+function triggerTransition() {
+  return new Promise(resolve => {
+    const t = document.getElementById('transition-overlay');
+    t.classList.add('active');
+    setTimeout(() => {
+      t.classList.remove('active');
+      setTimeout(resolve, 800);
+    }, 800);
+  });
+}
+
+function unlockCG(cgId) {
+  if (state.unlockedCGs.includes(cgId)) return;
+  state.unlockedCGs.push(cgId);
+  const cg = GALLERY_CGS.find(g => g.id === cgId);
+  if (cg) {
+    showToast('📖 解锁画册：' + cg.name);
+  }
+}
+
+async function startGame() {
+  try {
+    const btn = document.querySelector('.btn-start');
+    if (btn) { btn.textContent = '加载中...'; btn.disabled = true; }
+
+    document.getElementById('title-screen').classList.add('hidden');
+    const gs = document.getElementById('game-screen');
+    gs.style.display = '';
+    gs.classList.add('active');
+
+    if (!bgmStarted) {
+      try {
+        const bgm = document.getElementById('bgm');
+        applyBgmVolume();
+        bgm.play().catch(() => {});
+      } catch(e) {}
+      bgmStarted = true;
+    }
+
+    await showChapterTitle('序章', '巷口的水彩');
+    setNode('prologue_0');
+  } catch(e) {
+    console.error('startGame error:', e);
+  }
+}
+
+function setNode(nodeId) {
+  currentNodeId = nodeId;
+  state.currentNode = nodeId;
+  state.inChoice = false;
+
+  const node = getNode(nodeId);
+  if (!node) return;
+
+  if (node.bg) setBG(node.bg);
+
+  if (node.showCharacter !== undefined) {
+    showCharacter(node.showCharacter, node.expression || 'smile');
+  } else if (node.speaker === '络可' || node.speaker === '...') {
+    showCharacter(true, node.expression || 'smile');
+  }
+
+  if (node.type === 'ending') {
+    showEnding(node);
+    return;
+  }
+
+  if (node.type === 'condition') {
+    handleCondition(node);
+    return;
+  }
+
+  if (node.type === 'explore') {
+    showExplore(node);
+    return;
+  }
+
+  if (node.chapterTitle) {
+    const parts = node.chapterTitle.split('\n');
+    showChapterTitle(parts[0] || '', parts[1] || '');
+  }
+
+  if (node.speaker) {
+    document.getElementById('speaker-name').innerHTML =
+      node.speaker === '络可' ? '<span class="name-highlight">' + node.speaker + '</span>' : node.speaker;
+  } else {
+    document.getElementById('speaker-name').innerHTML = '';
+  }
+
+  const textBox = document.getElementById('text-box');
+  textBox.style.display = 'block';
+
+  if (node.choice) {
+    showChoices(node);
+  } else {
+    hideChoices();
+    typeText(node.text, () => {
+      if (node.affection) addAffection(node.affection);
+      if (node.unlockCG) unlockCG(node.unlockCG);
+    });
+  }
+
+  document.getElementById('top-menu').style.display = 'flex';
+}
+
+function typeText(text, onComplete) {
+  state.typing = true;
+  currentText = text;
+  currentCharIndex = 0;
+  const el = document.getElementById('dialogue-text');
+  el.innerHTML = '';
+  if (typingTimer) clearInterval(typingTimer);
+
+  typingTimer = setInterval(() => {
+    if (currentCharIndex < currentText.length) {
+      const ch = currentText[currentCharIndex];
+      el.innerHTML += ch === '\n' ? '<br>' : ch;
+      currentCharIndex++;
+    } else {
+      clearInterval(typingTimer);
+      typingTimer = null;
+      state.typing = false;
+      if (onComplete) onComplete();
+    }
+  }, state.textSpeed);
+}
+
+function advanceText() {
+  if (state.inChoice || isTransitioning) return;
+
+  if (state.typing) {
+    if (typingTimer) clearInterval(typingTimer);
+    typingTimer = null;
+    state.typing = false;
+    document.getElementById('dialogue-text').innerHTML = currentText.replace(/\n/g, '<br>');
+    return;
+  }
+
+  const node = getNode(currentNodeId);
+  if (!node) return;
+
+  if (state._exploreReturn) {
+    const ret = state._exploreReturn;
+    state._exploreReturn = null;
+    setNode(ret);
+    return;
+  }
+
+  if (node.next) {
+    if (node.next === 'chapter3_check') {
+      handleChapter3Check();
+      return;
+    }
+    setNode(node.next);
+  }
+}
+
+function hideChoices() {
+  const box = document.getElementById('choice-box');
+  box.classList.remove('active');
+  box.innerHTML = '';
+}
+
+function showChoices(node) {
+  if (node.speaker) {
+    document.getElementById('speaker-name').innerHTML =
+      node.speaker === '络可' ? '<span class="name-highlight">' + node.speaker + '</span>' : node.speaker;
+  }
+  document.getElementById('dialogue-text').textContent = node.text;
+
+  state.inChoice = true;
+  const box = document.getElementById('choice-box');
+  box.innerHTML = '';
+  node.choice.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = choice.text;
+    btn.onclick = () => {
+      hideChoices();
+      state.inChoice = false;
+      if (choice.node) {
+        setNode(choice.node);
+      }
+    };
+    box.appendChild(btn);
+  });
+  box.classList.add('active');
+}
+
+function showExplore(node) {
+  document.getElementById('speaker-name').innerHTML = '';
+  document.getElementById('dialogue-text').textContent = node.text;
+  document.getElementById('game-screen').style.display = 'none';
+  const screen = document.getElementById('explore-screen');
+  screen.classList.add('active');
+
+  const grid = document.getElementById('explore-grid');
+  grid.innerHTML = '';
+  const locs = node.locations || EXPLORE_LOCATIONS.map(l => l.id);
+  const locData = EXPLORE_LOCATIONS.filter(l => locs.includes(l.id));
+
+  locData.forEach(loc => {
+    const card = document.createElement('div');
+    card.className = 'explore-card';
+    card.innerHTML = `
+      <div class="explore-icon">${loc.icon}</div>
+      <div class="explore-location">${loc.name}</div>
+      <div class="explore-desc">${loc.desc}</div>
+    `;
+    card.onclick = () => {
+      screen.classList.remove('active');
+      document.getElementById('game-screen').style.display = 'block';
+      const target = node.results[loc.id];
+      if (target) setNode(target);
+    };
+    grid.appendChild(card);
+  });
+}
+
+function openExplore() {
+  if (state.inChoice || isTransitioning) return;
+  document.getElementById('game-screen').style.display = 'none';
+  const screen = document.getElementById('explore-screen');
+  screen.classList.add('active');
+  const grid = document.getElementById('explore-grid');
+  grid.innerHTML = '';
+  EXPLORE_LOCATIONS.forEach(loc => {
+    const card = document.createElement('div');
+    card.className = 'explore-card';
+    card.innerHTML = `
+      <div class="explore-icon">${loc.icon}</div>
+      <div class="explore-location">${loc.name}</div>
+      <div class="explore-desc">${loc.desc}</div>
+    `;
+    card.onclick = () => {
+      screen.classList.remove('active');
+      document.getElementById('game-screen').style.display = 'block';
+      toastEvent(loc);
+    };
+    grid.appendChild(card);
+  });
+}
+
+function toastEvent(loc) {
+  const events = {
+    alley: '老巷里很安静，阳光透过梧桐叶洒下斑驳的影子。\n\n（点击继续故事）',
+    shop: '藤田奶奶笑着给了你一颗糖：「络可今天去海边画画啦。」\n\n（点击继续故事）',
+    beach: '海风吹来，远处有一个戴着贝雷帽的身影正在写生……\n\n（点击继续故事）',
+    shrine: '石阶上有一片刚落下的叶子，形状像一颗心。\n\n（点击继续故事）'
+  };
+  state._exploreReturn = currentNodeId;
+  document.getElementById('dialogue-text').textContent = events[loc.id] || '这里似乎没有人。';
+  document.getElementById('speaker-name').innerHTML = '<span style="color:#a09080;font-size:0.9em;">✦ 探索</span>';
+  setBG('bg-' + loc.id);
+  addAffection(1);
+}
+
+function openGallery() {
+  const screen = document.getElementById('gallery-screen');
+  screen.classList.add('active');
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  GALLERY_CGS.forEach(cg => {
+    const unlocked = state.unlockedCGs.includes(cg.id);
+    const item = document.createElement('div');
+    item.className = 'gallery-item ' + (unlocked ? 'unlocked' : 'locked');
+    if (unlocked) {
+      const colors = ['#E8D5C4', '#D4E0E8', '#D4E8D0', '#F0E8D0', '#E8D0D4', '#D8D0E8'];
+      const c = colors[GALLERY_CGS.indexOf(cg) % colors.length];
+      item.innerHTML = `
+        <div class="gallery-item-inner">
+          <div class="gallery-cg" style="background:${c}">🎨</div>
+          <div class="gallery-cg-label">${cg.name}</div>
+          <div class="gallery-cg-note">${cg.note}</div>
+        </div>
+      `;
+    } else {
+      item.innerHTML = `<div class="gallery-item-inner"><div class="gallery-cg" style="background:#e8e0d8">?</div><div class="gallery-cg-label">???</div></div>`;
+    }
+    grid.appendChild(item);
+  });
+}
+
+function closeGallery() {
+  document.getElementById('gallery-screen').classList.remove('active');
+}
+
+function showEnding(node) {
+  document.getElementById('game-screen').style.display = 'none';
+  const screen = document.getElementById('ending-screen');
+  screen.className = 'active ending-' + node.ending;
+  screen.querySelector('.ending-type').textContent = '— ' + node.endingType + ' —';
+  screen.querySelector('.ending-title').textContent = node.endingTitle;
+  screen.querySelector('.ending-text').innerHTML = node.endingText.replace(/\n/g, '<br>');
+
+  if (node.unlockCG) unlockCG(node.unlockCG);
+
+  const bgm = document.getElementById('bgm');
+  if (bgm) {
+    applyBgmVolume(0.4);
+  }
+}
+
+function backToTitle() {
+  state.affection = 0;
+  state.unlockedCGs = [];
+  state.flags = {};
+  state.currentNode = null;
+  state.currentChapter = null;
+  document.getElementById('ending-screen').classList.remove('active');
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('title-screen').classList.remove('hidden');
+  updateAffectionBar();
+  const bgm = document.getElementById('bgm');
+  applyBgmVolume();
+}
+
+function handleCondition(node) {
+  for (const cond of node.conditions) {
+    if (cond.minAffection !== undefined && state.affection >= cond.minAffection) {
+      setNode(cond.node);
+      return;
+    }
+  }
+  setNode(node.conditions.find(c => c.default)?.default || 'chapter3_good_0');
+}
+
+function handleChapter3Check() {
+  if (state.affection >= 5) {
+    setNode('chapter3_hidden_0');
+  } else if (state.affection >= 2) {
+    setNode('c3g_0');
+  } else {
+    setNode('c3n_0');
+  }
+}
+
+// ==================== COLORING MINIGAME ====================
+
+let currentColor = '#E8A090';
+let isColoring = false;
+let coloringCanvas = null;
+let coloringCtx = null;
+let fillAreas = [];
+
+function initColoring() {
+  const canvas = document.getElementById('coloring-canvas');
+  if (!canvas) return;
+  coloringCanvas = canvas;
+  coloringCtx = canvas.getContext('2d');
+  const ctx = coloringCtx;
+
+  ctx.clearRect(0, 0, 500, 400);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, 500, 400);
+
+  // Draw a simple house outline for coloring
+  ctx.strokeStyle = '#4a3728';
+  ctx.lineWidth = 2.5;
+
+  // House body
+  ctx.strokeRect(150, 180, 200, 150);
+  // Roof
+  ctx.beginPath();
+  ctx.moveTo(130, 180);
+  ctx.lineTo(250, 100);
+  ctx.lineTo(370, 180);
+  ctx.closePath();
+  ctx.stroke();
+  // Door
+  ctx.strokeRect(220, 260, 60, 70);
+  // Windows
+  ctx.strokeRect(170, 210, 40, 40);
+  ctx.strokeRect(290, 210, 40, 40);
+  // Window cross
+  ctx.beginPath();
+  ctx.moveTo(190, 210); ctx.lineTo(190, 250);
+  ctx.moveTo(170, 230); ctx.lineTo(210, 230);
+  ctx.moveTo(310, 210); ctx.lineTo(310, 250);
+  ctx.moveTo(290, 230); ctx.lineTo(330, 230);
+  ctx.stroke();
+  // Sun
+  ctx.beginPath();
+  ctx.arc(400, 80, 30, 0, Math.PI * 2);
+  ctx.stroke();
+  // Clouds
+  ctx.beginPath();
+  ctx.arc(80, 70, 25, 0, Math.PI * 2);
+  ctx.arc(110, 65, 30, 0, Math.PI * 2);
+  ctx.arc(140, 70, 25, 0, Math.PI * 2);
+  ctx.stroke();
+  // Tree
+  ctx.beginPath();
+  ctx.rect(60, 230, 20, 100);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(70, 200, 40, 0, Math.PI * 2);
+  ctx.stroke();
+  // Fence
+  for (let i = 0; i < 5; i++) {
+    ctx.strokeRect(380 + i * 25, 290, 10, 40);
+    if (i < 4) {
+      ctx.strokeRect(385 + i * 25, 300, 25, 5);
+    }
+  }
+
+  // Track fill areas
+  fillAreas = [
+    { x: 152, y: 182, w: 198, h: 148, filled: false }, // house
+    { x: 132, y: 102, w: 236, h: 78, filled: false }, // roof
+    { x: 62, y: 162, w: 76, h: 76, filled: false }, // tree top
+    { x: 62, y: 232, w: 18, h: 98, filled: false }, // tree trunk
+    { x: 222, y: 262, w: 58, h: 68, filled: false }, // door
+    { x: 172, y: 212, w: 38, h: 38, filled: false }, // window1
+    { x: 292, y: 212, w: 38, h: 38, filled: false }, // window2
+    { x: 372, y: 52, w: 56, h: 56, filled: false }, // sun
+    { x: 382, y: 292, w: 8, h: 38, filled: false }, // fence1
+    { x: 407, y: 292, w: 8, h: 38, filled: false }, // fence2
+    { x: 432, y: 292, w: 8, h: 38, filled: false }, // fence3
+    { x: 457, y: 292, w: 8, h: 38, filled: false }, // fence4
+  ];
+
+  // Initialize palette
+  const palette = document.getElementById('color-palette');
+  palette.innerHTML = '';
+  COLORS.forEach(c => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch' + (c === currentColor ? ' active' : '');
+    swatch.style.background = c;
+    swatch.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      currentColor = c;
+    };
+    palette.appendChild(swatch);
+  });
+
+  // Click to fill
+  canvas.onclick = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    // Find area that contains click
+    for (const area of fillAreas) {
+      if (x >= area.x && x <= area.x + area.w &&
+          y >= area.y && y <= area.y + area.h && !area.filled) {
+        ctx.fillStyle = currentColor;
+        ctx.fillRect(area.x + 1, area.y + 1, area.w - 1, area.h - 1);
+        area.filled = true;
+
+        // Check if all areas filled
+        if (fillAreas.every(a => a.filled)) {
+          // Redraw outline on top
+          redrawOutline(ctx);
+          setTimeout(() => {
+            showToast('🎨 完成上色！络可很开心！');
+          }, 300);
+        }
+        break;
+      }
+    }
+  };
+}
+
+function redrawOutline(ctx) {
+  // Redraw the outline
+  const outline = () => {
+    ctx.strokeStyle = '#4a3728';
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(150, 180, 200, 150);
+    ctx.beginPath();
+    ctx.moveTo(130, 180);
+    ctx.lineTo(250, 100);
+    ctx.lineTo(370, 180);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.strokeRect(220, 260, 60, 70);
+    ctx.strokeRect(170, 210, 40, 40);
+    ctx.strokeRect(290, 210, 40, 40);
+    ctx.beginPath();
+    ctx.moveTo(190, 210); ctx.lineTo(190, 250);
+    ctx.moveTo(170, 230); ctx.lineTo(210, 230);
+    ctx.moveTo(310, 210); ctx.lineTo(310, 250);
+    ctx.moveTo(290, 230); ctx.lineTo(330, 230);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(400, 80, 30, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(80, 70, 25, 0, Math.PI * 2);
+    ctx.arc(110, 65, 30, 0, Math.PI * 2);
+    ctx.arc(140, 70, 25, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.rect(60, 230, 20, 100);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(70, 200, 40, 0, Math.PI * 2);
+    ctx.stroke();
+    for (let i = 0; i < 5; i++) {
+      ctx.strokeRect(380 + i * 25, 290, 10, 40);
+      if (i < 4) {
+        ctx.strokeRect(385 + i * 25, 300, 25, 5);
+      }
+    }
+  };
+  outline();
+}
+
+function openColoring() {
+  const screen = document.getElementById('coloring-screen');
+  screen.classList.add('active');
+  document.getElementById('game-screen').style.display = 'none';
+  initColoring();
+}
+
+function closeColoring() {
+  document.getElementById('coloring-screen').classList.remove('active');
+  document.getElementById('game-screen').style.display = 'block';
+  addAffection(1);
+  showToast('♥ 络可的好感度提升了');
+}
+
+// ==================== KEYBOARD SHORTCUTS ====================
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+    if (document.getElementById('title-screen').classList.contains('hidden') === false) return;
+    if (document.getElementById('gallery-screen').classList.contains('active')) return;
+    if (document.getElementById('explore-screen').classList.contains('active')) return;
+    if (document.getElementById('coloring-screen').classList.contains('active')) return;
+    if (document.getElementById('ending-screen').classList.contains('active')) return;
+    advanceText();
+    e.preventDefault();
+  }
+  if (e.key === 'g' || e.key === 'G') {
+    if (!document.getElementById('game-screen').classList.contains('active')) return;
+    if (document.getElementById('gallery-screen').classList.contains('active')) {
+      closeGallery();
+    } else {
+      openGallery();
+    }
+  }
+  if (e.key === 'c' || e.key === 'C') {
+    if (!document.getElementById('game-screen').classList.contains('active')) return;
+    if (document.getElementById('coloring-screen').classList.contains('active')) {
+      closeColoring();
+    } else {
+      openColoring();
+    }
+  }
+});
+
+// ==================== WATERCOLOR PARTICLES ====================
+
+function createWatercolorParticles() {
+  const container = document.getElementById('game-container');
+  const colors = ['rgba(200,180,160,0.08)', 'rgba(180,200,180,0.06)', 'rgba(200,190,210,0.07)',
+                  'rgba(220,200,180,0.05)', 'rgba(180,180,200,0.06)'];
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'watercolor-particle';
+    const size = 30 + Math.random() * 80;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.background = colors[i % colors.length];
+    p.style.animation = `floatParticle ${5 + Math.random() * 8}s ease-in-out infinite`;
+    p.style.animationDelay = Math.random() * 5 + 's';
+    container.appendChild(p);
+  }
+}
+
+// Add particle animation
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+@keyframes floatParticle {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  50% { transform: translate(${20 + Math.random() * 30}px, ${-10 - Math.random() * 20}px) scale(1.1); opacity: 0.8; }
+  80% { opacity: 0.4; }
+}
+`;
+document.head.appendChild(styleSheet);
+
+// ==================== SETTINGS ====================
+
+function initGameSettings() {
+  const bgm = document.getElementById('bgm');
+  const settingsButton = document.getElementById('riko-settings-btn');
+  const settingsPanel = document.getElementById('riko-settings');
+  const volumeInput = document.getElementById('bgm-volume');
+  const volumeValue = document.getElementById('bgm-volume-value');
+  const emotionToggle = document.getElementById('emotion-toggle');
+  const savedVolume = Math.min(100, Math.max(0, Number(localStorage.getItem('riko-bgm-volume') || 50)));
+  const savedEmotion = localStorage.getItem('riko-emotion-enabled') !== 'false';
+
+  volumeInput.value = savedVolume;
+  volumeValue.textContent = savedVolume + '%';
+  emotionToggle.checked = savedEmotion;
+  bgm.volume = savedVolume / 100;
+
+  settingsButton.addEventListener('click', event => {
+    event.stopPropagation();
+    settingsPanel.classList.toggle('active');
+  });
+  settingsPanel.addEventListener('click', event => event.stopPropagation());
+  document.addEventListener('click', () => settingsPanel.classList.remove('active'));
+  volumeInput.addEventListener('input', () => {
+    const volume = Number(volumeInput.value);
+    bgm.volume = volume / 100;
+    volumeValue.textContent = volume + '%';
+    localStorage.setItem('riko-bgm-volume', String(volume));
+  });
+  emotionToggle.addEventListener('change', () => {
+    localStorage.setItem('riko-emotion-enabled', String(emotionToggle.checked));
+    updateEmotionBubble(getNode(currentNodeId)?.expression || null);
+  });
+}
+
+// ==================== INIT ====================
+
+initGameSettings();
+createWatercolorParticles();
+updateAffectionBar();
+initColoring();
+
+// Auto-play BGM hint on first click
+document.addEventListener('click', () => {
+  if (!bgmStarted && document.getElementById('title-screen').classList.contains('hidden') === false) {
+    const bgm = document.getElementById('bgm');
+    applyBgmVolume();
+    bgm.play().catch(() => {});
+    bgmStarted = true;
+  }
+}, { once: true });
+
+console.log('★ 星贝速写簿 - Star Beret Sketchbook ★');
+console.log('制作：络可的夏日物语');
+console.log('提示：按 Enter/Space 继续对话，按 G 打开画册，按 C 打开上色小游戏');
+</script>
+</body>
+</html>

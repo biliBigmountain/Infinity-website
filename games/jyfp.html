@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记忆翻牌游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        header {
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 25px;
+            min-width: 120px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 0 auto;
+            max-width: 550px;
+        }
+        
+        .card {
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-front {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 2.5rem;
+        }
+        
+        .card-back {
+            background: #ff6b6b;
+            transform: rotateY(180deg);
+            font-size: 2rem;
+        }
+        
+        .card.matched .card-back {
+            background: #2ecc71;
+        }
+        
+        .controls {
+            margin: 25px 0;
+        }
+        
+        .btn {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-start {
+            background: #2ecc71;
+        }
+        
+        .btn-start:hover {
+            background: #27ae60;
+        }
+        
+        .difficulty {
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn.active {
+            background: #ff6b6b;
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 25px auto;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .card {
+                height: 100px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .stat-box {
+                padding: 10px 15px;
+                min-width: 90px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+
+    <style id="game-center-return-style">
+        .game-center-return {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .7rem 1.15rem;
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #00a89a, #3695c5);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+            text-decoration: none;
+            font: 600 .95rem/1.2 'Noto Sans SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .game-center-return:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 168, 154, .35);
+            filter: brightness(1.08);
+        }
+        .game-center-return:focus-visible {
+            outline: 3px solid rgba(68, 183, 238, .55);
+            outline-offset: 3px;
+        }
+        @media (max-width: 600px) {
+            .game-center-return {
+                top: .75rem;
+                right: .75rem;
+                padding: .6rem .85rem;
+                font-size: .85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="game-center-return" href="/index" aria-label="返回至游戏中心">返回至游戏中心</a>
+    <div class="container">
+        <header>
+            <h1>记忆翻牌游戏</h1>
+            <p class="subtitle">翻开卡片，找到所有匹配的对子，锻炼你的记忆力！</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="time">0s</div>
+                <div class="stat-label">时间</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="moves">0</div>
+                <div class="stat-label">步数</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="pairs">0/8</div>
+                <div class="stat-label">匹配对数</div>
+            </div>
+        </div>
+        
+        <div class="difficulty">
+            <button class="difficulty-btn active" data-size="8">简单</button>
+            <button class="difficulty-btn" data-size="12">中等</button>
+            <button class="difficulty-btn" data-size="16">困难</button>
+        </div>
+        
+        <div class="game-board" id="game-board">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-start" id="start-btn">开始游戏</button>
+            <button class="btn" id="reset-btn">重新开始</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>游戏规则</h3>
+            <p>点击卡片翻开它们，每次可以翻开两张卡片。如果两张卡片匹配，它们将保持翻开状态。如果不匹配，它们将自动翻回去。目标是使用最少的步数和时间找到所有匹配的对子。</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 游戏变量
+            let cards = [];
+            let flippedCards = [];
+            let matchedPairs = 0;
+            let totalPairs = 8;
+            let moves = 0;
+            let gameStarted = false;
+            let timer = null;
+            let seconds = 0;
+            
+            // 元素引用
+            const gameBoard = document.getElementById('game-board');
+            const timeElement = document.getElementById('time');
+            const movesElement = document.getElementById('moves');
+            const pairsElement = document.getElementById('pairs');
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            
+            // 卡片符号
+            const symbols = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍑', '🍓', '🥝', '🥥', '🍋', '🍐', '🍍', '🥭', '🍈', '🍉', '🥑'];
+            
+            // 初始化游戏
+            function initGame() {
+                // 重置游戏状态
+                clearInterval(timer);
+                seconds = 0;
+                moves = 0;
+                matchedPairs = 0;
+                flippedCards = [];
+                gameStarted = false;
+                
+                // 更新UI
+                timeElement.textContent = '0s';
+                movesElement.textContent = '0';
+                pairsElement.textContent = `0/${totalPairs}`;
+                startBtn.textContent = '开始游戏';
+                
+                // 生成卡片
+                generateCards();
+            }
+            
+            // 生成卡片
+            function generateCards() {
+                gameBoard.innerHTML = '';
+                cards = [];
+                
+                // 获取当前难度
+                let size = 8;
+                const activeDifficulty = document.querySelector('.difficulty-btn.active');
+                if (activeDifficulty) {
+                    size = parseInt(activeDifficulty.dataset.size);
+                    totalPairs = size / 2;
+                    pairsElement.textContent = `0/${totalPairs}`;
+                }
+                
+                // 更新游戏板样式
+                gameBoard.style.gridTemplateColumns = `repeat(${Math.sqrt(size)}, 1fr)`;
+                
+                // 选择符号
+                const selectedSymbols = symbols.slice(0, totalPairs);
+                
+                // 创建卡片对
+                let cardValues = [];
+                selectedSymbols.forEach(symbol => {
+                    cardValues.push(symbol);
+                    cardValues.push(symbol);
+                });
+                
+                // 洗牌算法
+                for (let i = cardValues.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cardValues[i], cardValues[j]] = [cardValues[j], cardValues[i]];
+                }
+                
+                // 创建卡片元素
+                cardValues.forEach((value, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.index = index;
+                    card.dataset.value = value;
+                    
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">?</div>
+                            <div class="card-back">${value}</div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => flipCard(card));
+                    gameBoard.appendChild(card);
+                    cards.push(card);
+                });
+            }
+            
+            // 翻牌函数
+            function flipCard(card) {
+                // 如果游戏未开始或卡片已翻开或已匹配，则忽略点击
+                if (!gameStarted || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                    return;
+                }
+                
+                // 如果已经翻开两张卡片，则忽略点击
+                if (flippedCards.length === 2) {
+                    return;
+                }
+                
+                // 翻开卡片
+                card.classList.add('flipped');
+                flippedCards.push(card);
+                
+                // 如果翻开了两张卡片，检查是否匹配
+                if (flippedCards.length === 2) {
+                    moves++;
+                    movesElement.textContent = moves;
+                    
+                    setTimeout(checkMatch, 700);
+                }
+            }
+            
+            // 检查匹配
+            function checkMatch() {
+                const [card1, card2] = flippedCards;
+                
+                if (card1.dataset.value === card2.dataset.value) {
+                    // 匹配成功
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    pairsElement.textContent = `${matchedPairs}/${totalPairs}`;
+                    
+                    // 检查游戏是否结束
+                    if (matchedPairs === totalPairs) {
+                        endGame();
+                    }
+                } else {
+                    // 不匹配，翻回卡片
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                }
+                
+                // 清空已翻开的卡片数组
+                flippedCards = [];
+            }
+            
+            // 开始游戏
+            function startGame() {
+                if (gameStarted) return;
+                
+                gameStarted = true;
+                startBtn.textContent = '游戏进行中...';
+                startBtn.disabled = true;
+                
+                // 启动计时器
+                timer = setInterval(() => {
+                    seconds++;
+                    timeElement.textContent = `${seconds}s`;
+                }, 1000);
+                
+                // 最初显示所有卡片3秒
+                cards.forEach(card => card.classList.add('flipped'));
+                
+                setTimeout(() => {
+                    cards.forEach(card => card.classList.remove('flipped'));
+                }, 3000);
+            }
+            
+            // 结束游戏
+            function endGame() {
+                clearInterval(timer);
+                gameStarted = false;
+                startBtn.disabled = false;
+                startBtn.textContent = '再玩一次';
+                
+                setTimeout(() => {
+                    alert(`恭喜！你用了 ${moves} 步和 ${seconds} 秒完成了游戏！`);
+                }, 500);
+            }
+            
+            // 事件监听
+            startBtn.addEventListener('click', () => {
+                if (!gameStarted) {
+                    startGame();
+                } else {
+                    initGame();
+                    startGame();
+                }
+            });
+            
+            resetBtn.addEventListener('click', initGame);
+            
+            difficultyBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    difficultyBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    initGame();
+                });
+            });
+            
+            // 初始化游戏
+            initGame();
+        });
+    </script>
+</body>
+</html>
