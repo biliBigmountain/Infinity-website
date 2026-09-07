@@ -1,5 +1,5 @@
 # Infinity-website
-Infinity个人主页HTML源代码
+Infinity个人主页所有静态网页HTML源代码
 
 文件仅供参考！
 
